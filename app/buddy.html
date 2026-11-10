@@ -54,11 +54,28 @@ textarea{min-height:140px;resize:vertical;line-height:1.45}
 .side{display:none}
 @media (min-width:900px){
   .shell{display:grid;grid-template-columns:260px minmax(0,1fr);gap:40px;align-items:start}
-  .side{display:flex;flex-direction:column;gap:14px;position:sticky;top:16px}
+  .side{display:flex;flex-direction:column;gap:6px;position:sticky;top:16px;min-height:calc(100vh - 32px);background:var(--mist);border-radius:24px;padding:16px 14px}
 }
-.side .c{display:flex;justify-content:space-between;align-items:center;border-radius:14px;padding:12px 14px;font-weight:600;text-align:left;width:100%}
-.side .c[aria-current="true"]{background:var(--ink);color:var(--white)}
-.side .c[aria-current="true"] .label{color:#a3a3a3}
+.side .c{display:flex;align-items:center;gap:10px;border-radius:14px;padding:9px 10px;font-weight:600;text-align:left;width:100%;min-height:52px;position:relative}
+.side .c:hover{background:rgba(0,0,0,.04)}
+.side .c .ini{width:34px;height:34px;border-radius:10px;background:var(--white);border:1px solid var(--rim);display:flex;align-items:center;justify-content:center;font-family:var(--disp);font-size:16px;flex:none}
+.side .c .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.side .c[aria-current="true"]{background:var(--white);box-shadow:0 2px 10px rgba(0,0,0,.08)}
+.side .c[aria-current="true"]::before{content:'';position:absolute;left:-6px;top:12px;bottom:12px;width:4px;border-radius:4px;background:var(--pink)}
+.side .c[aria-current="true"] .ini{background:var(--ink);color:var(--pink);border-color:var(--ink)}
+.side .home{display:flex;align-items:center;min-height:48px;padding:0 6px}
+.side .foot{margin-top:auto;display:flex;flex-direction:column;gap:2px;padding-top:12px;border-top:1px solid var(--rim)}
+.side .foot button{display:flex;align-items:center;gap:10px;min-height:44px;padding:0 10px;border-radius:12px;font-weight:600;color:var(--muted);text-align:left}
+.side .foot button:hover{background:rgba(0,0,0,.04);color:var(--ink)}
+/* top bar: what screen this is, how to go back, the settings */
+.topbar{position:sticky;top:0;z-index:15;display:flex;align-items:center;gap:8px;min-height:60px;margin:-16px calc(-1 * max(16px, env(safe-area-inset-left, 0px))) 4px;padding:8px max(12px, env(safe-area-inset-left, 0px));background:rgba(255,255,255,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--rim)}
+.topbar .back{display:flex;align-items:center;gap:2px;min-height:44px;padding:0 10px 0 4px;border-radius:12px;font-weight:600;font-size:15px}
+.topbar .back:hover{background:var(--mist)}
+.topbar .back b{font-size:24px;line-height:1;font-weight:500;margin-right:2px}
+.topbar .ttl{flex:1;min-width:0;text-align:center;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.topbar .act{display:flex;align-items:center;gap:6px;min-height:44px;padding:0 12px;border-radius:12px;background:var(--mist);font-weight:600;font-size:14px}
+.topbar .sp{width:88px;flex:none}
+@media (min-width:900px){.topbar{position:static;margin:0 0 4px;padding:0;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;border:0;min-height:48px}.topbar .back,.topbar .ttl{display:none}.topbar{justify-content:flex-end}.topbar .sp{display:none}}
 .main{display:flex;flex-direction:column;gap:18px;min-width:0}
 /* lists */
 .list{display:flex;flex-direction:column;border:1px solid var(--rim);border-radius:20px;overflow:hidden}
@@ -176,6 +193,36 @@ textarea{min-height:140px;resize:vertical;line-height:1.45}
 @keyframes bd-sa{0%,100%{transform:translate(0,0) rotate(-8deg)}50%{transform:translate(62px,-12px) rotate(8deg)}}
 @keyframes bd-sb{0%,100%{transform:translate(0,0) rotate(7deg)}50%{transform:translate(-62px,12px) rotate(-7deg)}}
 @keyframes bd-nod{0%,100%{transform:translateY(0) rotate(0)}40%{transform:translateY(-4px) rotate(-8deg)}}
+
+/* the first opening: plays once, never loops */
+.intro{min-height:calc(100vh - 32px);display:grid;gap:32px;align-content:center;padding-bottom:90px}
+.intro h1{font-size:clamp(46px,11vw,88px);line-height:.98}
+.intro .lead{font-size:18px;color:var(--muted);max-width:30em}
+.intro .cta{display:flex;flex-direction:column;gap:6px;max-width:380px}
+.intro .demo{align-self:center;border:1px solid var(--rim);border-radius:28px;padding:16px;display:flex;flex-direction:column;gap:10px;max-width:500px;width:100%;justify-self:center;background:var(--white);position:relative}
+.intro .demo .stage{padding:20px}.intro .demo .stage .q{font-size:22px}
+.intro .demo .opt{min-height:52px;font-size:16px}
+.isteps{display:grid;gap:10px}
+.istep{display:flex;gap:14px;align-items:center;border:1px solid var(--rim);border-radius:20px;padding:14px 16px}
+.istep .n{width:34px;height:44px;flex:none;border-radius:9px;background:var(--ink);color:var(--pink);font-family:var(--disp);font-size:20px;display:flex;align-items:center;justify-content:center;transform:rotate(-5deg)}
+.istep:nth-child(2) .n{background:var(--pink);color:var(--ink);transform:rotate(5deg)}
+.intro .dock{display:block}
+@media (min-width:900px){.intro{grid-template-columns:1.05fr 1fr;column-gap:64px;padding-bottom:24px}.intro .isteps{grid-column:1 / -1;grid-template-columns:repeat(3,1fr)}.intro .dock{display:none}}
+.anim .logo-in .dc.p{animation:drop-p .8s cubic-bezier(.2,1.5,.4,1) .15s both}
+.anim .logo-in .dc.k{animation:drop-k .8s cubic-bezier(.2,1.5,.4,1) .32s both}
+.anim .logo-in .tx{animation:rise .5s ease-out both}
+.hl{display:block}.anim .hl{animation:rise .6s cubic-bezier(.2,.8,.2,1) both}
+.anim .hl:nth-child(2){animation-delay:.12s}.anim .hl:nth-child(3){animation-delay:.24s}
+.anim .lead{animation:rise .6s ease-out .45s both}.anim .cta{animation:rise .6s ease-out .6s both}
+.anim .demo{animation:deal .8s cubic-bezier(.2,1.2,.4,1) .55s both}
+.anim .istep{animation:rise .5s ease-out both}.anim .istep:nth-child(1){animation-delay:.9s}.anim .istep:nth-child(2){animation-delay:1s}.anim .istep:nth-child(3){animation-delay:1.1s}
+.burst{position:absolute;left:50%;top:40%;width:0;height:0;pointer-events:none}
+.burst i{position:absolute;width:14px;height:20px;border-radius:4px;animation:burst .9s cubic-bezier(.1,.8,.3,1) forwards}
+@keyframes drop-p{from{transform:translateY(-140px) rotate(-60deg);opacity:0}to{transform:rotate(-8deg);opacity:1}}
+@keyframes drop-k{from{transform:translateY(-160px) rotate(50deg);opacity:0}to{transform:rotate(7deg);opacity:1}}
+@keyframes rise{from{transform:translateY(18px);opacity:0}to{transform:none;opacity:1}}
+@keyframes deal{from{transform:translate(60px,40px) rotate(10deg);opacity:0}to{transform:none;opacity:1}}
+@keyframes burst{from{transform:translate(0,0) rotate(0);opacity:1}to{transform:translate(var(--x),var(--y)) rotate(var(--r));opacity:0}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 <div id="app"></div>
@@ -637,16 +684,51 @@ function daily(c){
   startGame(c, {id:'daily', daily:true, title:'Partie du jour', cards: pick}, 0);
 }
 /* ================= screens ================= */
+function topbar({back, backV, backLabel, title, right}){
+  return `<header class="topbar">${back ? `<button class="back" data-a="${back}" ${backV ? `data-v="${backV}"` : ''} aria-label="Retour : ${esc(backLabel)}"><b>‹</b>${esc(backLabel)}</button>` : '<span class="sp"></span>'}<span class="ttl">${esc(title || '')}</span>${right || '<span class="sp"></span>'}</header>`;
+}
 function sideHtml(){
-  return `<aside class="side">${word(26)}<span class="label" style="margin-top:8px">Mes cours</span>${S.courses.map(c => { const d = daysTo(c); return `<button class="c" data-a="open" data-v="${c.id}" aria-current="${view.id === c.id}"><span>${esc(c.name)}</span>${d !== null && d >= 0 ? `<span class="label">J-${d}</span>` : ''}</button>`; }).join('')}<button class="add" data-a="new">+ Nouveau cours</button></aside>`;
+  return `<nav class="side" aria-label="Mes cours"><button class="home" data-a="home" aria-label="Accueil Buddy">${word(26)}</button><span class="label" style="margin:10px 6px 4px">Mes cours</span>${S.courses.map(c => { const d = daysTo(c); return `<button class="c" data-a="open" data-v="${c.id}" aria-current="${view.id === c.id}"><span class="ini">${esc((c.name.trim()[0] || '?').toUpperCase())}</span><span class="nm">${esc(c.name)}</span>${d !== null && d >= 0 ? `<span class="label">J-${d}</span>` : ''}</button>`; }).join('')}<button class="add" data-a="new" style="margin-top:6px;min-height:48px">+ Nouveau cours</button><div class="foot"><button data-a="sheet" data-v="about">? Comment ça marche</button></div></nav>`;
+}
+/* ================= the first opening ================= */
+const INTRO = [
+  {s:'Avant d’acheter un ordi, Léna compare trois modèles sur des sites.', q:'Elle est à quelle étape ?', o:['Achat','Pré-achat','Post-achat'], a:'Pré-achat', w:'Comparer des offres, c’est avant la transaction : le pré-achat.'},
+  {s:'Une entreprise vend à 50 € un produit qui lui coûte 30 € en charges variables.', q:'Sa marge sur coût variable unitaire ?', o:['20 €','30 €','80 €'], a:'20 €', w:'Prix de vente − coût variable : 50 − 30 = 20 €.'},
+  {s:'Tom lit les avis en ligne avant de réserver un hôtel.', q:'Le site d’avis est quel point de contact ?', o:['Brand-owned','Social/external','Partner-owned'], a:'Social/external', w:'Un avis en ligne échappe à la marque.'}
+];
+let intro = {i:0, picked:null, played:false};
+function introDemo(){
+  const c = INTRO[intro.i % INTRO.length], done = intro.picked !== null, ok = intro.picked === c.a;
+  return `<section class="stage"><span class="label">Essaie · ${intro.i % INTRO.length + 1}/${INTRO.length}</span><p class="sit">${esc(c.s)}</p><p class="q">${esc(c.q)}</p></section>
+  ${c.o.map(o => `<button class="opt ${done ? (o === c.a ? 'good' : o === intro.picked ? 'bad' : 'fade') : ''}" data-a="ipick" data-v="${esc(o)}" ${done ? 'disabled' : ''}>${esc(o)}${done && o === c.a ? '<span class="dot ok"></span>' : ''}</button>`).join('')}
+  ${done ? `<div class="verdict enter" role="status"><div class="w"><span class="dot ${ok ? 'ok' : 'no'}" style="width:12px;height:12px"></span>${ok ? 'Exact !' : 'Faux'}</div><p class="small">${ok ? '' : '<b>Réponse : ' + esc(c.a) + '.</b> '}${esc(c.w)}</p><button class="btn ink" data-a="inext">${intro.i % INTRO.length === INTRO.length - 1 ? 'Recommencer' : 'Une autre'}</button></div>` : ''}`;
+}
+function burst(host){
+  const b = document.createElement('div'); b.className = 'burst'; b.setAttribute('aria-hidden', 'true');
+  const cols = ['var(--pink)', 'var(--ink)', 'var(--green)', 'var(--pink)'];
+  b.innerHTML = Array.from({length: 16}, (_, i) => { const a = i / 16 * Math.PI * 2, d = 90 + Math.random() * 80; return `<i style="background:${cols[i % 4]};--x:${Math.cos(a) * d}px;--y:${Math.sin(a) * d - 40}px;--r:${Math.random() * 360 - 180}deg"></i>`; }).join('');
+  host.append(b); setTimeout(() => b.remove(), 1000);
 }
 function welcome(){
-  return `<div class="welcome">${word(30)}<h1>Salut&nbsp;! On révise quoi&nbsp;?</h1><p class="muted" style="font-size:18px">Ajoute un cours : tes TD, tes diapos, tes annales, tes notes. Je les lis et je te fais des jeux de 5 minutes, avec la page du cours à chaque réponse.</p>
-  <button class="btn" data-a="new">+ Ajouter un cours</button><button class="link" data-a="try" style="align-self:center">Ou essaie avec un cours exemple</button>
-  <p class="tiny muted" style="text-align:center">Tout reste dans ton Claude et ce navigateur.</p></div>`;
+  const anim = !intro.played; intro.played = true;
+  return `<div class="intro${anim ? ' anim' : ''}">
+  <div style="display:flex;flex-direction:column;gap:22px">
+    <span class="word logo-in" style="font-size:34px" role="img" aria-label="Buddy"><span class="tx">Bu</span><span class="dc p"><span>d</span></span><span class="dc k"><span>d</span></span><span class="tx">y</span></span>
+    <h1><span class="hl">Ton cours</span><span class="hl">devient</span><span class="hl">un jeu.</span></h1>
+    <p class="lead">Ajoute tes TD, diapos, annales et tableurs. Claude en fait des parties de 5 minutes pour ton objectif, et te montre la page du cours à chaque réponse.</p>
+    <div class="cta"><button class="btn" data-a="new">+ Ajouter un cours</button><button class="link" data-a="try" style="align-self:center">Ou essaie avec un cours exemple</button></div>
+  </div>
+  <div class="demo" id="idemo" aria-live="polite">${introDemo()}</div>
+  <div class="isteps">
+    <div class="istep"><span class="n">1</span><span><b>Ajoute ton cours</b><br><span class="small muted">Un dossier entier, ton Drive, Excel, des photos de notes.</span></span></div>
+    <div class="istep"><span class="n">2</span><span><b>Choisis ton objectif</b><br><span class="small muted">Valider, viser haut, comprendre, et le format des exercices.</span></span></div>
+    <div class="istep"><span class="n">3</span><span><b>Joue 5 minutes</b><br><span class="small muted">Ce que tu rates revient jusqu’à ce que ça rentre.</span></span></div>
+  </div>
+  <p class="tiny muted" style="text-align:center;grid-column:1 / -1">Tout reste dans ton Claude et ce navigateur.</p>
+  </div>`;
 }
 function home(){
-  return `<div class="row between" style="min-height:48px">${word(24)}<button class="icon" data-a="sheet" data-v="about" aria-label="Comment ça marche">?</button></div>
+  return `<header class="topbar" style="justify-content:space-between"><button data-a="intro" aria-label="Revoir l’accueil de Buddy" style="min-height:44px">${word(24)}</button><button class="act" data-a="sheet" data-v="about">? Comment ça marche</button></header>
   <h1 style="font-size:36px;margin:12px 0 18px">Mes cours</h1>
   <div class="courses">${S.courses.map(c => { const d = daysTo(c); return `<button class="course" data-a="open" data-v="${c.id}"><span class="ini">${esc((c.name.trim()[0] || '?').toUpperCase())}</span><span class="meta"><b>${esc(c.name)}</b><span class="small muted">${c.example ? 'Exemple · ' : ''}${plural(c.games.length, 'jeu', 'jeux')}${c.review.length ? ' · ' + c.review.length + ' à revoir' : ''}</span></span>${d !== null && d >= 0 ? `<span class="label" style="color:var(--ink)">J-${d}</span>` : '<span class="muted">›</span>'}</button>`; }).join('')}</div>
   <div style="margin-top:12px"><button class="add" data-a="new">+ Nouveau cours</button></div>
@@ -654,7 +736,7 @@ function home(){
 }
 function newCourseScreen(){
   return `<div class="shell">${sideHtml()}<div class="main" style="max-width:560px">
-  <button class="link" data-a="home" style="text-decoration:none">‹ Mes cours</button><h1 style="font-size:34px">Nouveau cours</h1>
+  ${topbar({back:'home', backLabel:'Mes cours', title:'Nouveau cours'})}<h1 style="font-size:34px">Nouveau cours</h1>
   <form id="newform" class="stack"><label class="label" for="cname">Nom du cours</label><input id="cname" placeholder="Contrôle de gestion" autocomplete="off" required>
   <button class="btn" type="submit">Continuer</button></form></div></div>`;
 }
@@ -667,7 +749,7 @@ function examSetup(c, inSheet){
 function setupScreen(){
   const c = course(); if (!c) return home();
   return `<div class="shell">${sideHtml()}<div class="main" style="max-width:560px">
-  <button class="link" data-a="open" data-v="${c.id}" style="text-decoration:none">‹ ${esc(c.name)}</button>
+  ${topbar({back:'open', backV:c.id, backLabel:'Retour', title:c.name})}
   <h1 style="font-size:34px">Ton cours</h1>
   ${filesBlock(c)}
   ${examSetup(c)}
@@ -688,7 +770,7 @@ function courseScreen(){
   const d = daysTo(c), can = !!sample && !busy && c.files.some(f => f.pages && f.pages.length);
   const filesN = c.files.filter(f => !f.error).length;
   return `<div class="shell">${sideHtml()}<div class="main">
-  <div class="row between"><button class="link" data-a="home" style="text-decoration:none">‹ Mes cours</button><div class="row">${d !== null && d >= 0 ? `<span class="label" style="color:var(--ink)">Partiel J-${d}</span>` : ''}<button class="icon" data-a="sheet" data-v="exam" aria-label="Mon partiel">⚙</button></div></div>
+  ${topbar({back:'home', backLabel:'Mes cours', title:c.name, right:`<button class="act" data-a="sheet" data-v="exam" aria-label="Mon partiel">${d !== null && d >= 0 ? 'Partiel J-' + d : 'Mon partiel'} ⚙</button>`})}
   ${c.fresh ? `<div class="banner" role="status"><span class="dot ok"></span><span>Dossier <b>${esc(c.name)}</b> créé. ${plural(filesN, 'fichier')} dedans, prêt à jouer.</span></div>` : ''}
   <h1 style="font-size:40px">${esc(c.name)}</h1>
   <div class="top2"><div class="card day"><span class="deco"></span><span class="label">Partie du jour</span><h2>5 min</h2><p class="muted">${c.games.length ? 'Un mélange de tes jeux' + (c.review.length ? ' · ' + plural(c.review.length, 'erreur') + ' à rattraper' : '') : 'Ton premier jeu, écrit par Claude'}</p><button class="btn" data-a="daily" ${c.games.length || can ? '' : 'disabled'}>Jouer</button>${!sample ? '<p class="tiny muted">Ouvre Buddy dans Claude pour jouer.</p>' : ''}</div>
@@ -846,6 +928,7 @@ function bindInputs(){
 function render(){
   const app = document.getElementById('app');
   if (view.name === 'making' && making) { document.getElementById('sheet').innerHTML = ''; return drawMaking(); }
+  if (view.name === 'welcome' && app.querySelector('.intro')) { drawSheet(); return; }
   app.innerHTML = view.name === 'welcome' ? welcome() : view.name === 'new' ? newCourseScreen() : view.name === 'setup' ? setupScreen() : view.name === 'course' ? courseScreen() : view.name === 'making' ? makingScreen() : view.name === 'play' ? play() : home();
   if (view.name !== 'setup' || sheet) drawSheet(); else document.getElementById('sheet').innerHTML = ''; bindInputs();
 }
@@ -856,6 +939,9 @@ document.addEventListener('click', e => {
   if (t.classList.contains('scrim') && e.target.closest('[data-stop]')) return;
   const a = t.dataset.a, v = t.dataset.v, c = course(), g = game, st = g?.st, k = g ? g.byId[g.cur] : null;
   switch (a) {
+    case 'intro': intro = {i:0, picked:null, played:false}; view = {name:'welcome'}; render(); return window.scrollTo(0, 0);
+    case 'ipick': { if (intro.picked !== null) return; intro.picked = v; const host = document.getElementById('idemo'); host.innerHTML = introDemo(); if (v === INTRO[intro.i % INTRO.length].a) burst(host); return; }
+    case 'inext': intro.i++; intro.picked = null; document.getElementById('idemo').innerHTML = introDemo(); return;
     case 'close': if (t.classList.contains('scrim') && e.target !== t) return; sheet = null; view.confirmReset = view.confirmDelete = view.confirmG = view.renaming = false; return render();
     case 'sheet': sheet = v; return drawSheet();
     case 'try': S.welcomed = true; save(); view = {name:'course', id:'ex'}; return render();
