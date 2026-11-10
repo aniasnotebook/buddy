@@ -764,12 +764,13 @@ function welcome(){
   <p class="tiny muted" style="text-align:center;grid-column:1 / -1">Tout reste dans ton Claude et ce navigateur.</p>
   </div>`;
 }
+const noClaude = () => claudeState === 'none' ? `<div class="banner" role="status" style="background:var(--orange-tint);color:var(--ink)"><span class="dot no" style="background:var(--orange)"></span><span><b>Claude n’est pas branché sur cette page.</b> Ouvre Buddy depuis claude.ai, connectée à ton compte Claude : sur un lien public, Claude est coupé. Tes cours et tes jeux déjà créés marchent quand même.</span></div>` : '';
 function home(){
   return `<header class="topbar" style="justify-content:space-between"><button data-a="intro" aria-label="Revoir l’accueil de Buddy" style="min-height:44px">${word(24)}</button><button class="act" data-a="sheet" data-v="about">${ic('help')}Comment ça marche</button></header>
   <h1 style="font-size:36px;margin:12px 0 18px">Mes cours</h1>
   <div class="courses">${S.courses.map(c => { const d = daysTo(c); return `<button class="course" data-a="open" data-v="${c.id}"><span class="ini">${esc((c.name.trim()[0] || '?').toUpperCase())}</span><span class="meta"><b>${esc(c.name)}</b><span class="small muted">${c.example ? 'Exemple · ' : ''}${plural(c.games.length, 'jeu', 'jeux')}${c.review.length ? ' · ' + c.review.length + ' à revoir' : ''}</span></span>${d !== null && d >= 0 ? `<span class="label" style="color:var(--ink)">J-${d}</span>` : '<span class="muted">›</span>'}</button>`; }).join('') || '<p class="muted">Aucun cours pour l’instant : ajoute ton premier cours.</p>'}</div>
   <div style="margin-top:12px"><button class="add" data-a="new" style="gap:6px">${ic('plus')}Ajouter un cours</button></div>
-  ${claudeState === 'none' ? '<p class="small muted" style="margin-top:16px">Ouvre Buddy dans Claude pour créer des jeux.</p>' : ''}`;
+  <div style="margin-top:16px">${noClaude()}</div>`;
 }
 function newCourseScreen(){
   return `<div class="shell">${sideHtml()}<div class="main" style="max-width:560px">
@@ -808,9 +809,9 @@ function courseScreen(){
   const filesN = c.files.filter(f => !f.error).length;
   return `<div class="shell">${sideHtml()}<div class="main">
   ${topbar({back:'home', backLabel:'Mes cours', title:c.name, right:`<button class="act" data-a="sheet" data-v="exam" aria-label="Réglages du cours">${ic('gear')}${d !== null && d >= 0 ? 'J-' + d + ' · ' : ''}Réglages</button>`})}
-  ${c.fresh ? `<div class="banner" role="status"><span class="dot ok"></span><span>Dossier <b>${esc(c.name)}</b> créé. ${plural(filesN, 'fichier')} dedans, prêt à jouer.</span></div>` : ''}
+  ${noClaude()}${c.fresh ? `<div class="banner" role="status"><span class="dot ok"></span><span>Dossier <b>${esc(c.name)}</b> créé. ${plural(filesN, 'fichier')} dedans, prêt à jouer.</span></div>` : ''}
   <h1 style="font-size:40px">${esc(c.name)}</h1>
-  <div class="top2"><div class="card day"><span class="deco"></span><span class="label">Partie du jour</span><h2>5 min</h2><p class="muted">${c.games.length ? 'Un mélange de tes jeux' + (c.review.length ? ' · ' + plural(c.review.length, 'erreur') + ' à rattraper' : '') : 'Ton premier jeu, écrit par Claude'}</p><button class="btn" data-a="daily" ${c.games.length || can ? '' : 'disabled'}>Jouer</button>${!sample ? '<p class="tiny muted">Ouvre Buddy dans Claude pour jouer.</p>' : ''}</div>
+  <div class="top2"><div class="card day"><span class="deco"></span><span class="label">Partie du jour</span><h2>5 min</h2><p class="muted">${c.games.length ? 'Un mélange de tes jeux' + (c.review.length ? ' · ' + plural(c.review.length, 'erreur') + ' à rattraper' : '') : 'Ton premier jeu, écrit par Claude'}</p><button class="btn" data-a="daily" ${c.games.length || can ? '' : 'disabled'}>Jouer</button></div>
   <div class="stack" style="gap:10px"><div class="row between"><span class="label">Mes jeux · ${c.games.length}</span><button class="btn sm white" data-a="newgame" ${can ? '' : 'disabled'}>${ic('plus')}Nouveau jeu</button></div>${c.games.map(gameRow).join('') || '<p class="small muted">Tes jeux s’ajoutent ici : rejoue-les, renomme-les, supprime-les.</p>'}</div></div>
   <div class="list"><button data-a="sheet" data-v="files"><span>Fichiers du cours</span><span class="muted">${plural(filesN, 'fichier')}${c.files.some(f => f.error) ? ' · 1 illisible' : ''}</span></button><button data-a="sheet" data-v="ask" ${sample ? '' : 'disabled'}><span>Poser une question</span><span class="muted" style="display:flex">${ic('next')}</span></button><button data-a="review" ${c.review.length && can ? '' : 'disabled'}><span>À revoir</span><span class="muted">${c.review.length}</span></button></div>
   </div></div>`;
