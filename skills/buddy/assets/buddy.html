@@ -224,7 +224,20 @@ textarea{min-height:140px;resize:vertical;line-height:1.45}
 .istep:nth-child(2) .n{background:var(--pink);color:var(--ink);transform:rotate(5deg)}
 .intro .dock{display:block}
 .deal{animation:deal .7s cubic-bezier(.2,1.2,.4,1) both}
-@media (min-width:900px){.intro{column-gap:64px;padding-bottom:24px}.intro.withdemo{grid-template-columns:1.05fr 1fr}.intro .isteps{grid-column:1 / -1;grid-template-columns:repeat(3,1fr)}.intro .dock{display:none}}
+/* the right side of the opening: three game cards fanned out; a tap opens the example */
+.fan{display:none}
+.fan .fc{position:absolute;width:200px;height:290px;border-radius:24px;padding:20px;display:flex;flex-direction:column;justify-content:space-between;text-align:left;box-shadow:0 18px 40px rgba(0,0,0,.12);transition:transform .25s cubic-bezier(.2,.8,.2,1)}
+.fan .fc .label{font-size:11px}
+.fan .f1{left:0;top:50px;background:var(--pink);color:var(--ink);transform:rotate(-10deg)}
+.fan .f2{left:360px;top:60px;background:var(--white);border:2px solid var(--ink);transform:rotate(6deg)}
+.fan .f3{left:180px;top:10px;background:var(--ink);color:var(--white);transform:rotate(-1deg);z-index:2}
+.fan:hover .f1{transform:rotate(-14deg) translateX(-18px)}.fan:hover .f2{transform:rotate(10deg) translateX(18px)}.fan:hover .f3{transform:rotate(-1deg) translateY(-8px)}
+.anim .fan .f1{animation:fan1 .8s cubic-bezier(.2,1.2,.4,1) .5s both}.anim .fan .f2{animation:fan2 .8s cubic-bezier(.2,1.2,.4,1) .62s both}.anim .fan .f3{animation:fan3 .8s cubic-bezier(.2,1.2,.4,1) .74s both}
+@keyframes fan1{from{transform:translate(120px,80px) rotate(20deg);opacity:0}to{transform:rotate(-10deg);opacity:1}}
+@keyframes fan2{from{transform:translate(120px,80px) rotate(30deg);opacity:0}to{transform:rotate(6deg);opacity:1}}
+@keyframes fan3{from{transform:translate(120px,80px) rotate(25deg);opacity:0}to{transform:rotate(-1deg);opacity:1}}
+@media (min-width:900px){.fan{display:block;position:relative;width:560px;height:380px;justify-self:center;align-self:center;cursor:pointer}}
+@media (min-width:900px){.intro{column-gap:64px;padding-bottom:24px;grid-template-columns:1.05fr 1fr}.intro .isteps{grid-column:1 / -1;grid-template-columns:repeat(3,1fr)}.intro .dock{display:none}}
 .anim .logo-in .dc.p{animation:drop-p .8s cubic-bezier(.2,1.5,.4,1) .15s both}
 .anim .logo-in .dc.k{animation:drop-k .8s cubic-bezier(.2,1.5,.4,1) .32s both}
 .anim .logo-in .tx{animation:rise .5s ease-out both}
@@ -738,7 +751,11 @@ function welcome(){
     <p class="lead">Ajoute tes TD, diapos, annales et tableurs. Claude en fait des parties de 5 minutes pour ton objectif, et te montre la page du cours à chaque réponse.</p>
     <div class="cta"><button class="btn" data-a="new">${ic('plus')}Ajouter un cours</button>${intro.show ? '' : '<button class="btn white" data-a="ishow">Essayer un exemple</button>'}</div>
   </div>
-  ${intro.show ? `<div class="demo${dealNow ? ' deal' : ''}" id="idemo" aria-live="polite">${introDemo()}</div>` : ''}
+  ${intro.show ? `<div class="demo${dealNow ? ' deal' : ''}" id="idemo" aria-live="polite">${introDemo()}</div>` : `<button class="fan" data-a="ishow" aria-label="Essayer un exemple">
+    <span class="fc f1"><span class="label">Flashcard</span><span style="font-family:var(--disp);font-size:24px;line-height:1.05">Seuil de rentabilité</span><span class="small">Touche pour retourner</span></span>
+    <span class="fc f2"><span class="label">Calcul</span><span style="font-weight:600;font-size:17px;line-height:1.3">Prix 50 €, coût variable 30 €. La marge unitaire&nbsp;?</span><span style="font-family:var(--disp);font-size:36px">20 €</span></span>
+    <span class="fc f3"><span class="label" style="color:#a3a3a3">Situation</span><span style="font-weight:600;font-size:18px;line-height:1.25">Léna compare trois ordis sur des sites. Elle est à quelle étape&nbsp;?</span><span style="display:flex;flex-direction:column;gap:6px"><span style="background:#fff;color:var(--ink);border-radius:12px;padding:8px 12px;font-weight:600;font-size:14px">Pré-achat</span><span style="background:#2a2a2a;border-radius:12px;padding:8px 12px;font-weight:600;font-size:14px">Achat</span></span></span>
+  </button>`}
   <div class="isteps">
     <div class="istep"><span class="n">1</span><span><b>Ajoute ton cours</b><br><span class="small muted">Un dossier entier, ton Drive, Excel, des photos de notes.</span></span></div>
     <div class="istep"><span class="n">2</span><span><b>Choisis ton objectif</b><br><span class="small muted">Valider, viser haut, comprendre, et le format des exercices.</span></span></div>
