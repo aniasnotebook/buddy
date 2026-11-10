@@ -189,7 +189,8 @@ textarea{min-height:140px;resize:vertical;line-height:1.45}
 @media (min-width:900px){
   .g{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:auto 1fr;gap:28px 40px;align-items:start;padding-bottom:24px}
   .g .gtop{grid-column:1 / -1;align-self:start}
-  .g .stage{align-self:start;position:sticky;top:24px;min-height:0;padding:36px}
+  .g .stage{align-self:stretch;min-height:min(640px,calc(100vh - 120px));justify-content:center;padding:40px}
+  .g .move{align-self:start}
   .g .stage .q{font-size:36px}
   .g .move{gap:12px}
   .g .opt,.g .pc,.g .line{min-height:64px;font-size:18px}
