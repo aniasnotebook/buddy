@@ -264,28 +264,44 @@ Tu choisis UNIQUEMENT parmi ces modèles ("type") et tu remplis leurs champs :
 - "build" : ask, items[3-4] blocs courts dans l’ordre, traps[2] blocs pièges plausibles.
 - "flash" : front (le terme), back (définition + un exemple).
 - "mistake" : ask, lines[3-6] (une copie d’étudiant), answer = index (0..) de la seule ligne fausse.
-- "number" : situation, ask, numbers {nom: valeur}, formula (arithmétique sur les noms), answer (nombre), unit, steps[] (le calcul étape par étape).
+- "number" : situation, ask, numbers {nom: valeur}, formula (arithmétique sur les noms : + - * / ( ) ^ et sqrt(...)), answer (nombre), unit, steps[] (le calcul étape par étape). Change les chiffres des exemples du cours : elle doit appliquer la règle, pas se souvenir du résultat.
 - "speed" : ask, pairs[4-6] = [terme, définition courte].
 - "explain" : ask, model (réponse attendue), keys[2-4] (les idées que la réponse doit contenir).
-Preuve : chaque carte a "quote" et "page". "quote" = la phrase du cours qui JUSTIFIE la bonne réponse (une règle, une définition, une ligne de corrigé), recopiée MOT POUR MOT, 30 mots max ; jamais l’énoncé de l’exercice. "page" = le numéro du marqueur [type · fichier · p. N]. N’invente rien qui ne soit pas dans le cours.`;
+Preuve : chaque carte a "quote" et "page". "quote" = la phrase du cours qui JUSTIFIE la bonne réponse (une règle, une définition, une ligne de corrigé), recopiée MOT POUR MOT, 30 mots max ; jamais l’énoncé de l’exercice ni un exemple chiffré du cours : cite la règle ou la formule en mots. Recopie de la prose plutôt qu’une formule mise en forme. "page" = le numéro du marqueur [type · fichier · p. N]. N’invente rien qui ne soit pas dans le cours.`;
 const FORMAT_MIX = {QCM:'surtout "pick" et "case" avec des pièges très proches', Dissertation:'des "build" et "explain" (arguments, définitions d’intro), des "pick" sur les distinctions, un "order" si possible', 'Cas pratique':'surtout "case" et "pick" concrets, un "explain" pour justifier', 'Juste comprendre':'"flash", "sort" et "pick" simples puis plus durs'};
 const TYPE_MIX = {'Claude choisit':null, Situations:'uniquement "pick" et "case"', Flashcards:'uniquement "flash"', Trier:'uniquement "sort"', Ordre:'uniquement "order"', Construire:'uniquement "build"', Rédiger:'uniquement "explain"', Calculs:'uniquement "number" et "mistake" sur les calculs du cours', 'Speed round':'un seul "speed" puis des "flash"'};
 
-function okNumber(k){ try { const toks = String(k.formula).match(/\d+(?:\.\d+)?|[A-Za-z_]\w*|[-+*/()]/g) || []; let i = 0; const nums = k.numbers || {};
-  const prim = () => { const t = toks[i++]; if (t === '(') { const v = expr(); i++; return v; } if (t === '-') return -prim(); if (/^\d/.test(t)) return +t; if (t in nums) return +nums[t]; throw 0; };
+function okNumber(k){ try { const toks = String(k.formula).replace(/√/g, 'sqrt').match(/\d+(?:[.,]\d+)?|[A-Za-z_]\w*|[-+*/()^]/g) || []; let i = 0; const nums = k.numbers || {};
+  const atom = () => { const t = toks[i++]; if (t === '(') { const v = expr(); i++; return v; } if (t === '-') return -atom(); if (t === 'sqrt') { if (toks[i++] !== '(') throw 0; const v = expr(); i++; return Math.sqrt(v); } if (/^\d/.test(t)) return +t.replace(',', '.'); if (t in nums) return +nums[t]; throw 0; };
+  const prim = () => { const b = atom(); if (toks[i] === '^') { i++; return Math.pow(b, prim()); } return b; };
   const term = () => { let v = prim(); while (toks[i] === '*' || toks[i] === '/') { const o = toks[i++]; const r = prim(); v = o === '*' ? v * r : v / r; } return v; };
   const expr = () => { let v = term(); while (toks[i] === '+' || toks[i] === '-') { const o = toks[i++]; const r = term(); v = o === '+' ? v + r : v - r; } return v; };
   const v = expr(); return Math.abs(v - +k.answer) <= Math.max(.01, Math.abs(+k.answer) * .01); } catch(e){ return false; } }
+/* Letters and digits only: PDF text breaks words, formulas and lines in odd places; a quote must still be found when only spacing, hyphens or punctuation differ. */
+const squash = t => String(t).normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/œ/g, 'oe').replace(/æ/g, 'ae').replace(/[^\p{L}\p{N}]+/gu, '');
+function finder(c){
+  const hay = [], pairs = [];
+  for (const f of c.files) { const pg = f.pages || []; pg.forEach((x, i) => { hay.push({p:x.p, f:f.name, t:squash(x.text)}); if (pg[i + 1]) pairs.push({p:x.p, f:f.name, a:squash(x.text.slice(-900)), b:squash(pg[i + 1].text.slice(0, 900))}); }); }
+  return quote => {
+    const q = squash(quote || '');
+    if (q.length < 8 || String(quote).trim().length < 15) return null;
+    const hit = hay.find(h => h.t.includes(q)); if (hit) return hit;
+    /* a sentence that runs onto the next page, a page footer in between */
+    for (const pr of pairs) for (let cut = 6; cut <= q.length - 6; cut++) if (pr.a.includes(q.slice(0, cut)) && !pr.a.includes(q.slice(0, cut + 1)) && pr.b.includes(q.slice(cut))) return pr;
+    return null;
+  };
+}
 function checkCards(c, all){
-  const hay = c.files.flatMap(f => (f.pages || []).map(pg => ({p:pg.p, f:f.name, t:norm(pg.text)})));
-  const out = [];
+  const find = finder(c);
+  const out = []; let used = 0;
   for (const k of all) {
     if (!k || !k.type || !k.quote) continue;
-    const q = norm(k.quote).replace(/^["']|["']$/g,'').replace(/[.…]+$/,''); const hit = q.length > 12 && hay.find(h => h.t.includes(q)); if (!hit) continue;
+    const before = out.length;
+    const hit = find(k.quote); if (!hit) continue;
     const base = {...k, page: hit.p, file: hit.f, id: uid()};
     const t = k.type; let ok = false;
     if (t === 'pick') ok = Array.isArray(k.options) && k.options.length === 4 && k.options.includes(k.answer) && k.ask;
-    if (t === 'case') { if (Array.isArray(k.steps) && k.situation) k.steps.forEach((s, i) => { const sq = s?.quote && norm(s.quote).replace(/^["']|["']$/g,'').replace(/[.…]+$/,''), sh = sq && sq.length > 12 && hay.find(h => h.t.includes(sq)); if (s && Array.isArray(s.options) && s.options.includes(s.answer) && s.ask) out.push({...base, ...(sh ? {quote: s.quote, page: sh.p, file: sh.f} : {}), id: uid(), type:'pick', caseStep: (i + 1) + '/' + k.steps.length, situation: k.situation, ask: s.ask, options: s.options, answer: s.answer, why: s.why || '', trap: s.trap || '', prev: k.steps.slice(0, i).map(x => ({ask: x.ask, answer: x.answer}))}); }); continue; }
+    if (t === 'case') { if (Array.isArray(k.steps) && k.situation) k.steps.forEach((s, i) => { const sh = s?.quote && find(s.quote); if (s && Array.isArray(s.options) && s.options.includes(s.answer) && s.ask) out.push({...base, ...(sh ? {quote: s.quote, page: sh.p, file: sh.f} : {}), id: uid(), type:'pick', caseStep: (i + 1) + '/' + k.steps.length, situation: k.situation, ask: s.ask, options: s.options, answer: s.answer, why: s.why || '', trap: s.trap || '', prev: k.steps.slice(0, i).map(x => ({ask: x.ask, answer: x.answer}))}); }); if (out.length > before) used++; continue; }
     if (t === 'sort') ok = Array.isArray(k.buckets) && k.buckets.length >= 2 && Array.isArray(k.items) && k.items.length >= 3 && k.items.every(x => x && k.buckets.includes(x.bucket));
     if (t === 'order') ok = Array.isArray(k.items) && k.items.length >= 3 && k.items.length <= 6;
     if (t === 'build') ok = Array.isArray(k.items) && k.items.length >= 2 && Array.isArray(k.traps) && k.traps.length >= 1;
@@ -294,8 +310,9 @@ function checkCards(c, all){
     if (t === 'number') ok = okNumber(k);
     if (t === 'speed') ok = Array.isArray(k.pairs) && k.pairs.length >= 3 && k.pairs.every(p => Array.isArray(p) && p.length === 2);
     if (t === 'explain') ok = k.ask && k.model && Array.isArray(k.keys) && k.keys.length >= 1;
-    if (ok) out.push(base);
+    if (ok) { out.push(base); used++; }
   }
+  out.dropped = all.filter(Boolean).length - used;
   return out;
 }
 async function makeGame(opts){
@@ -330,7 +347,7 @@ ${courseText(c, focus || goal)}`;
     if (!kept.length) { view = {name:'course', id:c.id}; render(); return toast('Aucune carte n’a passé la vérification des citations. Réessaie.'); }
     const g = {id: uid(), title: String(out.title || opts.kind || 'Jeu'), cards: kept, best: null, created: Date.now(), kind: opts.kind && opts.kind !== 'Claude choisit' ? opts.kind : 'Choisi par Claude'};
     c.games.unshift(g); save();
-    startGame(c, g, all.length - kept.length);
+    startGame(c, g, Math.max(0, kept.dropped || 0));
   } catch(e){ clearTimeout(t1); busy = false; making = null; if (e?.code === 'not_granted') claudeState = 'refused'; view = {name:'course', id:c.id}; render(); toast(errText(e)); }
 }
 async function ask(text){
@@ -639,7 +656,7 @@ function makingScreen(){
   return `<div class="making"><div class="deck" aria-hidden="true">${Array.from({length: m.n}, (_, i) => `<i class="${i < m.written ? 'on' : ''}"></i>`).join('')}</div><h2 style="font-size:28px">Je prépare ta partie</h2>
   <div class="steps"><div class="${st(0)}"><span class="dot"></span>Je lis ton cours</div><div class="${st(1)}"><span class="dot"></span>J’écris les cartes<span id="written">${m.written ? ' · ' + Math.min(m.written, m.n) + '/' + m.n : ''}</span></div><div class="${st(2)}"><span class="dot"></span>Je vérifie chaque citation</div></div></div>`;
 }
-const src = k => `<p class="quote">« ${esc(k.quote)} » — ${esc(k.file || 'ton cours')}, p. ${k.page}</p>`;
+const src = k => `<p class="quote">«&nbsp;${esc(k.quote)}&nbsp;» — ${esc(k.file || 'ton cours')}, p.&nbsp;${k.page}</p>`;
 function stageHtml(k, again){
   const labels = {pick: k.caseStep ? 'Cas · décision ' + k.caseStep : 'Situation', sort:'Range', order:'Remets dans l’ordre', build:'Construis ta réponse', mistake:'Une copie d’étudiant', number:'Calcul', explain:'Rédige', speed:'Speed round'};
   const enter = game.shown !== game.cur + ':' + game.i; game.shown = game.cur + ':' + game.i;
@@ -743,8 +760,8 @@ function md(src){
     if (li) { if (!list) { list = []; } list.push('<li>' + inline(li[1]) + '</li>'); continue; }
     if (list) { out.push('<ul>' + list.join('') + '</ul>'); list = null; }
     if (!l) continue;
-    const h = l.match(/^#{1,6}\s+(.*)/);
-    out.push(h ? '<h4>' + inline(h[1]) + '</h4>' : '<p>' + inline(l) + '</p>');
+    const h = l.match(/^#{1,6}\s+(.*)/), bq = l.match(/^>\s?(.*)/);
+    out.push(h ? '<h4>' + inline(h[1]) + '</h4>' : bq ? '<p style="border-left:3px solid var(--rim);padding-left:10px;color:var(--muted)">' + inline(bq[1]) + '</p>' : '<p>' + inline(l) + '</p>');
   }
   if (list) out.push('<ul>' + list.join('') + '</ul>');
   return out.join('');
