@@ -143,21 +143,32 @@ textarea{min-height:140px;resize:vertical;line-height:1.45}
 .opt.sel{background:var(--pink-tint);border-color:var(--pink)}
 .opt.good{border-color:var(--ink)} .opt.bad{background:var(--red-tint);border-color:var(--red)} .opt.fade{opacity:.35}
 .tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.pc{display:inline-flex;align-items:center;min-height:44px;border-radius:14px;background:var(--white);border:2px solid var(--rim);border-bottom-width:4px;padding:8px 12px;font-weight:600;font-size:15px;text-align:left}
-.pc.on{border-color:var(--ink)} .pc.good{background:#f0fde9;border-color:#2f8a4a} .pc.bad{background:var(--red-tint);border-color:var(--red)}
+/* an odd number of tiles: the last one takes the whole row, never left alone in a half */
+.tiles > :last-child:nth-child(odd){grid-column:1 / -1}
+/* answers (.opt) and pieces (.pc) are one component: white, 2px rim, 4px base, 16px corners, 600 weight; pieces are just shorter */
+.pc{display:inline-flex;align-items:center;min-height:52px;border-radius:16px;background:var(--white);border:2px solid var(--rim);border-bottom-width:4px;padding:10px 16px;font-weight:600;font-size:16px;text-align:left;line-height:1.3}
+.pc.on{background:var(--pink-tint);border-color:var(--pink)} .pc.good,.opt.good{border-color:var(--ink)} .pc.bad{background:var(--red-tint);border-color:var(--red)}
+.pool .pc{flex:1 1 calc(50% - 4px)} .pool .pc:last-child:nth-child(odd){flex-basis:100%}
 .pool{display:flex;flex-wrap:wrap;gap:8px}
 .answer{min-height:70px;border-radius:16px;border:2px dashed var(--rim);padding:8px;display:flex;flex-wrap:wrap;gap:8px;align-content:flex-start}
 .answer:empty::before{content:attr(data-empty);color:var(--muted);font-size:14px;padding:8px}
 .slots{display:flex;flex-direction:column;gap:8px}
 .slot{display:flex;align-items:center;gap:10px}
 .slot .n{width:18px;font:500 11px var(--mono);color:var(--muted)}
-.slot .e{flex:1;min-height:44px;border-radius:14px;background:var(--mist);border:2px dashed var(--rim)}
-.line{display:flex;gap:8px;padding:12px 14px;border-radius:14px;background:var(--mist);border:2px solid transparent;font-size:16px;text-align:left;width:100%}
-.line.sel{background:var(--pink-tint);border-color:var(--pink)} .line.good{background:#f0fde9;border-color:#2f8a4a} .line.bad{background:var(--red-tint);border-color:var(--red)}
-.flash{perspective:1200px;display:flex;justify-content:center}
-.flash button{width:min(320px,100%);height:380px;border-radius:28px;padding:24px;display:flex;flex-direction:column;justify-content:space-between;text-align:left;transition:transform .45s}
-.flash .front{background:var(--ink);color:var(--white)} .flash .back{background:var(--white);border:2px solid var(--ink);border-bottom-width:5px}
-.flash .front h3{font-size:34px}
+.slot .e{flex:1;min-height:52px;border-radius:14px;background:var(--mist);border:2px dashed var(--rim)}
+.line{display:flex;gap:10px;min-height:52px;align-items:center;padding:10px 16px;border-radius:16px;background:var(--white);border:2px solid var(--rim);border-bottom-width:4px;font-size:16px;font-weight:600;text-align:left;width:100%}
+.line.sel{background:var(--pink-tint);border-color:var(--pink)} .line.good{border-color:var(--ink)} .line.bad{background:var(--red-tint);border-color:var(--red)}
+.fl{display:flex;flex-direction:column;gap:16px;padding-bottom:120px}
+.fcard{position:relative;align-self:center;width:min(560px,100%);min-height:min(62vh,480px);border-radius:30px;padding:28px;display:flex;flex-direction:column;gap:16px;text-align:left;touch-action:pan-y;user-select:none;-webkit-user-select:none;cursor:pointer;transition:transform .25s cubic-bezier(.2,.8,.2,1)}
+.fcard.front{background:var(--ink);color:var(--white);justify-content:space-between}
+.fcard.back{background:var(--white);border:2px solid var(--ink);border-bottom-width:6px;cursor:grab}
+.fcard .term{font-family:var(--disp);font-size:clamp(30px,7vw,52px);line-height:1.05;overflow-wrap:anywhere}
+.fcard .def{font-size:clamp(18px,2.6vw,22px);line-height:1.4;font-weight:500;overflow-wrap:anywhere;flex:1;overflow:auto}
+.fcard .stamp{position:absolute;top:22px;padding:6px 14px;border-radius:12px;font-family:var(--disp);font-size:22px;opacity:0;transition:opacity .1s}
+.fcard .stamp.yes{right:22px;background:var(--green);color:var(--ink);transform:rotate(8deg)} .fcard .stamp.no{left:22px;background:var(--orange);color:var(--ink);transform:rotate(-8deg)}
+.fhint{display:flex;justify-content:space-between;color:var(--muted);font-size:13px;font-weight:600;width:min(560px,100%);align-self:center}
+.flink{align-self:center}
+@media (min-width:900px){.fl{padding-bottom:30px}.fl .dock{width:min(560px,100%);align-self:center}}
 .timer{height:6px;border-radius:3px;background:#333;overflow:hidden} .timer i{display:block;height:100%;background:var(--pink);transition:width 1s linear}
 .done-tags{display:flex;gap:6px;flex-wrap:wrap}
 .done-tags span{font-size:13px;font-weight:600;padding:5px 10px;border-radius:99px;background:#f0fde9;color:var(--green-ink)}
@@ -919,7 +930,7 @@ function moveHtml(k, st){
     case 'sort': return `${st.res.length ? `<div class="done-tags">${st.res.map(r => `<span style="${r.ok ? '' : 'background:var(--red-tint);color:#a4161a'}">${r.ok ? '✓' : '✗'} ${esc(r.text)}</span>`).join('')}</div>` : ''}${st.i < st.items.length ? `<span class="label">Dans quelle case&nbsp;?</span><div class="tiles">${k.buckets.map(b => `<button class="pc" data-a="bucket" data-v="${esc(b)}" style="min-height:56px">${esc(b)}</button>`).join('')}</div>` : ''}`;
     case 'order': return `<div class="slots">${k.items.map((_, i) => `<div class="slot"><span class="n">${i + 1}</span>${st.placed[i] ? (st.done ? `<span class="pc ${st.placed[i] === k.items[i] ? 'good' : 'bad'}" style="flex:1">${esc(st.placed[i])}</span>` : `<button class="pc on" data-a="unplace" data-v="${i}" style="flex:1">${esc(st.placed[i])}</button>`) : '<span class="e"></span>'}</div>`).join('')}</div>${st.done ? '' : `<span class="label">Touche la suivante</span><div class="pool">${st.pool.filter(x => !st.placed.includes(x)).map(x => `<button class="pc" data-a="place" data-v="${esc(x)}">${esc(x)}</button>`).join('')}</div>`}`;
     case 'build': return `<div class="answer" data-empty="Touche les blocs pour construire ta réponse">${st.placed.map((x, i) => st.done ? `<span class="pc ${x === k.items[i] ? 'good' : 'bad'}">${esc(x)}${k.traps.includes(x) ? ' · piège' : ''}</span>` : `<button class="pc on" data-a="unplace" data-v="${i}">${esc(x)}</button>`).join('')}</div>${st.done ? '' : `<div class="pool">${st.pool.filter(x => !st.placed.includes(x)).map(x => `<button class="pc" data-a="place" data-v="${esc(x)}">${esc(x)}</button>`).join('')}</div><p class="tiny muted">${plural(k.traps.length, 'bloc')} ${k.traps.length > 1 ? 'sont des pièges' : 'est un piège'}.</p>`}`;
-    case 'flash': return `<div class="flash"><button class="${st.flipped ? 'back' : 'front'}" data-a="flip" aria-label="Retourner la carte">${st.flipped ? `<span class="label">${esc(k.front)}</span><span style="font-weight:600;font-size:20px;line-height:1.3">${esc(k.back)}</span><span class="label">${esc(String(k.file || '').replace(/\.(pdf|pptx|docx|txt|md)$/i, ''))} · p. ${k.page}</span>` : `<span class="label" style="color:#a3a3a3">Flashcard · p. ${k.page}</span><h3>${esc(k.front)}</h3><span class="small" style="color:#a3a3a3">Dis la réponse dans ta tête, puis touche la carte.</span>`}</button></div>`;
+    case 'flash': return '';
     case 'mistake': return k.lines.map((l, i) => `<button class="line ${st.done ? (i === +k.answer ? 'good' : i === st.sel ? 'bad' : '') : i === st.sel ? 'sel' : ''}" data-a="line" data-v="${i}" ${st.done ? 'disabled' : ''}><span class="label" style="padding-top:3px">${i + 1}</span>${esc(l)}</button>`).join('');
     case 'number': return `<label class="label" for="num">Ta réponse</label><div class="row" style="flex-wrap:nowrap"><input id="num" inputmode="decimal" placeholder="0" value="${esc(st.val ?? '')}" ${st.done ? 'disabled' : ''} style="font-family:var(--disp);font-size:28px"><span style="font-size:20px;color:var(--muted)">${esc(k.unit || '')}</span></div>${st.done ? '' : `<button class="link" data-a="hint">${st.hint ? esc(k.steps?.[0] || '') : 'Montre-moi la première étape'}</button>`}`;
     case 'speed': return !st.started ? `<button class="btn ink" data-a="speedgo">Go, ${st.time} secondes</button>` : `<div class="timer"><i style="width:${st.time / 25 * 100}%"></i></div><div class="row between"><span class="label">${st.time} s</span><span class="label">${st.gone.length}/${k.pairs.length} paires</span></div>${st.gone.length ? `<div class="done-tags">${st.gone.map(t => `<span>✓ ${esc(t)}</span>`).join('')}</div>` : ''}<div class="tiles"><div class="stack" style="gap:8px"><span class="label">Terme</span>${st.left.filter(t => !st.gone.includes(t)).map(t => `<button class="pc ${st.pickL === t ? 'on' : ''}" data-a="L" data-v="${esc(t)}" ${st.done ? 'disabled' : ''} style="min-height:52px">${esc(t)}</button>`).join('')}</div><div class="stack" style="gap:8px"><span class="label">Définition</span>${st.right.filter(d => !st.gone.includes(k.pairs.find(p => p[1] === d)[0])).map(d => `<button class="pc" data-a="R" data-v="${esc(d)}" ${st.done ? 'disabled' : ''} style="min-height:52px">${esc(d)}</button>`).join('')}</div></div>`;
@@ -930,7 +941,7 @@ function moveHtml(k, st){
 function dockHtml(k, st, g){
   const again = g.i >= g.cards.length;
   if (!st.done) {
-    if (k.type === 'flash') return st.flipped ? `<div class="row" style="flex-wrap:nowrap"><button class="btn white" data-a="flashno">À revoir</button><button class="btn" data-a="flashyes">Je savais</button></div>` : '';
+    if (k.type === 'flash') return st.flipped ? `<div class="row" style="flex-wrap:nowrap"><button class="btn white" data-a="flashno">${ic('back')}À revoir</button><button class="btn" data-a="flashyes">Je savais${ic('next')}</button></div>` : `<button class="btn ink" data-a="flip">Retourner la carte</button>`;
     if (k.type === 'sort' || k.type === 'speed') return '';
     if (k.type === 'explain') return `<button class="btn" data-a="grade" ${st.grading ? 'disabled' : ''}>${st.grading ? 'Claude corrige<span class="nod" aria-hidden="true"><span>d</span><span>d</span></span>' : 'Faire corriger par Claude'}</button>`;
     const ready = k.type === 'pick' ? !!st.sel : k.type === 'mistake' ? st.sel !== undefined : k.type === 'number' ? true : st.placed.length === k.items.length;
@@ -943,13 +954,32 @@ function dockHtml(k, st, g){
   else if (k.type === 'sort' || k.type === 'speed') body = `<p class="small">${k.type === 'speed' ? (st.ok ? 'En ' + (25 - st.time) + ' secondes. Bats ton temps la prochaine fois.' : 'Le temps est écoulé.') : (st.ok ? 'Tout est bien rangé.' : 'Les cases en rouge reviennent plus tard.')}</p>`;
   else body = `<p class="small">${st.ok ? esc(k.why || '') : `<b>${k.type === 'mistake' ? 'C’était ' : 'Réponse : '}${esc(right)}.</b> ${esc(k.why || '')}`}</p>${!st.ok && k.trap ? `<p class="small muted">${esc(k.trap)}</p>` : ''}`;
   const enter = !st.verdictShown; st.verdictShown = true;
-  return `<div class="verdict${enter ? ' enter' : ''}" role="status"><div class="w"><span class="dot ${st.ok ? 'ok' : st.score > 0 ? 'part' : 'no'}" style="width:12px;height:12px"></span>${st.ok ? 'Exact !' : st.score > 0 ? 'Pas tout à fait' : 'Faux'}</div>${body}${src(k)}${!st.ok && g.retried[g.cur] && !again ? '<p class="tiny muted">Elle revient en fin de partie, autrement.</p>' : ''}<button class="btn ink" data-a="next">Continuer</button></div>`;
+  return `<div class="verdict${enter ? ' enter' : ''}" role="status"><div class="w"><span class="dot ${st.ok ? 'ok' : st.score > 0 ? 'part' : 'no'}" style="width:12px;height:12px"></span>${st.ok ? 'Exact !' : st.score > 0 ? 'Pas tout à fait' : 'Faux'}</div>${body}${src(k)}${!st.ok && g.retried[g.cur] && !again ? '<p class="tiny muted">Elle revient en fin de partie, autrement.</p>' : ''}${sample ? '<button class="link" data-a="explain" style="align-self:center">Je ne comprends pas : explique-moi</button>' : ''}<button class="btn ink" data-a="next">Continuer</button></div>`;
+}
+function flashHtml(k, st){
+  const src = `${esc(String(k.file || 'ton cours').replace(/\.(pdf|pptx|docx|xlsx|txt|md)$/i, ''))} · p. ${k.page}`;
+  if (!st.flipped) return `<div class="fcard front" data-a="flip" role="button" tabindex="0" aria-label="Retourner la carte"><span class="label" style="color:#a3a3a3">Flashcard · ${src}</span><span class="term">${esc(k.front)}</span><span class="small" style="color:#a3a3a3">Dis la réponse dans ta tête, puis retourne la carte.</span></div>`;
+  return `<div class="fcard back" id="fcard" aria-label="Glisse à droite si tu savais, à gauche pour revoir"><span class="stamp yes">Je savais</span><span class="stamp no">À revoir</span><span class="label">${esc(k.front)}</span><span class="def">${esc(k.back)}</span><span class="label">${src}</span></div>
+  <div class="fhint"><span>← À revoir</span><span>Glisse la carte</span><span>Je savais →</span></div>
+  <button class="link flink" data-a="explain">Je ne comprends pas : explique-moi</button>`;
+}
+/* swipe the flashcard: right = I knew it, left = to review */
+function bindSwipe(){
+  const el = document.getElementById('fcard'); if (!el) return;
+  let x0 = null, dx = 0;
+  el.onpointerdown = e => { x0 = e.clientX; dx = 0; el.setPointerCapture(e.pointerId); el.style.transition = 'none'; };
+  el.onpointermove = e => { if (x0 === null) return; dx = e.clientX - x0; el.style.transform = `translateX(${dx}px) rotate(${dx / 20}deg)`; el.querySelector('.stamp.yes').style.opacity = Math.max(0, Math.min(1, dx / 90)); el.querySelector('.stamp.no').style.opacity = Math.max(0, Math.min(1, -dx / 90)); };
+  el.onpointerup = el.onpointercancel = () => { if (x0 === null) return; x0 = null; el.style.transition = '';
+    if (Math.abs(dx) > 90) { const yes = dx > 0; el.style.transform = `translateX(${yes ? 700 : -700}px) rotate(${yes ? 25 : -25}deg)`; setTimeout(() => finish(yes), 200); }
+    else { el.style.transform = ''; el.querySelectorAll('.stamp').forEach(s => s.style.opacity = 0); } };
 }
 function play(){
   const g = game; if (!g) { view = {name:'course', id:view.id}; return courseScreen(); }
   if (!g.cur) return endScreen();
   const k = g.byId[g.cur], st = g.st, total = g.cards.length + Object.keys(g.retried).length;
   const segs = Array.from({length: Math.min(total, 12)}, (_, i) => `<i class="${i < Math.round((g.i + (st.done ? 1 : 0)) / total * Math.min(total, 12)) ? 'on' : ''}"></i>`).join('');
+  if (k.type === 'flash') return `<div class="fl"><div class="gtop"><button class="icon" data-a="quit" aria-label="Quitter le jeu">${ic('close')}</button><div class="segs" role="progressbar" aria-valuenow="${g.i}" aria-valuemax="${total}">${segs}</div><span class="label">${Math.min(g.i + 1, total)}/${total}</span></div>
+  ${flashHtml(k, st)}<div class="dock"><div>${dockHtml(k, st, g)}</div></div></div>`;
   return `<div class="g"><div class="gtop"><button class="icon" data-a="quit" aria-label="Quitter le jeu">${ic('close')}</button><div class="segs" role="progressbar" aria-valuenow="${g.i}" aria-valuemax="${total}">${segs}</div><span class="label">${Math.min(g.i + 1, total)}/${total}</span></div>
   ${stageHtml(k, g.i >= g.cards.length)}<div class="move">${moveHtml(k, st)}<div class="dock"><div>${dockHtml(k, st, g)}</div></div></div></div>`;
 }
@@ -1053,6 +1083,7 @@ function render(){
   if (view.name === 'welcome' && app.querySelector('.intro')) { drawSheet(); return; }
   app.innerHTML = view.name === 'welcome' ? welcome() : view.name === 'new' ? newCourseScreen() : view.name === 'setup' ? setupScreen() : view.name === 'course' ? courseScreen() : view.name === 'making' ? makingScreen() : view.name === 'play' ? play() : home();
   if (view.name !== 'setup' || sheet) drawSheet(); else document.getElementById('sheet').innerHTML = ''; bindInputs();
+  bindSwipe();
 }
 
 /* ================= actions ================= */
@@ -1093,6 +1124,7 @@ document.addEventListener('click', e => {
     case 'gdelete': c.games = c.games.filter(x => x.id !== gmenu); save(); sheet = null; toast('Jeu supprimé.'); return render();
     case 'review': return startGame(c, {id:'review', review:true, title:'À revoir', cards: shuffle(c.review).slice(0, 8).map(x => ({...x, id: uid()}))}, 0);
     case 'askchip': return ask(v);
+    case 'explain': { if (!sample) return toast('Claude n’est pas branché sur cette page.'); const q = k.type === 'flash' ? `Explique-moi simplement « ${k.front} » : ${k.back}` : `Explique-moi simplement cette question : « ${k.situation ? k.situation + ' ' : ''}${k.ask || ''} ». La bonne réponse est « ${k.type === 'pick' ? k.answer : k.type === 'number' ? k.answer + ' ' + (k.unit || '') : k.type === 'mistake' ? 'la ligne ' + (+k.answer + 1) + ' : ' + k.lines[+k.answer] : (k.items || []).join(' ') || k.model || ''} ». Pourquoi ? Donne un exemple.`; sheet = 'ask'; view.sub = null; drawSheet(); return ask(q); }
     case 'sel': if (st.done) return; st.sel = v; return render();
     case 'line': if (st.done) return; st.sel = +v; return render();
     case 'place': st.placed.push(v); return render();
