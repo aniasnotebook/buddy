@@ -1,0 +1,367 @@
+<title>Player Two</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Manrope:wght@400;600;700&display=swap">
+<style>
+/* One column, phone first: welcome, my courses, a course, a game with the card in the middle. */
+:root{
+  --paper:#fbf8f2; --card:#ffffff; --ink:#1b1a17; --muted:#625e52; --line:#d9d3c4;
+  --hot:#f06a98; --hot-ink:#1b1a17; --ok:#d8f1d2; --ok-ink:#1d5a20; --no:#fbd8d8; --no-ink:#8a1f1f; --soft:#f1ece1; --sun:#ffd66b;
+  --disp:'Bricolage Grotesque','Manrope',system-ui,sans-serif; --body:'Manrope',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#16150f; --card:#211f19; --ink:#f3efe4; --muted:#b4ad9c; --line:#3d392e;
+  --hot:#f27aa3; --hot-ink:#16150f; --ok:#1f3a1d; --ok-ink:#a9e3a0; --no:#43201f; --no-ink:#f3b0b0; --soft:#2a2820; --sun:#8a6d1c; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#16150f; --card:#211f19; --ink:#f3efe4; --muted:#b4ad9c; --line:#3d392e;
+  --hot:#f27aa3; --hot-ink:#16150f; --ok:#1f3a1d; --ok-ink:#a9e3a0; --no:#43201f; --no-ink:#f3b0b0; --soft:#2a2820; --sun:#8a6d1c; color-scheme:dark}
+html,body{height:100%}
+body{background:var(--paper);color:var(--ink);font:16px/1.5 var(--body);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+main{max-width:520px;margin:0 auto;padding-block:16px 48px;display:flex;flex-direction:column;gap:18px;min-height:100%}
+h1,h2,h3{font-family:var(--disp);font-weight:800;margin:0;line-height:1.1;text-wrap:balance}
+h1{font-size:34px;letter-spacing:-.01em} h2{font-size:24px} h3{font-size:19px}
+p{margin:0}
+.muted{color:var(--muted)} .small{font-size:14px}
+.tag{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.logo{display:flex;align-items:center;gap:8px;font-family:var(--disp);font-weight:800;font-size:18px}
+.two{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px;background:var(--hot);color:var(--hot-ink);border:2px solid var(--ink);font-size:16px;transform:rotate(-6deg);flex:none}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.between{justify-content:space-between}
+.stack{display:flex;flex-direction:column;gap:10px}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--hot);outline-offset:2px}
+.btn{min-height:52px;border-radius:14px;border:2px solid var(--ink);background:var(--ink);color:var(--paper);font-weight:700;padding:0 18px;width:100%}
+.btn.hot{background:var(--hot);color:var(--hot-ink)}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn:disabled{opacity:.45;cursor:default}
+.link{border:0;background:none;padding:0;min-height:40px;font-weight:700;text-decoration:underline;color:var(--muted);text-align:left}
+.panel{background:var(--card);border:2px solid var(--ink);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.hero{background:var(--ink);color:var(--paper);border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:10px}
+.hero .tag{color:var(--paper);opacity:.75}
+.list{border:2px solid var(--ink);border-radius:16px;overflow:hidden;background:var(--card)}
+.list>*{box-sizing:border-box;display:flex;align-items:center;gap:10px;width:100%;padding:14px 16px;border:0;border-bottom:1px solid var(--line);background:none;text-align:left;min-height:56px}
+.list>*:last-child{border-bottom:0}
+.list .go{margin-left:auto;color:var(--muted);font-weight:700;font-size:14px;white-space:nowrap}
+.chip{display:inline-flex;align-items:center;border:2px solid var(--ink);border-radius:99px;padding:2px 10px;font-size:13px;font-weight:700;background:var(--card);white-space:nowrap}
+.chip.ex{background:var(--soft)} .chip.sun{background:var(--sun)}
+label{font-weight:700;font-size:14px}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--card);border:2px solid var(--ink);border-radius:12px;min-height:48px;padding:8px 12px;width:100%;box-sizing:border-box}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.seg.two-col{grid-template-columns:1fr 1fr}
+.seg button{min-height:44px;border:2px solid var(--ink);border-radius:12px;background:var(--card);font-weight:700;font-size:14px;padding:4px}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+details summary{cursor:pointer;font-weight:700;min-height:40px;display:flex;align-items:center}
+.status{border:2px dashed var(--ink);border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;font-size:14px}
+.status div{display:flex;gap:8px;align-items:flex-start}
+.dot{flex:none;width:12px;height:12px;border-radius:99px;border:2px solid var(--ink);margin-top:5px;background:var(--card)}
+.dot.ok{background:#4caf50} .dot.no{background:#e05555} .dot.wait{background:#f2c14e}
+/* chat */
+.msgs{display:flex;flex-direction:column;gap:8px}
+.msg{max-width:88%;padding:10px 12px;border-radius:14px;white-space:pre-wrap;font-size:15px}
+.msg.me{align-self:flex-end;background:var(--ink);color:var(--paper)}
+.msg.ai{align-self:flex-start;background:var(--soft)}
+/* play */
+.play{display:flex;flex-direction:column;gap:14px;min-height:calc(100vh - 64px)}
+.ptop{display:flex;align-items:center;gap:12px}
+.bar{flex:1;height:12px;border:2px solid var(--ink);border-radius:99px;overflow:hidden;background:var(--card)}
+.bar i{display:block;height:100%;background:var(--hot);transition:width .3s}
+.center{flex:1;display:flex;flex-direction:column;justify-content:center;gap:14px}
+.qcard{background:var(--card);border:2px solid var(--ink);border-radius:22px;padding:22px 20px;box-shadow:6px 6px 0 var(--ink);display:flex;flex-direction:column;gap:10px}
+.opt{min-height:54px;border:2px solid var(--ink);border-radius:14px;background:var(--card);text-align:left;padding:10px 14px;font-weight:600;width:100%}
+.opt.good{background:var(--ok);color:var(--ok-ink);border-color:var(--ok-ink)}
+.opt.bad{background:var(--no);color:var(--no-ink);border-color:var(--no-ink)}
+.pool{display:flex;flex-wrap:wrap;gap:8px}
+.pool button{border:2px solid var(--ink);border-radius:12px;background:var(--card);padding:8px 12px;font-weight:600;min-height:44px;text-align:left}
+.slots{display:flex;flex-direction:column;gap:6px}
+.slot{min-height:46px;border:2px dashed var(--line);border-radius:12px;display:flex;align-items:center;gap:8px;padding:6px 10px;font-weight:600}
+.slot.full{border-style:solid;border-color:var(--ink);background:var(--card)}
+.slot.good{background:var(--ok);color:var(--ok-ink);border-color:var(--ok-ink)} .slot.bad{background:var(--no);color:var(--no-ink);border-color:var(--no-ink)}
+.slot button{margin-left:auto;border:0;background:none;font-weight:800;min-height:36px;min-width:36px}
+.fb{border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:8px;border:2px solid var(--ink)}
+.fb.ok{background:var(--ok);color:var(--ok-ink)} .fb.no{background:var(--no);color:var(--no-ink)}
+.quote{font-size:14px;border-left:3px solid currentColor;padding-left:10px;font-style:italic}
+.big{font-family:var(--disp);font-weight:800;font-size:64px;line-height:1;font-variant-numeric:tabular-nums}
+.steps{display:flex;flex-direction:column;gap:10px}
+.steps div{display:flex;gap:12px;align-items:flex-start}
+.num{flex:none;width:30px;height:30px;border-radius:9px;border:2px solid var(--ink);display:flex;align-items:center;justify-content:center;font-weight:800;background:var(--sun);color:#1b1a17}
+.toast{position:fixed;left:50%;top:calc(12px + env(safe-area-inset-top,0px));transform:translateX(-50%);background:var(--ink);color:var(--paper);border-radius:99px;padding:10px 16px;font-weight:700;font-size:14px;z-index:30;max-width:90%;text-align:center}
+@media (prefers-reduced-motion: no-preference){.qcard{animation:pop .25s ease-out}@keyframes pop{from{transform:translateY(8px);opacity:.6}to{transform:none;opacity:1}}}
+</style>
+<main id="app"></main>
+<input type="file" id="file" accept=".pdf,.txt,.md,text/plain,application/pdf" hidden>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+/* ---------------- State: kept in this browser ---------------- */
+const KEY = 'p2-app-v2';
+const EXAMPLE = {id:'ex', example:true, name:'Marketing · parcours client', exam:{date:'', format:'Dissertation', minutes:5, style:'Situations'}, review:[], sets:[], files:[{name:'TD3 parcours client (exemple).txt', pages:[
+ {p:1, text:"TD 3 · Le parcours client. Le parcours client se découpe en trois étapes : le pré-achat, l'achat et le post-achat. Le pré-achat regroupe tout ce qui se passe avant la transaction : le client reconnaît un besoin, cherche des informations et compare des offres. L'achat couvre le choix, la commande et le paiement ; c'est en général l'étape la plus courte. Le post-achat commence après la transaction : le client utilise le produit, contacte le service après-vente et donne parfois son avis."},
+ {p:2, text:"À chaque étape, le client croise des points de contact. On en distingue quatre types selon qui les contrôle. Les points de contact brand-owned sont conçus et gérés par la marque, comme son site, son appli ou son packaging. Les points de contact partner-owned sont gérés avec des partenaires, comme une agence ou un distributeur. Les points de contact customer-owned dépendent du client seul, comme sa propre réflexion sur ses besoins. Les points de contact social/external échappent à la marque, comme les avis en ligne ou un influenceur indépendant. Au post-achat, un déclencheur mène soit à la fidélité, avec un rachat, soit à un retour au pré-achat où le client compare d'autres offres : c'est la boucle de fidélité."}
+]}]};
+const fresh = () => ({welcomed:false, courses:[JSON.parse(JSON.stringify(EXAMPLE))]});
+const load = () => { try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.courses) return s; } catch(e){} return fresh(); };
+let S = load();
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){ toast('Plus de place dans ce navigateur : retire un gros fichier.'); } };
+let view = {name: S.welcomed ? 'home' : 'welcome'}, game = null, busy = false, opts = null;
+const chats = {};
+const T = {sample:'wait'};
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const course = () => S.courses.find(c => c.id === view.id);
+const textOf = c => c.files.map(f => f.pages.map(pg => `[${f.name} · p. ${pg.p}]\n${pg.text}`).join('\n\n')).join('\n\n');
+const norm = s => String(s).normalize('NFKC').toLowerCase().replace(/[’‘`]/g,"'").replace(/[“”«»]/g,'"').replace(/-\s+/g,'-').replace(/\s+/g,' ').trim();
+const shuffle = a => { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
+const daysTo = d => { if (!d) return null; const t = new Date(d + 'T00:00:00'), n = new Date(); n.setHours(0,0,0,0); return Math.round((t - n) / 864e5); };
+let toastEl; function toast(t){ toastEl?.remove(); toastEl = document.createElement('div'); toastEl.className='toast'; toastEl.setAttribute('role','status'); toastEl.textContent = t; document.body.append(toastEl); setTimeout(()=>toastEl?.remove(), 3400); }
+
+/* ---------------- Claude, on the student's own account ---------------- */
+let sample = null;
+/* Two ways in: a page published with the sample capability, or an artifact Claude makes inside a chat (window.claude.complete). */
+function fromComplete(complete){
+  const flat = input => typeof input === 'string' ? input : input.map(t => (t.role === 'user' ? 'Étudiante : ' : 'Toi : ') + t.content).join('\n\n');
+  const f = async (input, o) => { let text; try { text = await complete(flat(input)); } catch(e){ throw {code:'upstream_error', message:String(e)}; } o?.onText?.({text, delta:text}); return {text, truncated:false}; };
+  f.json = async (input, o) => { const {text} = await f(input + '\n\nRéponds uniquement avec le JSON demandé, sans texte autour.', o); const m = text.match(/```(?:json)?\s*([\s\S]*?)```/); const body = m ? m[1] : text.slice(text.search(/[\[{]/), Math.max(text.lastIndexOf('}'), text.lastIndexOf(']')) + 1); try { return JSON.parse(body); } catch(e){ throw {code:'invalid_json', message:'unparsable', text}; } };
+  return f;
+}
+(async () => { try { sample = await window.claude?.use?.('sample'); } catch(e){ sample = null; } if (!sample && typeof window.claude?.complete === 'function') sample = fromComplete(window.claude.complete.bind(window.claude)); T.sample = sample ? 'ready' : 'none'; render(); })();
+const ERR = {not_granted:'Tu as refusé l’accès à Claude. Recharge la page pour qu’il te le redemande.', rate_limited:'Ta limite Claude est atteinte pour le moment. Réessaie plus tard.', prompt_too_large:'Ce cours est trop long pour une seule demande : retire un fichier ou précise une partie.', invalid_json:'La réponse de Claude n’était pas lisible. Réessaie.', sampling_disabled:'Claude n’est pas disponible pour ce compte.', capability_disabled:'Claude n’est pas disponible pour ce compte.', session_expired:'Ta session Claude a expiré. Recharge la page.', refused:'Claude a refusé cette demande. Essaie une autre partie du cours.', empty_completion:'Claude n’a rien renvoyé. Réessaie.'};
+const errText = e => ERR[e?.code] || ('Claude n’a pas répondu (' + (e?.code || 'erreur') + '). Réessaie.');
+
+/* The engine: learning and game rules, the same for every course */
+const ENGINE = `Tu es le moteur d’exercices Player Two. Tu fabriques une partie d’entraînement pour une étudiante, à partir de SON cours uniquement.
+Règles d’apprentissage :
+- Elle répond avant de voir la réponse (récupération active). Une seule idée par carte.
+- Mélange les notions du cours dans la partie (pas trois cartes d’affilée sur la même chose).
+- Préfère une petite situation concrète et nouvelle à une phrase recopiée du cours.
+- Pièges plausibles : les confusions qu’une étudiante fait vraiment, jamais de réponse absurde.
+- Explication courte de la bonne réponse, et une phrase sur le piège le plus tentant.
+Types de cartes :
+- "pick" : une question, 4 options, une seule juste.
+- "order" : remettre dans l’ordre 3 à 5 étapes (seulement si le cours donne vraiment un ordre).
+- "build" : construire une réponse rédigée avec 3 ou 4 blocs dans l’ordre, plus 2 blocs pièges plausibles ; c’est l’entraînement à la rédaction.
+Preuve : pour chaque carte, recopie MOT POUR MOT une phrase du cours (30 mots maximum) qui justifie la réponse, et donne la page indiquée par les marqueurs [fichier · p. N]. N’invente rien qui ne soit pas dans le cours.`;
+const FORMAT_MIX = {QCM:'surtout des cartes "pick" avec des pièges très proches, comme au partiel', Dissertation:'un tiers de cartes "build" (phrases d’argument, définitions d’intro), des cartes "pick" sur les distinctions et les plans, et une carte "order" si le cours s’y prête', 'Cas pratique':'surtout des situations concrètes en "pick", plus une ou deux cartes "build" pour justifier', Comprendre:'des cartes "pick" simples puis plus dures, et une carte "order" si le cours s’y prête'};
+const STYLE = {Situations:'des situations concrètes de la vie réelle', 'Définitions':'des questions nettes sur les définitions et le vocabulaire exact', 'Mélange':'un mélange de situations et de définitions'};
+
+function checkCards(c, all){
+  const hay = c.files.flatMap(f => f.pages.map(pg => ({p:pg.p, f:f.name, t:norm(pg.text)})));
+  return all.map(k => {
+    if (!k || !k.ask || !k.quote) return null;
+    const type = ['pick','order','build'].includes(k.type) ? k.type : 'pick';
+    if (type === 'pick' && !(Array.isArray(k.options) && k.options.length === 4 && k.options.includes(k.answer))) return null;
+    if (type === 'order' && !(Array.isArray(k.items) && k.items.length >= 3 && k.items.length <= 6)) return null;
+    if (type === 'build' && !(Array.isArray(k.items) && k.items.length >= 2 && Array.isArray(k.traps) && k.traps.length)) return null;
+    const q = norm(k.quote).replace(/^["']|["']$/g,'').replace(/[.…]+$/,'');
+    const hit = hay.find(h => h.t.includes(q)); if (!hit) return null;
+    return {...k, type, page: hit.p, file: hit.f, id: 'k' + Math.random().toString(36).slice(2,9)};
+  }).filter(Boolean);
+}
+async function makeGame(kind){
+  const c = course(); if (!sample || busy || !c.files.length) return;
+  const o = opts || defaults(c), n = o.minutes >= 10 ? 8 : 5, days = daysTo(c.exam.date);
+  const prompt = `${ENGINE}
+
+L’étudiante :
+- Son partiel : ${o.format}${days !== null && days >= 0 ? ', dans ' + days + ' jour' + (days>1?'s':'') : ''}. Composition de la partie : ${FORMAT_MIX[o.format] || FORMAT_MIX.Comprendre}.
+- Sa façon d’apprendre : ${STYLE[o.style] || STYLE['Mélange']}.
+- Son temps : ${o.minutes} minutes, donc ${n} cartes.${o.focus ? '\n- Elle veut se concentrer sur : ' + o.focus + '.' : ''}${c.review.length ? '\n- Elle a déjà raté ces idées, reprends-en une ou deux autrement : ' + c.review.slice(0,4).map(k => k.ask).join(' / ') : ''}
+
+Réponds uniquement avec ce JSON :
+{"title":"titre court de la partie","cards":[
+ {"type":"pick","situation":"…ou chaîne vide","ask":"…","options":["…","…","…","…"],"answer":"une des options, à l’identique","why":"…","trap":"…","quote":"phrase exacte du cours","page":1},
+ {"type":"order","situation":"","ask":"Remets dans l’ordre…","items":["étape 1","étape 2","étape 3"],"why":"…","quote":"…","page":1},
+ {"type":"build","situation":"","ask":"Rédige : …","items":["bloc 1","bloc 2","bloc 3"],"traps":["piège 1","piège 2"],"why":"…","quote":"…","page":1}
+]}
+
+LE COURS :
+${textOf(c).slice(0, 150000)}`;
+  busy = true; view = {name:'making', id:c.id}; render();
+  try {
+    const out = await sample.json(prompt, {modelTier:'default'});
+    T.sample = 'ok';
+    const all = Array.isArray(out?.cards) ? out.cards : [], kept = checkCards(c, all);
+    busy = false;
+    if (!kept.length) { view = {name:'course', id:c.id}; render(); return toast('Aucune carte n’a passé la vérification des citations. Réessaie.'); }
+    startGame(c, String(out.title || 'Partie'), kept, all.length - kept.length, null);
+  } catch(e){ busy = false; if (e?.code === 'not_granted') T.sample = 'refused'; view = {name:'course', id:c.id}; render(); toast(errText(e)); }
+}
+async function ask(text){
+  const c = course(); if (!sample || busy || !text.trim()) return;
+  const turns = chats[c.id] = chats[c.id] || [];
+  turns.push({role:'user', content:text.trim()}); turns.push({role:'assistant', content:'…'});
+  busy = true; render();
+  const rules = `Tu es Player Two, le compagnon de révision d’une étudiante. Réponds en français, en 2 à 5 phrases, uniquement d’après son cours ci-dessous, et cite la page (p. N). Si le cours n’en parle pas, dis-le simplement. Si elle demande un résumé ou un plan, fais-le à partir du cours.
+
+LE COURS :
+${textOf(c).slice(0, 150000)}`;
+  const history = turns.slice(0, -1).slice(-8);
+  try {
+    const {text: t} = await sample([{role:'user', content: rules}, ...history], {cache:false, modelTier:'default', onText: ({text}) => { turns[turns.length-1].content = text; const el = document.getElementById('lastai'); if (el) el.textContent = text; }});
+    turns[turns.length-1].content = t; T.sample = 'ok';
+  } catch(e){ turns[turns.length-1].content = errText(e); if (e?.code === 'not_granted') T.sample = 'refused'; }
+  busy = false; render(); document.getElementById('lastai')?.scrollIntoView({block:'nearest'});
+}
+
+/* ---------------- Game ---------------- */
+function prep(k){ const st = {done:false, ok:null, picked:null, placed:[]}; if (k.type === 'pick') st.opts = shuffle(k.options); else st.pool = shuffle(k.type === 'build' ? k.items.concat(k.traps) : k.items); return st; }
+function startGame(c, title, cards, dropped, kind){
+  game = {courseId:c.id, title, kind, cards:cards.slice(), queue:cards.map(k => k.id), byId:Object.fromEntries(cards.map(k => [k.id, k])), retried:{}, first:{}, i:0, dropped, saved:false};
+  game.cur = game.queue.shift(); game.st = prep(game.byId[game.cur]);
+  view = {name:'play', id:c.id}; render(); window.scrollTo(0,0);
+}
+function answer(ok){
+  const g = game, k = g.byId[g.cur]; g.st.done = true; g.st.ok = ok;
+  if (!(g.cur in g.first)) g.first[g.cur] = ok;
+  const c = S.courses.find(x => x.id === g.courseId);
+  if (!ok && !g.retried[g.cur]) { g.retried[g.cur] = true; g.queue.push(g.cur); }
+  if (!ok && !c.review.some(r => r.ask === k.ask)) c.review.push(k);
+  if (ok && g.kind === 'review') c.review = c.review.filter(r => r.ask !== k.ask);
+  save(); render(); document.querySelector('.fb')?.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+function next(){ const g = game; g.i++; g.cur = g.queue.shift(); if (g.cur) g.st = prep(g.byId[g.cur]); render(); window.scrollTo(0,0); }
+
+/* ---------------- Files ---------------- */
+let pdfReady = null;
+function pdfLib(){ if (pdfReady) return pdfReady; pdfReady = (async () => { const L = window.pdfjsLib; if (!L) throw new Error('pdf'); try { const blob = new Blob(["importScripts('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js');"], {type:'text/javascript'}); L.GlobalWorkerOptions.workerPort = new Worker(URL.createObjectURL(blob)); } catch(e){ L.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; } return L; })(); return pdfReady; }
+async function readFile(f){
+  if (/\.pdf$/i.test(f.name) || f.type === 'application/pdf') {
+    const L = await pdfLib(); const doc = await L.getDocument({data: await f.arrayBuffer()}).promise; const pages = [];
+    for (let i = 1; i <= doc.numPages; i++) { const pg = await doc.getPage(i); const tc = await pg.getTextContent(); pages.push({p:i, text: tc.items.map(x => x.str + (x.hasEOL ? '\n' : ' ')).join('').replace(/[ \t]+/g,' ').trim()}); }
+    return pages.filter(p => p.text);
+  }
+  const t = await f.text(); return t.split(/\f/).map((x, i) => ({p:i+1, text:x.trim()})).filter(p => p.text);
+}
+document.getElementById('file').addEventListener('change', async e => {
+  const f = e.target.files[0]; e.target.value = ''; const c = course(); if (!f || !c) return;
+  busy = true; render(); toast('Lecture de ' + f.name + '…');
+  try { const pages = await readFile(f); if (!pages.length) throw new Error('vide'); if (c.example) { c.files = []; c.example = false; } c.files.push({name:f.name, pages}); save(); toast(f.name + ' ajouté : ' + pages.length + ' page' + (pages.length>1?'s':'') + ' lues.'); }
+  catch(err){ toast('Je n’arrive pas à lire ce fichier. Essaie un PDF avec du texte (pas un scan), ou un .txt.'); }
+  busy = false; render();
+});
+
+/* ---------------- Screens ---------------- */
+const defaults = c => ({format:c.exam.format || 'Comprendre', minutes:c.exam.minutes || 5, style:c.exam.style || 'Mélange', focus:''});
+function welcome(){
+  return `<div class="logo"><span class="two">2</span>Player Two</div>
+  <h1>Ton cours devient un jeu.</h1>
+  <p class="muted">Ajoute ton cours. Claude en fait des parties de 5 minutes, adaptées à ton partiel, avec la page du cours à chaque réponse.</p>
+  <div class="steps"><div><span class="num">1</span><span><b>Un dossier par cours.</b> Tu y mets ton TD, tes slides, ton poly.</span></div><div><span class="num">2</span><span><b>Claude crée tes exercices</b> selon ton partiel, ton temps et ta façon d’apprendre. Chaque citation est vérifiée dans ton fichier.</span></div><div><span class="num">3</span><span><b>Tu joues.</b> Ce que tu rates revient jusqu’à ce que ça rentre.</span></div></div>
+  <button class="btn hot" data-a="start">Commencer avec le cours exemple</button>
+  <p class="small muted">Tout se passe dans ton Claude : pas de compte en plus, pas de serveur à nous. Tes cours et tes scores restent dans ce navigateur.</p>`;
+}
+function home(){
+  return `<div class="row between"><div class="logo"><span class="two">2</span>Player Two</div><button class="link" data-a="about">Comment ça marche</button></div>
+  <h1>Mes cours</h1>
+  <div class="list">${S.courses.map(c => { const d = daysTo(c.exam.date); return `<button data-a="open" data-v="${c.id}"><span><b>${esc(c.name)}</b><br><span class="small muted">${c.files.length} fichier${c.files.length>1?'s':''} · ${c.sets.length} partie${c.sets.length>1?'s':''} gardée${c.sets.length>1?'s':''}${c.review.length ? ' · ' + c.review.length + ' à revoir' : ''}</span></span>${c.example?'<span class="chip ex">Exemple</span>':''}${d !== null && d >= 0 ? `<span class="chip sun">J-${d}</span>` : ''}<span class="go">›</span></button>`; }).join('')}</div>
+  ${view.adding ? `<form class="panel" id="newform"><label for="cname">Nom du cours</label><input id="cname" placeholder="Contrôle de gestion" autocomplete="off"><button class="btn" type="submit">Créer le dossier</button><button class="link" type="button" data-a="cancel-add">Annuler</button></form>` : `<button class="btn ghost" data-a="add">+ Nouveau cours</button>`}
+  ${T.sample === 'none' ? `<div class="status"><div><span class="dot no"></span><span>Claude n’est pas joignable ici. Ouvre cette page dans Claude pour créer des exercices.</span></div></div>` : ''}`;
+}
+function coursePage(){
+  const c = course(); if (!c) { view = {name:'home'}; return home(); }
+  const o = opts || (opts = defaults(c)), d = daysTo(c.exam.date), can = !!sample && !busy && c.files.length;
+  const tab = view.tab || 'play';
+  return `<div class="row between"><button class="link" data-a="home">‹ Mes cours</button>${d !== null && d >= 0 ? `<span class="chip sun">Partiel J-${d}</span>` : c.example ? '<span class="chip ex">Cours exemple</span>' : ''}</div>
+  <h1>${esc(c.name)}</h1>
+  <div class="seg">${[['play','Jouer'],['chat','Discuter'],['files','Fichiers']].map(([k,l]) => `<button data-a="tab" data-v="${k}" aria-pressed="${tab===k}">${l}</button>`).join('')}</div>
+  ${tab === 'play' ? playTab(c, o, can) : tab === 'chat' ? chatTab(c, can) : filesTab(c)}`;
+}
+function playTab(c, o, can){
+  return `<section class="hero"><span class="tag">Nouvelle partie</span><h2>${o.minutes} minutes · ${esc(o.format === 'Comprendre' ? 'pour comprendre' : 'format ' + o.format.toLowerCase())}</h2>
+    <p class="small" style="opacity:.85">${c.files.length ? 'Claude lit ' + c.files.length + ' fichier' + (c.files.length>1?'s':'') + ' et vérifie chaque citation. Compte 30 secondes à 1 minute.' : 'Ajoute d’abord un fichier dans l’onglet Fichiers.'}</p>
+    <button class="btn hot" data-a="make" ${can?'':'disabled'}>Créer ma partie</button>
+    ${!sample ? '<p class="small" style="opacity:.85">Ouvre cette page dans Claude pour créer des parties.</p>' : ''}</section>
+  ${c.review.length ? `<button class="btn" data-a="review">Revoir mes erreurs (${c.review.length})</button>` : ''}
+  <details class="panel" ${view.opensettings?'open':''}><summary>Adapter à mon partiel</summary>
+    <label>Format du partiel</label><div class="seg two-col">${['QCM','Dissertation','Cas pratique','Comprendre'].map(f => `<button type="button" data-a="set" data-k="format" data-v="${f}" aria-pressed="${o.format===f}">${f==='Comprendre'?'Juste comprendre':f}</button>`).join('')}</div>
+    <label for="edate">Date du partiel</label><input id="edate" type="date" value="${esc(c.exam.date)}">
+    <label>Temps par partie</label><div class="seg">${[5,10,15].map(t => `<button type="button" data-a="set" data-k="minutes" data-v="${t}" aria-pressed="${o.minutes===t}">${t} min</button>`).join('')}</div>
+    <label>Ta façon d’apprendre</label><div class="seg">${['Situations','Définitions','Mélange'].map(s => `<button type="button" data-a="set" data-k="style" data-v="${s}" aria-pressed="${o.style===s}">${s}</button>`).join('')}</div>
+    <label for="focus">Une partie précise ? (facultatif)</label><input id="focus" placeholder="la boucle de fidélité" value="${esc(o.focus)}" autocomplete="off"></details>
+  <section class="stack"><span class="tag">Parties gardées</span>
+    ${c.sets.length ? `<div class="list">${c.sets.map(st => `<div><button class="link" style="color:var(--ink);text-decoration:none;flex:1;min-width:0" data-a="replay" data-v="${st.id}"><b>${esc(st.title)}</b><br><span class="small muted">${st.cards.length} cartes · meilleur score ${st.best}/${st.cards.length}</span></button><button class="link go" data-a="rmset" data-v="${st.id}" aria-label="Supprimer ${esc(st.title)}">Supprimer</button></div>`).join('')}</div>` : '<p class="muted small">Les parties que tu gardes restent ici, pour les rejouer.</p>'}</section>`;
+}
+function chatTab(c, can){
+  const turns = chats[c.id] || [];
+  return `<section class="stack">${turns.length ? `<div class="msgs">${turns.map((t,i) => `<div class="msg ${t.role==='user'?'me':'ai'}" ${i===turns.length-1 && t.role!=='user'?'id="lastai"':''}>${esc(t.content)}</div>`).join('')}</div>` : `<p class="muted">Pose une question sur ton cours. Claude répond seulement d’après tes fichiers, avec la page.</p><div class="row">${['Résume-moi le cours','C’est quoi la boucle de fidélité ?','Donne-moi un plan de dissert'].map(q => `<button class="chip" data-a="askchip" data-v="${esc(q)}" ${can?'':'disabled'}>${esc(q)}</button>`).join('')}</div>`}
+    <form id="askform" class="row" style="flex-wrap:nowrap"><input id="q" placeholder="Ta question" autocomplete="off" style="flex:1;min-width:0"><button class="btn" type="submit" style="width:auto" ${can?'':'disabled'}>Envoyer</button></form></section>`;
+}
+function filesTab(c){
+  return `<section class="stack">${c.files.length ? `<div class="list">${c.files.map((f,i) => `<div><span style="min-width:0;overflow-wrap:anywhere">${esc(f.name)}<br><span class="small muted">${f.pages.length} page${f.pages.length>1?'s':''} lue${f.pages.length>1?'s':''}</span></span><button class="link go" data-a="rmfile" data-v="${i}" aria-label="Retirer ${esc(f.name)}">Retirer</button></div>`).join('')}</div>` : '<p class="muted">Aucun fichier pour l’instant.</p>'}
+    <button class="btn" data-a="upload" ${busy?'disabled':''}>+ Ajouter un fichier (PDF ou texte)</button>
+    <p class="small muted">${c.example ? 'Ton premier fichier remplace le cours exemple. ' : ''}Un PDF scanné (une photo de page) ne peut pas être lu : il faut un PDF avec du texte.</p></section>
+  <section class="stack"><span class="tag">Ce dossier</span><button class="link" data-a="rename">Renommer</button><button class="link" data-a="rmcourse" style="color:var(--no-ink)">${view.confirmDelete ? 'Toucher encore pour supprimer ce cours et ses parties' : 'Supprimer ce cours'}</button></section>`;
+}
+function making(){ return `<div class="center" style="min-height:70vh;text-align:center;align-items:center"><span class="two" style="width:56px;height:56px;font-size:30px">2</span><h2>Claude prépare ta partie</h2><p class="muted">Il lit ton cours, écrit les cartes, puis chaque citation est vérifiée mot pour mot dans ton fichier.</p></div>`; }
+function cardBody(k, st){
+  if (k.type === 'pick') return `<div class="stack">${st.opts.map(o => `<button class="opt ${st.done ? (o===k.answer?'good':o===st.picked?'bad':'') : ''}" data-a="pick" data-v="${esc(o)}" ${st.done?'disabled':''}>${esc(o)}</button>`).join('')}</div>`;
+  const target = k.items, build = k.type === 'build';
+  return `${st.done ? '' : `<p class="small muted">${build ? 'Touche les blocs dans l’ordre pour construire ta réponse. ' + k.traps.length + ' blocs sont des pièges.' : 'Touche les étapes dans l’ordre.'}</p><div class="pool">${st.pool.filter(x => !st.placed.includes(x)).map(x => `<button data-a="place" data-v="${esc(x)}">${esc(x)}</button>`).join('')}</div>`}
+  <div class="slots">${target.map((_, i) => { const x = st.placed[i]; const cls = !x ? '' : st.done ? (x === target[i] ? 'full good' : 'full bad') : 'full'; return `<div class="slot ${cls}"><span>${i+1}. ${esc(x || '')}${st.done && x && x !== target[i] ? (k.traps?.includes(x) ? ' · piège' : ' · pas à sa place') : ''}</span>${x && !st.done ? `<button data-a="unplace" data-v="${i}" aria-label="Retirer">✕</button>` : ''}</div>`; }).join('')}</div>
+  ${st.done ? '' : `<button class="btn" data-a="check" ${st.placed.length === target.length ? '' : 'disabled'}>Valider</button>`}`;
+}
+function play(){
+  const g = game; if (!g) { view = {name:'course', id:view.id}; return coursePage(); }
+  if (!g.cur) return endScreen();
+  const k = g.byId[g.cur], st = g.st, total = g.cards.length + Object.keys(g.retried).length, again = g.i >= g.cards.length;
+  const right = k.type === 'pick' ? k.answer : k.items.join(' ');
+  return `<div class="play"><div class="ptop"><button class="link" data-a="quit" aria-label="Quitter la partie" style="text-decoration:none;font-size:24px;min-height:44px">✕</button><div class="bar"><i style="width:${Math.round((g.i + (st.done?1:0)) / total * 100)}%"></i></div><span class="small"><b>${Math.min(g.i+1, total)}</b>/${total}</span></div>
+  <div class="center"><div class="qcard">${again ? '<span class="tag">Deuxième chance</span>' : k.type==='build' ? '<span class="tag">Réponse à construire</span>' : ''}${k.situation ? `<p>${esc(k.situation)}</p>` : ''}<h2>${esc(k.ask)}</h2></div>
+  ${cardBody(k, st)}
+  ${st.done ? `<div class="fb ${st.ok?'ok':'no'}"><b>${st.ok ? 'Exact' : k.type === 'pick' ? 'Raté · c’était ' + esc(right) : 'Pas tout à fait · ' + esc(right)}</b><p>${esc(st.ok ? k.why : (k.trap || k.why))}</p><p class="quote">« ${esc(k.quote)} » · ${esc(k.file || '')} p. ${k.page}</p>${!st.ok && g.retried[g.cur] && !again ? '<p class="small">Elle revient en fin de partie.</p>' : ''}<button class="btn" data-a="next">${g.queue.length ? 'Suivante' : 'Voir mon score'}</button></div>` : ''}</div></div>`;
+}
+function endScreen(){
+  const g = game, c = S.courses.find(x => x.id === g.courseId), right = g.cards.filter(k => g.first[k.id]).length, n = g.cards.length;
+  if (g.setId && !g.scored) { g.scored = true; const st = c.sets.find(x => x.id === g.setId); if (st && right > st.best) { st.best = right; save(); } }
+  const missed = g.cards.filter(k => !g.first[k.id]);
+  return `<div class="center" style="min-height:80vh"><span class="tag">${esc(g.title)}</span><div class="row" style="align-items:baseline;gap:12px"><p class="big">${right}/${n}</p><h2>${right===n?'Parfait.':right>=n-1?'Presque.':'On s’y remet.'}</h2></div>
+  <p class="small muted">Du premier coup.${g.dropped ? ' ' + g.dropped + ' carte' + (g.dropped>1?'s':'') + ' écartée' + (g.dropped>1?'s':'') + ' : citation introuvable dans ton cours.' : ''}</p>
+  ${missed.length ? `<span class="tag">À revoir · elles restent dans « Revoir mes erreurs »</span><div class="list">${missed.map(k => `<div><span><b>${esc(k.ask)}</b><br><span class="small muted">${esc(k.type==='pick'?k.answer:k.items.join(' '))} · p. ${k.page}</span></span></div>`).join('')}</div>` : ''}
+  ${g.setId || g.kind === 'review' ? `<button class="btn hot" data-a="again">Rejouer</button>` : g.saved ? '<p class="muted">Gardée dans ce cours.</p>' : `<button class="btn hot" data-a="keep">Garder cette partie</button><button class="btn ghost" data-a="drop">Ne pas la garder</button>`}
+  <button class="btn ghost" data-a="back-course">Retour au cours</button></div>`;
+}
+function about(){
+  return `<button class="link" data-a="home">‹ Mes cours</button><h1>Comment ça marche</h1>
+  <div class="steps"><div><span class="num">1</span><span><b>Tes fichiers restent ici.</b> Le texte de tes PDF est lu dans ce navigateur et gardé dans ce navigateur.</span></div><div><span class="num">2</span><span><b>Claude, sur ton compte.</b> Quand tu crées une partie ou poses une question, la page envoie le cours à ton Claude. Ça compte dans ton usage Claude, comme un message.</span></div><div><span class="num">3</span><span><b>Chaque réponse est prouvée.</b> Une carte dont la citation n’est pas retrouvée mot pour mot dans ton fichier est jetée.</span></div><div><span class="num">4</span><span><b>Tes erreurs reviennent</b> dans la partie même, puis dans « Revoir mes erreurs », jusqu’à ce que tu les réussisses.</span></div></div>
+  <button class="link" data-a="reset" style="color:var(--no-ink)">${view.confirmReset ? 'Toucher encore pour tout effacer' : 'Tout effacer dans ce navigateur'}</button>`;
+}
+function render(){
+  const app = document.getElementById('app');
+  app.innerHTML = ({welcome, home, course:coursePage, making, play, about})[view.name]?.() ?? home();
+  const nf = document.getElementById('newform'); if (nf) { document.getElementById('cname').focus(); nf.onsubmit = e => { e.preventDefault(); const n = document.getElementById('cname').value.trim(); if (!n) return; const c = {id:'c'+Date.now(), name:n, exam:{date:'', format:'Comprendre', minutes:5, style:'Mélange'}, files:[], sets:[], review:[]}; S.courses.push(c); save(); opts = null; view = {name:'course', id:c.id, tab:'files'}; render(); }; }
+  const af = document.getElementById('askform'); if (af) af.onsubmit = e => { e.preventDefault(); const q = document.getElementById('q').value; ask(q); };
+  const fo = document.getElementById('focus'); if (fo) fo.oninput = () => { opts.focus = fo.value; };
+  const ed = document.getElementById('edate'); if (ed) ed.onchange = () => { course().exam.date = ed.value; save(); view.opensettings = true; render(); };
+  const sum = document.querySelector('details.panel'); if (sum) sum.ontoggle = () => { view.opensettings = sum.open; };
+}
+document.getElementById('app').addEventListener('click', e => {
+  const t = e.target.closest('[data-a]'); if (!t) return; const a = t.dataset.a, v = t.dataset.v, c = course(), g = game;
+  switch (a) {
+    case 'start': S.welcomed = true; save(); view = {name:'course', id:'ex'}; opts = null; return render();
+    case 'about': view = {name:'about'}; return render();
+    case 'reset': if (!view.confirmReset) { view.confirmReset = true; return render(); } S = fresh(); S.welcomed = true; save(); view = {name:'home'}; return render();
+    case 'open': view = {name:'course', id:v}; opts = null; render(); return window.scrollTo(0,0);
+    case 'home': view = {name:'home'}; return render();
+    case 'add': view = {name:'home', adding:true}; return render();
+    case 'cancel-add': view = {name:'home'}; return render();
+    case 'tab': view.tab = v; view.confirmDelete = false; return render();
+    case 'upload': return document.getElementById('file').click();
+    case 'rmfile': c.files.splice(+v,1); save(); return render();
+    case 'rename': { const el = document.querySelector('h1'); el.contentEditable = 'true'; el.focus(); el.onblur = () => { const s = el.textContent.trim(); if (s) { c.name = s; save(); } el.contentEditable = 'false'; render(); }; el.onkeydown = ev => { if (ev.key === 'Enter') { ev.preventDefault(); el.blur(); } }; return; }
+    case 'rmcourse': if (!view.confirmDelete) { view.confirmDelete = true; return render(); } S.courses = S.courses.filter(x => x.id !== c.id); save(); view = {name:'home'}; return render();
+    case 'set': { const k = t.dataset.k; opts[k] = k === 'minutes' ? +v : v; c.exam[k] = opts[k]; save(); view.opensettings = true; return render(); }
+    case 'make': return makeGame();
+    case 'review': return startGame(c, 'Revoir mes erreurs', shuffle(c.review).slice(0, 8).map(k => ({...k, id:'r'+Math.random().toString(36).slice(2,9)})), 0, 'review');
+    case 'askchip': return ask(v);
+    case 'pick': if (g.st.done) return; g.st.picked = v; return answer(v === g.byId[g.cur].answer);
+    case 'place': g.st.placed.push(v); return render();
+    case 'unplace': if (g.st.done) return; g.st.placed.splice(+v,1); return render();
+    case 'check': { const k = g.byId[g.cur]; return answer(g.st.placed.every((x,i) => x === k.items[i])); }
+    case 'next': return next();
+    case 'quit': case 'back-course': game = null; view = {name:'course', id:view.id}; render(); return window.scrollTo(0,0);
+    case 'keep': { const cc = S.courses.find(x => x.id === g.courseId); const right = g.cards.filter(k => g.first[k.id]).length; cc.sets.unshift({id:'s'+Date.now(), title:g.title, cards:g.cards, best:right}); save(); g.saved = true; toast('Partie gardée dans ' + cc.name + '.'); return render(); }
+    case 'drop': game = null; view = {name:'course', id:view.id}; render(); return toast('Partie supprimée.');
+    case 'again': { const cc = S.courses.find(x => x.id === g.courseId); if (g.kind === 'review') { if (!cc.review.length) { toast('Plus rien à revoir : tout est rattrapé.'); game = null; view = {name:'course', id:cc.id}; return render(); } return startGame(cc, 'Revoir mes erreurs', shuffle(cc.review).slice(0,8).map(k => ({...k, id:'r'+Math.random().toString(36).slice(2,9)})), 0, 'review'); } const st = cc.sets.find(x => x.id === g.setId); startGame(cc, st.title, st.cards, 0, null); game.setId = st.id; return render(); }
+    case 'replay': { const st = c.sets.find(x => x.id === v); startGame(c, st.title, st.cards, 0, null); game.setId = st.id; return render(); }
+    case 'rmset': c.sets = c.sets.filter(x => x.id !== v); save(); return render();
+  }
+});
+render();
+</script>

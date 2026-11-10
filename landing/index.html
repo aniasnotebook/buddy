@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Player Two</title>
+<meta name="description" content="Ton cours devient un jeu. Claude crée tes exercices, avec la page du cours à chaque réponse.">
+<meta property="og:title" content="Player Two · Ton cours devient un jeu">
+<meta property="og:description" content="Ajoute ton cours. Claude en fait des parties de 5 minutes, avec la page du cours à chaque réponse.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Manrope:wght@400;600;700&display=swap">
+<style>
+/* A phone-width column: the promise, one playable card in the middle, one button. */
+:root{
+  --paper:#fbf8f2; --card:#ffffff; --ink:#1b1a17; --muted:#625e52; --line:#d9d3c4;
+  --hot:#f06a98; --hot-ink:#1b1a17; --ok:#d8f1d2; --ok-ink:#1d5a20; --no:#fbd8d8; --no-ink:#8a1f1f; --sun:#ffd66b;
+  --disp:'Bricolage Grotesque','Manrope',system-ui,sans-serif; --body:'Manrope',system-ui,-apple-system,'Segoe UI',sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root{
+  --paper:#16150f; --card:#211f19; --ink:#f3efe4; --muted:#b4ad9c; --line:#3d392e;
+  --hot:#f27aa3; --hot-ink:#16150f; --ok:#1f3a1d; --ok-ink:#a9e3a0; --no:#43201f; --no-ink:#f3b0b0; --sun:#8a6d1c; color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.5 var(--body);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+main{max-width:520px;margin:0 auto;padding-block:20px 56px;display:flex;flex-direction:column;gap:22px}
+h1,h2,h3{font-family:var(--disp);font-weight:800;margin:0;line-height:1.05;text-wrap:balance}
+h1{font-size:44px;letter-spacing:-.02em} h2{font-size:26px} h3{font-size:20px}
+p{margin:0} .muted{color:var(--muted)} .small{font-size:14px}
+.tag{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.logo{display:flex;align-items:center;gap:8px;font-family:var(--disp);font-weight:800;font-size:19px}
+.two{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:9px;background:var(--hot);color:var(--hot-ink);border:2px solid var(--ink);font-size:17px;transform:rotate(-6deg)}
+.qcard{background:var(--card);border:2px solid var(--ink);border-radius:22px;padding:20px;box-shadow:6px 6px 0 var(--ink);display:flex;flex-direction:column;gap:12px}
+.opt{font:inherit;color:inherit;min-height:52px;border:2px solid var(--ink);border-radius:14px;background:var(--card);text-align:left;padding:10px 14px;font-weight:600;width:100%;cursor:pointer}
+.opt.good{background:var(--ok);color:var(--ok-ink);border-color:var(--ok-ink)} .opt.bad{background:var(--no);color:var(--no-ink);border-color:var(--no-ink)}
+.fb{border-radius:14px;padding:12px;font-size:15px;display:flex;flex-direction:column;gap:6px}
+.fb.ok{background:var(--ok);color:var(--ok-ink)} .fb.no{background:var(--no);color:var(--no-ink)}
+.quote{font-size:14px;border-left:3px solid currentColor;padding-left:10px;font-style:italic}
+.btn{display:flex;align-items:center;justify-content:center;min-height:56px;border-radius:16px;border:2px solid var(--ink);background:var(--hot);color:var(--hot-ink);font-weight:800;font-size:18px;text-decoration:none;padding:0 18px}
+.btn:focus-visible,.opt:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+.steps{display:flex;flex-direction:column;gap:12px}
+.steps div{display:flex;gap:12px;align-items:flex-start}
+.num{flex:none;width:30px;height:30px;border-radius:9px;border:2px solid var(--ink);display:flex;align-items:center;justify-content:center;font-weight:800;background:var(--sun);color:#1b1a17}
+.box{border:2px solid var(--ink);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:10px;background:var(--card)}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:14px;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:8px 10px;display:block;overflow-x:auto}
+a{color:inherit}
+</style>
+</head>
+<body>
+<main>
+  <div class="logo"><span class="two">2</span>Player Two</div>
+  <h1>Ton cours devient un jeu.</h1>
+  <p class="muted">Ajoute ton TD, tes slides ou ton poly. Claude en fait des parties de 5 minutes, adaptées à ton partiel, avec la page du cours à chaque réponse.</p>
+
+  <section class="qcard" id="demo" aria-live="polite"></section>
+
+  <a class="btn" id="open" href="https://claude.ai/artifact/QGYa5c8WPtBdMXFxmQjc2m" target="_blank" rel="noopener">Ouvrir Player Two dans Claude</a>
+  <p class="small muted" style="margin-top:-12px">Gratuit, avec ton compte Claude. Rien à installer.</p>
+
+  <section class="steps" aria-label="Comment ça marche">
+    <div><span class="num">1</span><span><b>Un dossier par cours.</b> Tu y ajoutes ton PDF.</span></div>
+    <div><span class="num">2</span><span><b>Tu dis ton partiel</b> : QCM, dissert ou cas, la date, ton temps.</span></div>
+    <div><span class="num">3</span><span><b>Claude crée ta partie.</b> Chaque citation est vérifiée mot pour mot dans ton fichier.</span></div>
+    <div><span class="num">4</span><span><b>Ce que tu rates revient</b> jusqu’à ce que ça rentre.</span></div>
+  </section>
+
+  <section class="box"><h3>Tes fichiers ?</h3><p class="small">Pas de compte en plus, pas de serveur à nous. Ton cours est lu dans ton navigateur et envoyé seulement à ton Claude quand tu crées une partie.</p></section>
+
+  <section class="box"><h3>Tu codes ?</h3><p class="small">Le moteur marche aussi dans Claude Code, Codex ou Gemini CLI :</p><code>npx skills add aniasnotebook/study-engine</code><p class="small muted">Puis : « Player Two : interroge-moi sur mon dossier de cours ».</p></section>
+
+  <p class="small muted">ChatGPT et Gemini : bientôt.</p>
+</main>
+<script>
+const CARDS = [
+  {s:'Avant d’acheter un ordi, Léna compare trois modèles sur des sites.', q:'Elle est à quelle étape du parcours client ?', o:['Pré-achat','Achat','Post-achat','Fidélité'], a:'Pré-achat', w:'Comparer des offres, c’est avant la transaction.', quote:'Le pré-achat regroupe tout ce qui se passe avant la transaction', p:1},
+  {s:'Tom lit les avis TripAdvisor avant de réserver un hôtel.', q:'Le site d’avis, c’est quel type de point de contact ?', o:['Brand-owned','Partner-owned','Customer-owned','Social/external'], a:'Social/external', w:'Les avis en ligne échappent à la marque.', quote:'Les points de contact social/external échappent à la marque, comme les avis en ligne', p:2}
+];
+let i = 0, picked = null;
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function draw(){
+  const el = document.getElementById('demo');
+  if (i >= CARDS.length) { el.innerHTML = `<span class="tag">Essai terminé</span><h3>Avec ton cours, c’est pareil.</h3><p class="small muted">Ces cartes viennent d’un TD de marketing. Les tiennes viendront de tes fichiers.</p><button class="opt" id="again">Rejouer l’essai</button>`; document.getElementById('again').onclick = () => { i = 0; picked = null; draw(); }; return; }
+  const c = CARDS[i], done = picked !== null, ok = picked === c.a;
+  el.innerHTML = `<span class="tag">Essaie · carte ${i+1} sur ${CARDS.length}</span><p>${esc(c.s)}</p><h2>${esc(c.q)}</h2>
+  <div style="display:flex;flex-direction:column;gap:8px">${c.o.map(o => `<button class="opt ${done ? (o===c.a?'good':o===picked?'bad':'') : ''}" data-v="${esc(o)}" ${done?'disabled':''}>${esc(o)}</button>`).join('')}</div>
+  ${done ? `<div class="fb ${ok?'ok':'no'}"><b>${ok?'Exact':'Raté · c’était ' + esc(c.a)}</b><span>${esc(c.w)}</span><span class="quote">« ${esc(c.quote)} » · TD3 p. ${c.p}</span></div><button class="opt" id="nx" style="background:var(--ink);color:var(--paper);text-align:center">Suivante</button>` : ''}`;
+  el.querySelectorAll('[data-v]').forEach(b => b.onclick = () => { picked = b.dataset.v; draw(); });
+  const nx = document.getElementById('nx'); if (nx) nx.onclick = () => { i++; picked = null; draw(); };
+}
+draw();
+</script>
+</body>
+</html>
