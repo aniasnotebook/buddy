@@ -3,97 +3,114 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Player Two</title>
-<meta name="description" content="Ton cours devient un jeu. Claude crée tes exercices, avec la page du cours à chaque réponse.">
-<meta property="og:title" content="Player Two · Ton cours devient un jeu">
-<meta property="og:description" content="Ajoute ton cours. Claude en fait des parties de 5 minutes, avec la page du cours à chaque réponse.">
+<title>Buddy · Ton cours devient un jeu</title>
+<meta name="description" content="Ajoute ton cours. Claude en fait des parties de 5 minutes pour ton partiel, avec la page du cours à chaque réponse.">
+<meta property="og:title" content="Buddy · Ton cours devient un jeu">
+<meta property="og:description" content="Des parties de 5 minutes sur ton cours, avec la page à chaque réponse.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Manrope:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Titan+One&family=Inter:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap">
 <style>
-/* A phone-width column: the promise, one playable card in the middle, one button. */
-:root{
-  --paper:#fbf8f2; --card:#ffffff; --ink:#1b1a17; --muted:#625e52; --line:#d9d3c4;
-  --hot:#f06a98; --hot-ink:#1b1a17; --ok:#d8f1d2; --ok-ink:#1d5a20; --no:#fbd8d8; --no-ink:#8a1f1f; --sun:#ffd66b;
-  --disp:'Bricolage Grotesque','Manrope',system-ui,sans-serif; --body:'Manrope',system-ui,-apple-system,'Segoe UI',sans-serif;
-  color-scheme:light;
-}
-@media (prefers-color-scheme: dark){:root{
-  --paper:#16150f; --card:#211f19; --ink:#f3efe4; --muted:#b4ad9c; --line:#3d392e;
-  --hot:#f27aa3; --hot-ink:#16150f; --ok:#1f3a1d; --ok-ink:#a9e3a0; --no:#43201f; --no-ink:#f3b0b0; --sun:#8a6d1c; color-scheme:dark}}
+/* Buddy landing, look C on plain white. Computer: promise left, a game to try right, 3 steps below. Phone: stacked, the button pinned at the bottom. */
+:root{--white:#fff;--ink:#111;--muted:#737373;--rim:#e6e6e6;--mist:#f5f5f5;--pink:#f06a98;--pink-tint:#fde3ec;--green:#7fee64;--orange:#ff7a45;--orange-tint:#fff1ea;
+  --disp:'Titan One','Arial Black',sans-serif;--body:Inter,system-ui,-apple-system,'Segoe UI',sans-serif;--mono:'DM Mono',ui-monospace,monospace;color-scheme:light}
 *{box-sizing:border-box}
-body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.5 var(--body);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-main{max-width:520px;margin:0 auto;padding-block:20px 56px;display:flex;flex-direction:column;gap:22px}
-h1,h2,h3{font-family:var(--disp);font-weight:800;margin:0;line-height:1.05;text-wrap:balance}
-h1{font-size:44px;letter-spacing:-.02em} h2{font-size:26px} h3{font-size:20px}
+body{margin:0;background:var(--white);color:var(--ink);font:17px/1.5 var(--body);letter-spacing:-.01em;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+main{max-width:1120px;margin:0 auto;padding-block:20px 120px;display:flex;flex-direction:column;gap:40px}
+h1,h2,h3{font-family:var(--disp);font-weight:400;margin:0;line-height:1.02;text-wrap:balance}
 p{margin:0} .muted{color:var(--muted)} .small{font-size:14px}
-.tag{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-.logo{display:flex;align-items:center;gap:8px;font-family:var(--disp);font-weight:800;font-size:19px}
-.two{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:9px;background:var(--hot);color:var(--hot-ink);border:2px solid var(--ink);font-size:17px;transform:rotate(-6deg)}
-.qcard{background:var(--card);border:2px solid var(--ink);border-radius:22px;padding:20px;box-shadow:6px 6px 0 var(--ink);display:flex;flex-direction:column;gap:12px}
-.opt{font:inherit;color:inherit;min-height:52px;border:2px solid var(--ink);border-radius:14px;background:var(--card);text-align:left;padding:10px 14px;font-weight:600;width:100%;cursor:pointer}
-.opt.good{background:var(--ok);color:var(--ok-ink);border-color:var(--ok-ink)} .opt.bad{background:var(--no);color:var(--no-ink);border-color:var(--no-ink)}
-.fb{border-radius:14px;padding:12px;font-size:15px;display:flex;flex-direction:column;gap:6px}
-.fb.ok{background:var(--ok);color:var(--ok-ink)} .fb.no{background:var(--no);color:var(--no-ink)}
-.quote{font-size:14px;border-left:3px solid currentColor;padding-left:10px;font-style:italic}
-.btn{display:flex;align-items:center;justify-content:center;min-height:56px;border-radius:16px;border:2px solid var(--ink);background:var(--hot);color:var(--hot-ink);font-weight:800;font-size:18px;text-decoration:none;padding:0 18px}
-.btn:focus-visible,.opt:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
-.steps{display:flex;flex-direction:column;gap:12px}
-.steps div{display:flex;gap:12px;align-items:flex-start}
-.num{flex:none;width:30px;height:30px;border-radius:9px;border:2px solid var(--ink);display:flex;align-items:center;justify-content:center;font-weight:800;background:var(--sun);color:#1b1a17}
-.box{border:2px solid var(--ink);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:10px;background:var(--card)}
-code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:14px;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:8px 10px;display:block;overflow-x:auto}
+.label{font:500 11px/1.3 var(--mono);letter-spacing:.02em;text-transform:uppercase;color:var(--muted)}
+.word{display:inline-flex;align-items:flex-end;white-space:nowrap;font-family:var(--disp);line-height:1}
+.word .dc{display:inline-flex;align-items:center;justify-content:center;width:.62em;height:.98em;border-radius:.14em;margin:0 -.02em;vertical-align:-.12em}
+.word .dc span{font-size:.82em;line-height:1}
+.dc.p{background:var(--pink);color:var(--ink);transform:rotate(-8deg)} .dc.k{background:var(--ink);color:var(--white);transform:rotate(7deg)}
+.top{display:flex;justify-content:space-between;align-items:center;min-height:52px}
+.btn{display:flex;align-items:center;justify-content:center;min-height:56px;border-radius:16px;background:var(--pink);color:var(--ink);box-shadow:0 4px 0 rgba(0,0,0,.2);font-weight:600;font-size:17px;padding:0 24px;text-decoration:none;border:0;cursor:pointer;transition:transform .08s,box-shadow .08s}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.2)}
+.btn.sm{min-height:44px;font-size:15px;border-radius:12px;padding:0 16px}
+a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid var(--pink);outline-offset:2px}
+.hero{display:grid;gap:32px;align-items:center}
+.hero h1{font-size:clamp(48px,9vw,84px)}
+.hero .lead{font-size:19px;color:var(--muted);max-width:30em;margin-top:18px}
+.cta{display:flex;flex-direction:column;gap:10px;margin-top:28px;max-width:360px}
+/* the game to try */
+.demo{border:1px solid var(--rim);border-radius:28px;padding:18px;display:flex;flex-direction:column;gap:12px;max-width:520px;width:100%;justify-self:center}
+.stage{background:var(--ink);color:var(--white);border-radius:22px;padding:20px;display:flex;flex-direction:column;gap:10px}
+.stage .label{color:#a3a3a3} .stage .sit{color:#d4d4d4;font-size:16px} .stage .q{font-weight:600;font-size:24px;line-height:1.15;letter-spacing:-.02em}
+.opt{font:inherit;color:inherit;display:flex;justify-content:space-between;align-items:center;min-height:54px;border-radius:16px;background:var(--white);border:2px solid var(--rim);border-bottom-width:4px;padding:8px 16px;font-weight:600;text-align:left;width:100%;cursor:pointer}
+.opt.good{border-color:var(--ink)} .opt.bad{background:var(--orange-tint);border-color:var(--orange)} .opt.fade{opacity:.35}
+.dot{display:inline-block;width:10px;height:10px;border-radius:99px;flex:none} .dot.ok{background:var(--green)} .dot.no{background:var(--orange)}
+.verdict{border:1px solid var(--rim);border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:8px;box-shadow:0 12px 32px rgba(0,0,0,.08)}
+.verdict .w{display:flex;align-items:center;gap:10px;font-family:var(--disp);font-size:24px}
+.quote{padding:10px 12px;border-radius:12px;background:var(--mist);font:13px/1.5 var(--mono)}
+.next{font:inherit;min-height:50px;border-radius:14px;background:var(--ink);color:var(--white);border:0;font-weight:600;cursor:pointer}
+/* steps and boxes */
+.steps{display:grid;gap:14px}
+.step{border:1px solid var(--rim);border-radius:22px;padding:20px;display:flex;flex-direction:column;gap:8px}
+.step .n{width:40px;height:52px;border-radius:10px;background:var(--ink);color:var(--pink);font-family:var(--disp);font-size:24px;display:flex;align-items:center;justify-content:center;transform:rotate(-5deg);margin-bottom:6px}
+.step:nth-child(2) .n{background:var(--pink);color:var(--ink);transform:rotate(5deg)}
+.boxes{display:grid;gap:14px}
+.box{background:var(--mist);border-radius:22px;padding:20px;display:flex;flex-direction:column;gap:10px}
+details summary{font-weight:600;min-height:44px;display:flex;align-items:center;cursor:pointer}
+ol{margin:6px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+code{font:13px/1.5 var(--mono);background:var(--white);border:1px solid var(--rim);border-radius:10px;padding:10px 12px;display:block;overflow-x:auto}
 a{color:inherit}
+.dock{position:fixed;left:0;right:0;bottom:0;padding:12px max(16px,env(safe-area-inset-right,0px)) calc(14px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));background:linear-gradient(to top,var(--white) 70%,rgba(255,255,255,0));z-index:5}
+.top .btn,.cta .btn{display:none}
+@media (min-width:900px){
+  main{padding-bottom:64px;gap:56px}
+  .hero{grid-template-columns:1fr 1fr;gap:56px}
+  .steps,.boxes{grid-template-columns:repeat(3,1fr)}
+  .boxes{grid-template-columns:repeat(2,1fr)}
+  .dock{display:none} .top .btn,.cta .btn{display:flex}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
 <main>
-  <div class="logo"><span class="two">2</span>Player Two</div>
-  <h1>Ton cours devient un jeu.</h1>
-  <p class="muted">Ajoute ton TD, tes slides ou ton poly. Claude en fait des parties de 5 minutes, adaptées à ton partiel, avec la page du cours à chaque réponse.</p>
+  <header class="top"><span class="word" style="font-size:30px" role="img" aria-label="Buddy">Bu<span class="dc p"><span>d</span></span><span class="dc k"><span>d</span></span>y</span><a class="btn sm install" target="_blank" rel="noopener">Installer dans mon Claude</a></header>
 
-  <section class="qcard" id="demo" aria-live="polite"></section>
-
-  <section class="box" id="install" aria-label="Installer Player Two">
-    <h2>Installe-le dans ton Claude</h2>
-    <a class="btn" href="https://claude.ai/new?q=Ouvre%20Player%20Two%20%3A%20cr%C3%A9e%20un%20artifact%20HTML%20dont%20le%20contenu%20est%20exactement%20ce%20fichier%2C%20copi%C3%A9%20en%20entier%2C%20sans%20rien%20changer%20ni%20raccourcir.%20Titre%20%3A%20Player%20Two.%20https%3A//raw.githubusercontent.com/aniasnotebook/study-engine/main/app/player-two.html" target="_blank" rel="noopener">Installer dans mon Claude</a>
-    <p class="small">Claude s’ouvre avec le message déjà écrit : envoie-le. Ton Claude crée ton app, dans ton compte. Pour la retrouver, rouvre cette conversation.</p>
-    <details class="small"><summary style="font-weight:700;min-height:40px;cursor:pointer">Ça n’a pas marché ?</summary>
-      <div class="steps" style="margin-top:8px">
-        <div><span class="num">1</span><span><a href="https://github.com/aniasnotebook/study-engine/raw/main/dist/player-two-skill.zip">Télécharge le fichier Player Two</a>.</span></div>
-        <div><span class="num">2</span><span>Dans Claude : Personnaliser › Skills › importer le fichier (active l’exécution de code si on te le demande).</span></div>
-        <div><span class="num">3</span><span>Dans une nouvelle conversation : « Ouvre Player Two ».</span></div>
-      </div></details>
-    <p class="small muted">Gratuit, avec ton compte Claude.</p>
+  <section class="hero">
+    <div>
+      <h1>Ton cours devient un jeu.</h1>
+      <p class="lead">Ajoute ton TD, tes diapos, tes annales. Claude en fait des parties de 5 minutes pour ton partiel, avec la page du cours à chaque réponse.</p>
+      <div class="cta"><a class="btn install" target="_blank" rel="noopener">Installer dans mon Claude</a><span class="small muted">Gratuit, avec ton compte Claude.</span></div>
+    </div>
+    <section class="demo" id="demo" aria-live="polite" aria-label="Essaie une partie"></section>
   </section>
 
-  <h2 style="font-size:22px">Et après ?</h2>
   <section class="steps" aria-label="Comment ça marche">
-    <div><span class="num">1</span><span><b>Un dossier par cours.</b> Tu y ajoutes ton PDF, depuis ton téléphone ou ton Google Drive.</span></div>
-    <div><span class="num">2</span><span><b>Tu dis ton partiel</b> : QCM, dissert ou cas, la date, ton temps.</span></div>
-    <div><span class="num">3</span><span><b>Claude crée ta partie.</b> Chaque citation est vérifiée mot pour mot dans ton fichier.</span></div>
-    <div><span class="num">4</span><span><b>Ce que tu rates revient</b> jusqu’à ce que ça rentre.</span></div>
+    <div class="step"><span class="n">1</span><h3 style="font-size:24px">Installe-le en un tap</h3><p class="muted">Ton Claude s’ouvre avec « Ouvre Buddy » déjà écrit. Tu l’envoies, Buddy apparaît.</p></div>
+    <div class="step"><span class="n">2</span><h3 style="font-size:24px">Ajoute ton cours</h3><p class="muted">PDF, diapos, Word, photos de notes, annales. Depuis ton téléphone ou ton Drive.</p></div>
+    <div class="step"><span class="n">3</span><h3 style="font-size:24px">Joue 5 minutes</h3><p class="muted">Ce que tu rates revient jusqu’à ce que ça rentre.</p></div>
   </section>
 
-  <section class="box"><h3>Tes fichiers ?</h3><p class="small">Pas de compte en plus, pas de serveur à nous. Ton app est dans ton compte Claude. Ton cours est lu dans ton navigateur et envoyé seulement à ton Claude quand tu crées une partie.</p></section>
-
-  <section class="box"><h3>Tu codes ?</h3><p class="small">Le moteur marche aussi dans Claude Code, Codex ou Gemini CLI :</p><code>npx skills add aniasnotebook/study-engine</code><p class="small muted">Puis : « Player Two : interroge-moi sur mon dossier de cours ».</p></section>
-
-  <p class="small muted">ChatGPT et Gemini : bientôt.</p>
+  <section class="boxes">
+    <div class="box"><h3 style="font-size:22px">Ça n’a pas marché&nbsp;?</h3>
+      <ol class="small"><li><a href="https://github.com/aniasnotebook/study-engine/raw/main/dist/buddy-skill.zip">Télécharge le fichier Buddy</a>.</li><li>Dans Claude : Personnaliser › Skills › importer le fichier (active l’exécution de code si on te le demande).</li><li>Dans une nouvelle conversation : « Ouvre Buddy ».</li></ol>
+      <p class="small muted">Pour retrouver Buddy, rouvre la conversation où il est né.</p></div>
+    <div class="box"><h3 style="font-size:22px">Et tes fichiers&nbsp;?</h3><p class="small">Pas de compte en plus, pas de serveur à nous. Buddy vit dans ton compte Claude. Ton cours est lu dans ton navigateur, et envoyé seulement à ton Claude quand tu crées un jeu.</p>
+      <details class="small"><summary>Tu codes&nbsp;?</summary><code>npx skills add aniasnotebook/study-engine</code><p class="muted" style="margin-top:6px">Puis, dans Claude Code ou Codex : « Buddy : interroge-moi sur mon dossier de cours ».</p></details></div>
+  </section>
 </main>
+<div class="dock"><a class="btn install" target="_blank" rel="noopener">Installer dans mon Claude</a></div>
 <script>
+const MSG = 'Ouvre Buddy : crée un artifact HTML dont le contenu est exactement ce fichier, copié en entier, sans rien changer ni raccourcir. Titre : Buddy. Puis propose-moi de connecter Google Drive pour retrouver mes cours. https://raw.githubusercontent.com/aniasnotebook/study-engine/main/app/buddy.html';
+document.querySelectorAll('.install').forEach(a => a.href = 'https://claude.ai/new?q=' + encodeURIComponent(MSG));
 const CARDS = [
-  {s:'Avant d’acheter un ordi, Léna compare trois modèles sur des sites.', q:'Elle est à quelle étape du parcours client ?', o:['Pré-achat','Achat','Post-achat','Fidélité'], a:'Pré-achat', w:'Comparer des offres, c’est avant la transaction.', quote:'Le pré-achat regroupe tout ce qui se passe avant la transaction', p:1},
-  {s:'Tom lit les avis TripAdvisor avant de réserver un hôtel.', q:'Le site d’avis, c’est quel type de point de contact ?', o:['Brand-owned','Partner-owned','Customer-owned','Social/external'], a:'Social/external', w:'Les avis en ligne échappent à la marque.', quote:'Les points de contact social/external échappent à la marque, comme les avis en ligne', p:2}
+  {s:'Avant d’acheter un ordi, Léna compare trois modèles sur des sites.', q:'Elle est à quelle étape ?', o:['Achat','Pré-achat','Post-achat','Fidélité'], a:'Pré-achat', w:'Comparer des offres, c’est avant la transaction.', quote:'Le pré-achat regroupe tout ce qui se passe avant la transaction', p:1},
+  {s:'Tom lit les avis TripAdvisor avant de réserver un hôtel.', q:'Le site d’avis, c’est quel point de contact ?', o:['Brand-owned','Partner-owned','Customer-owned','Social/external'], a:'Social/external', w:'Les avis en ligne échappent à la marque.', quote:'Les points de contact social/external échappent à la marque, comme les avis en ligne', p:2},
+  {s:'Après son achat, Inès reçoit un bon de réduction et recommande la même marque.', q:'Elle entre dans quoi ?', o:['La boucle de fidélité','Le pré-achat','L’achat','Un point de contact partner-owned'], a:'La boucle de fidélité', w:'Le déclencheur du post-achat mène au rachat : c’est la fidélité.', quote:'Au post-achat, un déclencheur mène soit à la fidélité, avec un rachat', p:2}
 ];
 let i = 0, picked = null;
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function draw(){
   const el = document.getElementById('demo');
-  if (i >= CARDS.length) { el.innerHTML = `<span class="tag">Essai terminé</span><h3>Avec ton cours, c’est pareil.</h3><p class="small muted">Ces cartes viennent d’un TD de marketing. Les tiennes viendront de tes fichiers.</p><button class="opt" id="again">Rejouer l’essai</button>`; document.getElementById('again').onclick = () => { i = 0; picked = null; draw(); }; return; }
+  if (i >= CARDS.length) { el.innerHTML = `<div class="stage"><span class="label">Essai terminé</span><p class="q">Avec ton cours, c’est pareil.</p><p class="sit">Ces cartes viennent d’un TD de marketing. Les tiennes viendront de tes fichiers.</p></div><button class="next" id="again">Rejouer l’essai</button>`; document.getElementById('again').onclick = () => { i = 0; picked = null; draw(); }; return; }
   const c = CARDS[i], done = picked !== null, ok = picked === c.a;
-  el.innerHTML = `<span class="tag">Essaie · carte ${i+1} sur ${CARDS.length}</span><p>${esc(c.s)}</p><h2>${esc(c.q)}</h2>
-  <div style="display:flex;flex-direction:column;gap:8px">${c.o.map(o => `<button class="opt ${done ? (o===c.a?'good':o===picked?'bad':'') : ''}" data-v="${esc(o)}" ${done?'disabled':''}>${esc(o)}</button>`).join('')}</div>
-  ${done ? `<div class="fb ${ok?'ok':'no'}"><b>${ok?'Exact':'Raté · c’était ' + esc(c.a)}</b><span>${esc(c.w)}</span><span class="quote">« ${esc(c.quote)} » · TD3 p. ${c.p}</span></div><button class="opt" id="nx" style="background:var(--ink);color:var(--paper);text-align:center">Suivante</button>` : ''}`;
+  el.innerHTML = `<div class="stage"><span class="label">Essaie · ${i + 1} sur ${CARDS.length} · TD de marketing</span><p class="sit">${esc(c.s)}</p><p class="q">${esc(c.q)}</p></div>
+  ${c.o.map(o => `<button class="opt ${done ? (o === c.a ? 'good' : o === picked ? 'bad' : 'fade') : ''}" data-v="${esc(o)}" ${done ? 'disabled' : ''}>${esc(o)}${done && o === c.a ? '<span class="dot ok"></span>' : ''}</button>`).join('')}
+  ${done ? `<div class="verdict" role="status"><div class="w"><span class="dot ${ok ? 'ok' : 'no'}" style="width:12px;height:12px"></span>${ok ? 'Exact !' : 'Pas tout à fait'}</div><p class="small">${ok ? '' : '<b>Réponse : ' + esc(c.a) + '.</b> '}${esc(c.w)}</p><p class="quote">« ${esc(c.quote)} » — TD3, p. ${c.p}</p><button class="next" id="nx">Continuer</button></div>` : ''}`;
   el.querySelectorAll('[data-v]').forEach(b => b.onclick = () => { picked = b.dataset.v; draw(); });
   const nx = document.getElementById('nx'); if (nx) nx.onclick = () => { i++; picked = null; draw(); };
 }
