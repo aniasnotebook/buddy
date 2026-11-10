@@ -164,18 +164,20 @@ textarea{min-height:140px;resize:vertical;line-height:1.45}
 .slot .e{flex:1;min-height:56px;border-radius:14px;background:var(--mist);border:2px dashed var(--rim)}
 .line{display:flex;gap:10px;min-height:56px;align-items:center;padding:10px 16px;border-radius:16px;background:var(--white);border:2px solid var(--rim);border-bottom-width:4px;font-size:17px;font-weight:600;text-align:left;width:100%}
 .line.sel{background:var(--pink-tint);border-color:var(--pink)} .line.bad{background:var(--red-tint);border-color:var(--red)}
-.fl{display:flex;flex-direction:column;gap:16px;padding-bottom:120px;overflow-x:clip}
+.fl{display:flex;flex-direction:column;gap:16px;padding-bottom:110px;overflow-x:clip;min-height:calc(100dvh - 32px)}
+/* the card and its actions sit in the middle of the free space */
+.fbody{flex:1;display:flex;flex-direction:column;justify-content:center;gap:16px;padding-top:18px}
 .fcard{position:relative;align-self:center;width:min(560px,100%);min-height:min(46vh,360px);border-radius:30px;padding:28px;display:flex;flex-direction:column;gap:16px;text-align:left;touch-action:pan-y;user-select:none;-webkit-user-select:none;cursor:pointer;transition:transform .25s cubic-bezier(.2,.8,.2,1)}
 .fcard.front{background:var(--ink);color:var(--white);justify-content:space-between}
 .fcard.back{background:var(--white);border:2px solid var(--ink);border-bottom-width:6px;cursor:grab}
 .fcard .term{font-family:var(--disp);font-size:clamp(30px,7vw,52px);line-height:1.05;overflow-wrap:anywhere}
 .fcard .def{font-size:clamp(18px,2.6vw,22px);line-height:1.4;font-weight:500;overflow-wrap:anywhere}
 .fcard.back .label:last-child{margin-top:auto}
-.fcard .stamp{position:absolute;top:-16px;padding:6px 14px;border-radius:12px;font-family:var(--disp);font-size:22px;opacity:0;transition:opacity .1s}
-.fcard .stamp.yes{right:22px;background:var(--green);color:var(--ink);transform:rotate(8deg)} .fcard .stamp.no{left:22px;background:var(--orange);color:var(--ink);transform:rotate(-8deg)}
+.fcard .stamp{position:absolute;top:-18px;left:50%;right:auto;padding:6px 14px;border-radius:12px;font-family:var(--disp);font-size:22px;opacity:0;transition:opacity .1s}
+.fcard .stamp.yes{background:var(--green);color:var(--ink);transform:translateX(-50%) rotate(-4deg)} .fcard .stamp.no{background:var(--orange);color:var(--ink);transform:translateX(-50%) rotate(4deg)}
 .fhint{display:flex;justify-content:space-between;color:var(--muted);font-size:13px;font-weight:600;width:min(560px,100%);align-self:center}
 .flink{align-self:center}
-@media (min-width:900px){.fl{padding-bottom:30px}.fl .dock{width:min(560px,100%);align-self:center}}
+@media (min-width:900px){.fl{padding-bottom:24px}.fl .dock{width:min(560px,100%);align-self:center}}
 .timer{height:6px;border-radius:3px;background:#333;overflow:hidden} .timer i{display:block;height:100%;background:var(--pink);transition:width 1s linear}
 .done-tags{display:flex;gap:6px;flex-wrap:wrap}
 .done-tags span{font-size:13px;font-weight:600;padding:5px 10px;border-radius:99px;background:#f0fde9;color:var(--green-ink)}
@@ -994,7 +996,7 @@ function play(){
   const segs = Array.from({length: Math.min(total, 12)}, (_, i) => `<i class="${again || i < Math.round(Math.min(g.i + (st.done ? 1 : 0), total) / total * Math.min(total, 12)) ? 'on' : ''}"></i>`).join('');
   const count = again ? 'Rattrapage' : (g.i + 1) + '/' + total;
   if (k.type === 'flash') return `<div class="fl"><div class="gtop"><button class="icon" data-a="quit" aria-label="Quitter le jeu">${ic('close')}</button><div class="segs" role="progressbar" aria-valuenow="${g.i}" aria-valuemax="${total}">${segs}</div><span class="label">${count}</span></div>
-  ${flashHtml(k, st)}<div class="dock"><div>${dockHtml(k, st, g)}</div></div></div>`;
+  <div class="fbody">${flashHtml(k, st)}<div class="dock"><div>${dockHtml(k, st, g)}</div></div></div></div>`;
   return `<div class="g"><div class="gtop"><button class="icon" data-a="quit" aria-label="Quitter le jeu">${ic('close')}</button><div class="segs" role="progressbar" aria-valuenow="${g.i}" aria-valuemax="${total}">${segs}</div><span class="label">${count}</span></div>
   ${stageHtml(k, g.i >= g.cards.length)}<div class="move">${moveHtml(k, st)}<div class="dock${st.done ? ' flow' : ''}"><div>${dockHtml(k, st, g)}</div></div></div></div>`;
 }
