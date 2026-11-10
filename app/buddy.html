@@ -327,7 +327,7 @@ async function makeGame(opts){
 
 L’étudiante :
 - Son objectif, qui passe avant tout le reste : ${goal || 'réussir son partiel'}.
-- Son partiel : ${fmt(c) === 'Format choisi par Claude' ? 'format inconnu, déduis-le de ses annales et de son cours' : fmt(c)}${days !== null && days >= 0 ? ', dans ' + plural(days, 'jour') : ''}.
+- Le format des exercices qu’elle veut : ${fmt(c) === 'Format choisi par Claude' ? 'à toi de choisir, d’après ses annales et son cours' : fmt(c)}.${days !== null && days >= 0 ? '\n- Son partiel est dans ' + plural(days, 'jour') + '.' : ''}
 - Ce jeu : ${mix}. ${minutes} minutes, donc ${n} cartes.${focus ? '\n- Uniquement sur : ' + focus + '.' : ''}${reviewPart}
 
 Réponds uniquement avec ce JSON : {"title":"titre court du jeu","cards":[ ... ]}
@@ -603,9 +603,9 @@ function examSetup(c, inSheet){
   const gch = v => `<button class="chip" data-a="goal" data-v="${v}" aria-pressed="${c.goal === v}">${v}</button>`;
   return `<span class="label">Ton objectif</span><div class="chips">${GOALS.map(gch).join('')}</div>
   ${c.goal === 'Autre' ? `<input id="goalother" placeholder="Ex. comprendre les écritures de fin d’année" value="${esc(c.goalOther || '')}" aria-label="Ton objectif">` : ''}
-  <span class="label">Le format du partiel</span><div class="chips">${ch('format', 'auto', 'Claude choisit')}${['QCM','Dissertation','Cas pratique','Autre'].map(v => ch('format', v)).join('')}</div>
+  <span class="label">Le format des exercices</span><div class="chips">${ch('format', 'auto', 'Claude choisit')}${['QCM','Dissertation','Cas pratique','Autre'].map(v => ch('format', v)).join('')}</div>
   ${!e.format || e.format === 'auto' ? '<p class="tiny muted">Claude le devine d’après tes annales et ton cours.</p>' : ''}
-  ${e.format === 'Autre' ? `<input id="exother" placeholder="Autre : oral, exposé, partiel en ligne…" value="${esc(e.other)}" aria-label="Ton format">` : ''}
+  ${e.format === 'Autre' ? `<input id="exother" placeholder="Autre : écritures comptables, schémas, oral…" value="${esc(e.other)}" aria-label="Format des exercices">` : ''}
   <span class="label">Quand</span><div class="chips">${ch('when','none','Peu importe')}${ch('when','exact','Date exacte')}${ch('when','2w','Dans 2 semaines')}</div>
   ${e.when === 'exact' ? `<input id="exdate" type="date" value="${esc(e.date)}" aria-label="Date du partiel">` : ''}
   ${inSheet ? '<button class="btn" data-a="close">OK</button>' : ''}`;
