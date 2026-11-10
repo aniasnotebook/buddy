@@ -267,7 +267,7 @@ Tu choisis UNIQUEMENT parmi ces modèles ("type") et tu remplis leurs champs :
 - "number" : situation, ask, numbers {nom: valeur}, formula (arithmétique sur les noms : + - * / ( ) ^ et sqrt(...)), answer (nombre), unit, steps[] (le calcul étape par étape). Change les chiffres des exemples du cours : elle doit appliquer la règle, pas se souvenir du résultat.
 - "speed" : ask, pairs[4-6] = [terme, définition courte].
 - "explain" : ask, model (réponse attendue), keys[2-4] (les idées que la réponse doit contenir).
-Preuve : chaque carte a "quote" et "page". "quote" = la phrase du cours qui JUSTIFIE la bonne réponse (une règle, une définition, une ligne de corrigé), recopiée MOT POUR MOT, 30 mots max ; jamais l’énoncé de l’exercice ni un exemple chiffré du cours : cite la règle ou la formule en mots. Recopie de la prose plutôt qu’une formule mise en forme. "page" = le numéro du marqueur [type · fichier · p. N]. N’invente rien qui ne soit pas dans le cours.`;
+Preuve : chaque carte a "quote" et "page". "quote" = une phrase du cours sur la notion testée (la règle, la définition, la ligne de corrigé), recopiée MOT POUR MOT, 30 mots max, de la prose plutôt qu’une formule mise en forme : elle sert à vérifier que la carte vient du cours et à ouvrir la bonne page ; elle n’est pas montrée. L’explication, c’est "why". "page" = le numéro du marqueur [type · fichier · p. N]. N’invente rien qui ne soit pas dans le cours.`;
 const FORMAT_MIX = {QCM:'surtout "pick" et "case" avec des pièges très proches', Dissertation:'des "build" et "explain" (arguments, définitions d’intro), des "pick" sur les distinctions, un "order" si possible', 'Cas pratique':'surtout "case" et "pick" concrets, un "explain" pour justifier', 'Juste comprendre':'"flash", "sort" et "pick" simples puis plus durs'};
 const TYPE_MIX = {'Claude choisit':null, Situations:'uniquement "pick" et "case"', Flashcards:'uniquement "flash"', Trier:'uniquement "sort"', Ordre:'uniquement "order"', Construire:'uniquement "build"', Rédiger:'uniquement "explain"', Calculs:'uniquement "number" et "mistake" sur les calculs du cours', 'Speed round':'un seul "speed" puis des "flash"'};
 
@@ -294,7 +294,7 @@ function finder(c){
 /* Claude's instructions are not a guarantee: a card must carry an explanation, and its quote must prove the answer, not repeat the exercise. */
 const wordsOf = t => norm(t).match(/[a-zà-ÿ0-9]{4,}/g) || [];
 function echoes(k){ const q = wordsOf(k.quote); if (q.length < 4) return false; const ctx = new Set(wordsOf((k.situation || '') + ' ' + (k.ask || ''))); return q.filter(w => ctx.has(w)).length / q.length >= .5; }
-const sound = k => !!k && (k.type !== 'pick' || !!String(k.why || '').trim()) && (k.type === 'flash' || !echoes(k));
+const sound = k => !!k && (k.type !== 'pick' || !!String(k.why || '').trim());
 function checkCards(c, all){
   const find = finder(c);
   const out = []; let used = 0;
@@ -663,7 +663,16 @@ function makingScreen(){
   return `<div class="making"><div class="deck" aria-hidden="true">${Array.from({length: m.n}, (_, i) => `<i class="${i < m.written ? 'on' : ''}"></i>`).join('')}</div><h2 style="font-size:28px">Je prépare ta partie</h2>
   <div class="steps"><div class="${st(0)}"><span class="dot"></span>Je lis ton cours</div><div class="${st(1)}"><span class="dot"></span>J’écris les cartes<span id="written">${m.written ? ' · ' + Math.min(m.written, m.n) + '/' + m.n : ''}</span></div><div class="${st(2)}"><span class="dot"></span>Je vérifie chaque citation</div></div></div>`;
 }
-const src = k => `<p class="quote">«&nbsp;${esc(k.quote)}&nbsp;» — ${esc(k.file || 'ton cours')}, p.&nbsp;${k.page}</p>`;
+/* Where it comes from: a link that opens the passage of her course, the course sentence highlighted when it is found. */
+function pageOf(k){ const c = S.courses.find(x => x.id === (game?.courseId || view.id)); const f = c?.files.find(x => x.name === k.file) || c?.files.find(x => x.pages?.some(p => p.p === k.page)); return f?.pages?.find(p => p.p === k.page)?.text || ''; }
+function src(k){
+  const st = game?.st, open = st?.showSrc, label = `Voir dans ton cours · ${esc(String(k.file || 'ton cours').replace(/\.(pdf|pptx|docx|txt|md)$/i, ''))}, ${k.unit === 'diapo' ? 'diapo' : 'p.'}&nbsp;${k.page}`;
+  if (!open) return `<button class="link" data-a="srcopen" style="justify-content:flex-start;text-align:left">${label} ›</button>`;
+  const t = pageOf(k), i = t.toLowerCase().indexOf(String(k.quote || '').toLowerCase().slice(0, 40));
+  const from = Math.max(0, (i < 0 ? 0 : i) - 160), part = t.slice(from, from + 900);
+  const body = i < 0 ? esc(part) : esc(part).replace(esc(t.slice(i, i + String(k.quote).length)), m => '<mark style="background:var(--pink-tint)">' + m + '</mark>');
+  return `<button class="link" data-a="srcopen" style="justify-content:flex-start;text-align:left">${label} ⌄</button><div class="quote" style="max-height:170px;overflow:auto;white-space:pre-wrap">${from > 0 ? '… ' : ''}${body || 'Page introuvable.'}${t.length > from + 900 ? ' …' : ''}</div>`;
+}
 function stageHtml(k, again){
   const labels = {pick: k.caseStep ? 'Cas · décision ' + k.caseStep : 'Situation', sort:'Range', order:'Remets dans l’ordre', build:'Construis ta réponse', mistake:'Une copie d’étudiant', number:'Calcul', explain:'Rédige', speed:'Speed round'};
   const enter = game.shown !== game.cur + ':' + game.i; game.shown = game.cur + ':' + game.i;
@@ -675,7 +684,7 @@ function moveHtml(k, st){
     case 'sort': return `${st.res.length ? `<div class="done-tags">${st.res.map(r => `<span style="${r.ok ? '' : 'background:var(--red-tint);color:#a4161a'}">${r.ok ? '✓' : '✗'} ${esc(r.text)}</span>`).join('')}</div>` : ''}${st.i < st.items.length ? `<span class="label">Dans quelle case&nbsp;?</span><div class="tiles">${k.buckets.map(b => `<button class="pc" data-a="bucket" data-v="${esc(b)}" style="min-height:56px">${esc(b)}</button>`).join('')}</div>` : ''}`;
     case 'order': return `<div class="slots">${k.items.map((_, i) => `<div class="slot"><span class="n">${i + 1}</span>${st.placed[i] ? (st.done ? `<span class="pc ${st.placed[i] === k.items[i] ? 'good' : 'bad'}" style="flex:1">${esc(st.placed[i])}</span>` : `<button class="pc on" data-a="unplace" data-v="${i}" style="flex:1">${esc(st.placed[i])}</button>`) : '<span class="e"></span>'}</div>`).join('')}</div>${st.done ? '' : `<span class="label">Touche la suivante</span><div class="pool">${st.pool.filter(x => !st.placed.includes(x)).map(x => `<button class="pc" data-a="place" data-v="${esc(x)}">${esc(x)}</button>`).join('')}</div>`}`;
     case 'build': return `<div class="answer" data-empty="Touche les blocs pour construire ta réponse">${st.placed.map((x, i) => st.done ? `<span class="pc ${x === k.items[i] ? 'good' : 'bad'}">${esc(x)}${k.traps.includes(x) ? ' · piège' : ''}</span>` : `<button class="pc on" data-a="unplace" data-v="${i}">${esc(x)}</button>`).join('')}</div>${st.done ? '' : `<div class="pool">${st.pool.filter(x => !st.placed.includes(x)).map(x => `<button class="pc" data-a="place" data-v="${esc(x)}">${esc(x)}</button>`).join('')}</div><p class="tiny muted">${plural(k.traps.length, 'bloc')} ${k.traps.length > 1 ? 'sont des pièges' : 'est un piège'}.</p>`}`;
-    case 'flash': return `<div class="flash"><button class="${st.flipped ? 'back' : 'front'}" data-a="flip" aria-label="Retourner la carte">${st.flipped ? `<span class="label">${esc(k.front)}</span><span style="font-weight:600;font-size:20px;line-height:1.3">${esc(k.back)}</span>${src(k)}` : `<span class="label" style="color:#a3a3a3">Flashcard · p. ${k.page}</span><h3>${esc(k.front)}</h3><span class="small" style="color:#a3a3a3">Dis la réponse dans ta tête, puis touche la carte.</span>`}</button></div>`;
+    case 'flash': return `<div class="flash"><button class="${st.flipped ? 'back' : 'front'}" data-a="flip" aria-label="Retourner la carte">${st.flipped ? `<span class="label">${esc(k.front)}</span><span style="font-weight:600;font-size:20px;line-height:1.3">${esc(k.back)}</span><span class="label">${esc(String(k.file || '').replace(/\.(pdf|pptx|docx|txt|md)$/i, ''))} · p. ${k.page}</span>` : `<span class="label" style="color:#a3a3a3">Flashcard · p. ${k.page}</span><h3>${esc(k.front)}</h3><span class="small" style="color:#a3a3a3">Dis la réponse dans ta tête, puis touche la carte.</span>`}</button></div>`;
     case 'mistake': return k.lines.map((l, i) => `<button class="line ${st.done ? (i === +k.answer ? 'good' : i === st.sel ? 'bad' : '') : i === st.sel ? 'sel' : ''}" data-a="line" data-v="${i}" ${st.done ? 'disabled' : ''}><span class="label" style="padding-top:3px">${i + 1}</span>${esc(l)}</button>`).join('');
     case 'number': return `<label class="label" for="num">Ta réponse</label><div class="row" style="flex-wrap:nowrap"><input id="num" inputmode="decimal" placeholder="0" value="${esc(st.val ?? '')}" ${st.done ? 'disabled' : ''} style="font-family:var(--disp);font-size:28px"><span style="font-size:20px;color:var(--muted)">${esc(k.unit || '')}</span></div>${st.done ? '' : `<button class="link" data-a="hint">${st.hint ? esc(k.steps?.[0] || '') : 'Montre-moi la première étape'}</button>`}`;
     case 'speed': return !st.started ? `<button class="btn ink" data-a="speedgo">Go, ${st.time} secondes</button>` : `<div class="timer"><i style="width:${st.time / 25 * 100}%"></i></div><div class="row between"><span class="label">${st.time} s</span><span class="label">${st.gone.length}/${k.pairs.length} paires</span></div>${st.gone.length ? `<div class="done-tags">${st.gone.map(t => `<span>✓ ${esc(t)}</span>`).join('')}</div>` : ''}<div class="tiles"><div class="stack" style="gap:8px"><span class="label">Terme</span>${st.left.filter(t => !st.gone.includes(t)).map(t => `<button class="pc ${st.pickL === t ? 'on' : ''}" data-a="L" data-v="${esc(t)}" ${st.done ? 'disabled' : ''} style="min-height:52px">${esc(t)}</button>`).join('')}</div><div class="stack" style="gap:8px"><span class="label">Définition</span>${st.right.filter(d => !st.gone.includes(k.pairs.find(p => p[1] === d)[0])).map(d => `<button class="pc" data-a="R" data-v="${esc(d)}" ${st.done ? 'disabled' : ''} style="min-height:52px">${esc(d)}</button>`).join('')}</div></div>`;
@@ -716,7 +725,7 @@ function endScreen(){
   const head = right === n ? 'Parfait.' : right >= n - 1 ? 'Presque parfait.' : right >= n / 2 ? 'Bonne partie.' : 'On s’y remet.';
   return `<div class="end"><div class="medal">${right === n ? '★' : right}</div><h1 style="font-size:40px">${head}</h1>
   <div class="stats"><div><b>${right}/${n}</b><span class="label">du 1er coup</span></div><div><b>${c.review.length}</b><span class="label">à revoir</span></div><div><b>${secs >= 60 ? Math.round(secs / 60) + ' min' : secs + ' s'}</b><span class="label">de jeu</span></div></div>
-  ${g.dropped ? `<p class="small muted">${plural(g.dropped, 'carte')} écartée${g.dropped > 1 ? 's' : ''} : la phrase du cours ne prouvait pas la réponse.</p>` : ''}
+  ${g.dropped ? `<p class="small muted">${plural(g.dropped, 'carte')} écartée${g.dropped > 1 ? 's' : ''} : pas retrouvée dans ton cours, ou sans explication.</p>` : ''}
   <div class="row" style="width:100%;max-width:520px;flex-wrap:nowrap"><button class="btn" data-a="continue">Continuer</button>${g.review ? '' : `<button class="btn white" data-a="replay-now">${g.daily ? 'Un autre mélange' : 'Rejouer'}</button>`}</div></div>`;
 }
 
@@ -724,7 +733,7 @@ function endScreen(){
 let gmenu = null, newGame = {on:'all', part:'', kind:'Claude choisit', minutes:5};
 function sheetHtml(){
   const c = course();
-  if (sheet === 'about') return `<h2 style="font-size:26px">Comment ça marche</h2><p><b>Ton cours reste ici.</b> Tes fichiers sont lus dans ce navigateur et gardés dans ce navigateur.</p><p><b>Claude, sur ton compte.</b> Quand tu crées un jeu ou poses une question, Buddy envoie ton cours à ton Claude. Ça compte dans ton usage Claude.</p><p><b>Chaque réponse est prouvée.</b> Une carte dont la phrase n’est pas retrouvée mot pour mot dans ton cours est jetée.</p><p><b>Tes erreurs reviennent</b> en fin de partie, puis dans « À revoir ».</p><button class="btn white" data-a="reset">${view.confirmReset ? 'Toucher encore pour tout effacer' : 'Tout effacer dans ce navigateur'}</button>`;
+  if (sheet === 'about') return `<h2 style="font-size:26px">Comment ça marche</h2><p><b>Ton cours reste ici.</b> Tes fichiers sont lus dans ce navigateur et gardés dans ce navigateur.</p><p><b>Claude, sur ton compte.</b> Quand tu crées un jeu ou poses une question, Buddy envoie ton cours à ton Claude. Ça compte dans ton usage Claude.</p><p><b>Chaque carte vient de ton cours.</b> Buddy vérifie qu’elle s’appuie sur une phrase retrouvée mot pour mot dans tes fichiers, sinon elle est jetée. Sous chaque réponse, « Voir dans ton cours » ouvre la page.</p><p><b>Tes erreurs reviennent</b> en fin de partie, puis dans « À revoir ».</p><button class="btn white" data-a="reset">${view.confirmReset ? 'Toucher encore pour tout effacer' : 'Tout effacer dans ce navigateur'}</button>`;
   if (!c) return '';
   if (sheet === 'files') return `<h2 style="font-size:26px">Mon cours</h2>${filesBlock(c)}<div class="row between"><button class="link" data-a="rename">Renommer le cours</button><button class="link" data-a="rmcourse" style="color:#b4500a">${view.confirmDelete ? 'Toucher encore pour supprimer' : 'Supprimer le cours'}</button></div>`;
   if (sheet === 'exam') return `<h2 style="font-size:26px">Ton objectif</h2>${examSetup(c, true)}`;
@@ -830,6 +839,7 @@ document.addEventListener('click', e => {
     case 'place': st.placed.push(v); return render();
     case 'unplace': if (st.done) return; st.placed.splice(+v, 1); return render();
     case 'hint': st.hint = true; return render();
+    case 'srcopen': st.showSrc = !st.showSrc; render(); { const m = document.querySelector('.verdict mark'), box = m?.closest('.quote'); if (box) box.scrollTop = m.offsetTop - box.offsetTop - 8; } return;
     case 'flip': st.flipped = !st.flipped; return render();
     case 'flashyes': return finish(true);
     case 'flashno': return finish(false);
