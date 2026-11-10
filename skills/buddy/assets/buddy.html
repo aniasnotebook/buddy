@@ -14,7 +14,7 @@
 *{box-sizing:border-box}
 html,body{height:100%}
 body{background:var(--white);color:var(--ink);font:16px/1.5 var(--body);letter-spacing:-.01em;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));-webkit-tap-highlight-color:transparent}
-#app{max-width:1180px;margin:0 auto;padding-block:16px 120px;min-height:100%}
+#app{max-width:1320px;margin:0 auto;padding-block:16px 120px;min-height:100%}
 h1,h2,h3{margin:0;font-family:var(--disp);font-weight:400;line-height:1.05;text-wrap:balance;letter-spacing:0}
 p{margin:0}
 button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
@@ -85,21 +85,23 @@ textarea{min-height:140px;resize:vertical;line-height:1.45}
 .file .kind{width:58px;flex:none;font:500 11px/1.3 var(--mono);text-transform:uppercase}
 .file .nm{flex:1;min-width:0;font-size:14px;line-height:1.3;overflow-wrap:anywhere}
 /* sheets */
-.scrim{position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:30;display:flex;align-items:flex-end;justify-content:center;animation:fade .15s}
-.sheet{width:100%;max-width:560px;max-height:88vh;overflow:auto;background:var(--white);border-radius:28px 28px 0 0;padding:10px max(18px,env(safe-area-inset-left,0px)) calc(22px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:14px;animation:up .24s cubic-bezier(.2,.8,.2,1)}
-@media (min-width:900px){.scrim{align-items:center}.sheet{border-radius:28px;max-height:80vh}}
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:30;display:flex;align-items:flex-end;justify-content:center}.scrim.enter{animation:fade .15s}
+.sheet{width:100%;max-width:560px;max-height:88vh;overflow:auto;background:var(--white);border-radius:28px 28px 0 0;padding:10px max(18px,env(safe-area-inset-left,0px)) calc(22px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:14px}.enter .sheet{animation:up .24s cubic-bezier(.2,.8,.2,1)}
+.sheet.chat{height:92vh;max-height:92vh;overflow:hidden}.sheet.chat .msgs{flex:1;overflow-y:auto;overscroll-behavior:contain;padding-bottom:6px}
+@media (min-width:900px){.scrim{align-items:center}.sheet{border-radius:28px;max-height:80vh}.scrim.drawer{justify-content:flex-end;align-items:stretch}.sheet.chat{max-width:520px;height:100vh;max-height:100vh;border-radius:28px 0 0 28px}.enter .sheet.chat{animation:side .24s cubic-bezier(.2,.8,.2,1)}}
 .grab{width:40px;height:5px;border-radius:9px;background:var(--rim);align-self:center}
 .msgs{display:flex;flex-direction:column;gap:8px}
-.msg{max-width:88%;padding:10px 14px;border-radius:18px;white-space:pre-wrap;font-size:15px}
+.msg{max-width:88%;padding:10px 14px;border-radius:18px;font-size:15px;line-height:1.5}.msg.me{white-space:pre-wrap}.msg p{margin:0 0 8px}.msg p:last-child{margin:0}.msg h4{font:600 16px/1.3 var(--body);margin:10px 0 4px}.msg ul{margin:4px 0 8px;padding-left:18px}.msg li{margin:2px 0}
+.typing{display:inline-flex;gap:4px}.typing i{width:6px;height:6px;border-radius:9px;background:#a3a3a3;animation:blink 1.2s infinite}.typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}
 .msg.me{align-self:flex-end;background:var(--ink);color:var(--white);border-bottom-right-radius:6px}
 .msg.ai{align-self:flex-start;background:var(--mist);border-bottom-left-radius:6px}
 /* the game */
 .g{display:flex;flex-direction:column;gap:16px;padding-bottom:110px}
 .gtop{display:flex;align-items:center;gap:14px}
 .segs{flex:1;display:flex;gap:4px} .segs i{flex:1;height:5px;border-radius:3px;background:var(--rim);transition:background .3s} .segs i.on{background:var(--pink)}
-.stage{background:var(--ink);color:var(--white);border-radius:24px;padding:22px;display:flex;flex-direction:column;gap:12px;animation:in .28s cubic-bezier(.2,.8,.2,1)}
+.stage{background:var(--ink);color:var(--white);border-radius:24px;padding:22px;display:flex;flex-direction:column;gap:12px}.stage.enter{animation:in .28s cubic-bezier(.2,.8,.2,1)}
 .stage .label{color:#a3a3a3}
-.stage .sit{color:#d4d4d4;font-size:16px;line-height:1.45}
+.stage .sit{color:#d4d4d4;font-size:16px;line-height:1.45}.stage .prev{display:flex;flex-direction:column;gap:4px;font-size:14px;color:#a3a3a3;border-left:2px solid #333;padding-left:10px}.stage .prev b{color:#fff;font-weight:600}
 .stage .q{font-family:var(--body);font-weight:600;font-size:26px;line-height:1.15;letter-spacing:-.02em}
 .move{display:flex;flex-direction:column;gap:10px;min-width:0}
 .opt{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:58px;border-radius:16px;background:var(--white);border:2px solid var(--rim);border-bottom-width:4px;padding:10px 16px;font-weight:600;font-size:17px;text-align:left;width:100%;transition:transform .08s}
@@ -107,7 +109,7 @@ textarea{min-height:140px;resize:vertical;line-height:1.45}
 .opt.sel{background:var(--pink-tint);border-color:var(--pink)}
 .opt.good{border-color:var(--ink)} .opt.bad{background:var(--orange-tint);border-color:var(--orange)} .opt.fade{opacity:.35}
 .tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.pc{display:inline-flex;align-items:center;min-height:44px;border-radius:14px;background:var(--white);border:2px solid var(--rim);border-bottom-width:4px;padding:8px 12px;font-weight:600;font-size:15px;text-align:left;animation:pop .18s ease-out}
+.pc{display:inline-flex;align-items:center;min-height:44px;border-radius:14px;background:var(--white);border:2px solid var(--rim);border-bottom-width:4px;padding:8px 12px;font-weight:600;font-size:15px;text-align:left}
 .pc.on{border-color:var(--ink)} .pc.good{background:#f0fde9;border-color:#2f8a4a} .pc.bad{background:var(--orange-tint);border-color:var(--orange)}
 .pool{display:flex;flex-wrap:wrap;gap:8px}
 .answer{min-height:70px;border-radius:16px;border:2px dashed var(--rim);padding:8px;display:flex;flex-wrap:wrap;gap:8px;align-content:flex-start}
@@ -127,14 +129,16 @@ textarea{min-height:140px;resize:vertical;line-height:1.45}
 .done-tags span{font-size:13px;font-weight:600;padding:5px 10px;border-radius:99px;background:#f0fde9;color:var(--green-ink)}
 .dock{position:fixed;left:0;right:0;bottom:0;z-index:20;padding:12px max(16px,env(safe-area-inset-right,0px)) calc(14px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));background:linear-gradient(to top,var(--white) 70%,rgba(255,255,255,0))}
 .dock>div{max-width:560px;margin:0 auto}
-.verdict{border-radius:26px;border:1px solid var(--rim);background:rgba(255,255,255,.94);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);box-shadow:0 12px 32px rgba(0,0,0,.12);padding:20px;display:flex;flex-direction:column;gap:10px;animation:up .26s cubic-bezier(.2,.8,.2,1)}
+.verdict{border-radius:26px;border:1px solid var(--rim);background:rgba(255,255,255,.94);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);box-shadow:0 12px 32px rgba(0,0,0,.12);padding:20px;display:flex;flex-direction:column;gap:10px}.verdict.enter{animation:up .26s cubic-bezier(.2,.8,.2,1)}
 .verdict .w{display:flex;align-items:center;gap:10px;font-family:var(--disp);font-size:26px}
 .keys{display:flex;flex-direction:column;gap:6px;font-size:14px}
 @media (min-width:900px){
-  .g{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:32px;align-items:start;padding-bottom:40px}
-  .g .gtop{grid-column:1 / -1}
-  .g .stage{position:sticky;top:16px;min-height:420px;justify-content:center}
-  .g .stage .q{font-size:34px}
+  .g{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:auto 1fr;gap:28px 40px;align-items:center;padding-bottom:24px;min-height:calc(100vh - 40px)}
+  .g .gtop{grid-column:1 / -1;align-self:start}
+  .g .stage{align-self:stretch;min-height:440px;justify-content:center;padding:40px}
+  .g .stage .q{font-size:36px}
+  .g .move{gap:12px}
+  .g .opt{min-height:68px;font-size:19px}
   .dock{position:static;padding:0;background:none;margin-top:8px}
   .dock>div{max-width:none}
 }
@@ -142,11 +146,12 @@ textarea{min-height:140px;resize:vertical;line-height:1.45}
 .making{min-height:70vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;text-align:center}
 .pair{display:flex;gap:6px}
 .pair .dc{font-size:96px}
-.five .p{animation:bd-l 1.1s ease-in-out infinite;transform-origin:bottom right} .five .k{animation:bd-r 1.1s ease-in-out infinite;transform-origin:bottom left}
+.deck{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;max-width:420px}.deck i{width:46px;height:62px;border-radius:10px;border:2px dashed var(--rim);transition:transform .35s cubic-bezier(.2,1.4,.4,1),background .2s,border-color .2s}.deck i.on{border:0;transform:rotate(-6deg) translateY(-4px)}.deck i.on:nth-child(odd){background:var(--pink)}.deck i.on:nth-child(even){background:var(--ink);transform:rotate(6deg) translateY(-4px)}.deck i.ok{box-shadow:inset 0 0 0 3px var(--green)}
+.bar{height:6px;border-radius:3px;background:var(--mist);overflow:hidden}.bar i{display:block;height:100%;background:var(--pink);transition:width .3s}
 .shuf{position:relative;width:150px;height:100px} .shuf .dc{position:absolute;top:0;font-size:90px} .shuf .p{left:10px;animation:bd-sa 1.4s ease-in-out infinite} .shuf .k{left:72px;animation:bd-sb 1.4s ease-in-out infinite}
 .steps{display:flex;flex-direction:column;gap:10px;font-weight:600;text-align:left}
 .steps div{display:flex;gap:10px;align-items:center;color:#a3a3a3} .steps .on{color:var(--ink)} .steps .ok{color:var(--ink)}
-.steps .dot{background:var(--rim)} .steps .on .dot{background:var(--pink);animation:pulse 1s infinite} .steps .ok .dot{background:var(--green)}
+.steps .dot{background:var(--rim)} .steps .on .dot{background:var(--pink)} .steps .ok .dot{background:var(--green)}
 .nod{display:inline-flex;gap:4px;margin-left:8px} .nod span{display:inline-flex;width:16px;height:22px;border-radius:5px;align-items:center;justify-content:center;font-family:var(--disp);font-size:16px;animation:bd-nod .9s ease-in-out infinite} .nod span:first-child{background:var(--white);color:var(--ink)} .nod span:last-child{background:var(--ink);color:var(--white);animation-delay:.15s}
 /* end */
 .end{min-height:76vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;text-align:center}
@@ -163,6 +168,8 @@ textarea{min-height:140px;resize:vertical;line-height:1.45}
 @keyframes fade{from{opacity:0}to{opacity:1}}
 @keyframes drop{from{transform:translate(-50%,-10px);opacity:0}to{transform:translate(-50%,0);opacity:1}}
 @keyframes pulse{50%{transform:scale(1.4)}}
+@keyframes side{from{transform:translateX(40px);opacity:.3}to{transform:none;opacity:1}}
+@keyframes blink{50%{opacity:.25}}
 @keyframes bd-l{0%,100%{transform:rotate(-8deg)}45%{transform:rotate(4deg) translateX(6px)}55%{transform:rotate(2deg) translateX(3px)}}
 @keyframes bd-r{0%,100%{transform:rotate(7deg)}45%{transform:rotate(-4deg) translateX(-6px)}55%{transform:rotate(-2deg) translateX(-3px)}}
 @keyframes bd-sa{0%,100%{transform:translate(0,0) rotate(-8deg)}50%{transform:translate(62px,-12px) rotate(8deg)}}
@@ -182,11 +189,17 @@ const EX_PAGES = [
  {p:1, text:"TD 3 · Le parcours client. Le parcours client se découpe en trois étapes : le pré-achat, l'achat et le post-achat. Le pré-achat regroupe tout ce qui se passe avant la transaction : le client reconnaît un besoin, cherche des informations et compare des offres. L'achat couvre le choix, la commande et le paiement ; c'est en général l'étape la plus courte. Le post-achat commence après la transaction : le client utilise le produit, contacte le service après-vente et donne parfois son avis."},
  {p:2, text:"À chaque étape, le client croise des points de contact. On en distingue quatre types selon qui les contrôle. Les points de contact brand-owned sont conçus et gérés par la marque, comme son site, son appli ou son packaging. Les points de contact partner-owned sont gérés avec des partenaires, comme une agence ou un distributeur. Les points de contact customer-owned dépendent du client seul, comme sa propre réflexion sur ses besoins. Les points de contact social/external échappent à la marque, comme les avis en ligne ou un influenceur indépendant. Au post-achat, un déclencheur mène soit à la fidélité, avec un rachat, soit à un retour au pré-achat où le client compare d'autres offres : c'est la boucle de fidélité."}];
 const newCourse = (name, example) => ({id: example ? 'ex' : 'c' + Date.now(), name, example: !!example, created: Date.now(), fresh: true,
-  exam: {format: example ? 'Dissertation' : '', other: '', when: 'none', date: ''}, files: example ? [{name:'TD3 parcours client (exemple).txt', kind:'Cours', pages: EX_PAGES, unit:'page'}] : [], games: [], review: []});
+  goal: example ? 'Valider le partiel' : '', goalOther: '', exam: {format: 'auto', other: '', when: 'none', date: ''}, files: example ? [{name:'TD3 parcours client (exemple).txt', kind:'Cours', pages: EX_PAGES, unit:'page'}] : [], games: [], review: []});
 const fresh = () => ({welcomed:false, courses:[newCourse('Marketing · parcours client', true)]});
 const load = () => { try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.courses) return s; } catch(e){} return fresh(); };
 let S = load();
-const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){ toast('Plus de place dans ce navigateur : retire un gros fichier.'); } };
+/* Courses can be big: they live in IndexedDB (hundreds of MB), not localStorage (5 MB). */
+let idbP = null;
+const idb = () => idbP || (idbP = new Promise((res, rej) => { const r = indexedDB.open('buddy', 1); r.onupgradeneeded = () => r.result.createObjectStore('kv'); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }));
+const idbGet = async k => { const db = await idb(); return new Promise((res, rej) => { const q = db.transaction('kv').objectStore('kv').get(k); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); }); };
+const idbPut = async (k, v) => { const db = await idb(); return new Promise((res, rej) => { const t = db.transaction('kv', 'readwrite'); t.objectStore('kv').put(v, k); t.oncomplete = () => res(); t.onerror = () => rej(t.error); }); };
+let saveT = null, loaded = false;
+const save = () => { if (!loaded) return; clearTimeout(saveT); saveT = setTimeout(() => idbPut(KEY, S).catch(() => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){ toast('Plus de place dans ce navigateur : retire un gros fichier.'); } }), 120); };
 let view = {name: S.welcomed ? 'home' : 'welcome'}, game = null, busy = false, sheet = null, making = null, reading = null;
 const chats = {};
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -196,7 +209,9 @@ const norm = s => String(s).normalize('NFKC').toLowerCase().replace(/[’‘`]/g
 const shuffle = a => { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
 const plural = (n, w, ws) => n + ' ' + (n > 1 ? (ws || w + 's') : w);
 const daysTo = c => { const e = c.exam; let d = null; if (e.when === 'exact' && e.date) d = new Date(e.date + 'T00:00:00'); if (e.when === '2w') d = new Date((c.created || Date.now()) + 14 * 864e5); if (!d) return null; const n = new Date(); n.setHours(0,0,0,0); return Math.round((d - n) / 864e5); };
-const fmt = c => c.exam.format === 'Autre' ? (c.exam.other || 'Autre') : (c.exam.format || 'Juste comprendre');
+const fmt = c => c.exam.format === 'Autre' ? (c.exam.other || 'Autre') : (!c.exam.format || c.exam.format === 'auto' || c.exam.format === 'Juste comprendre') ? 'Format choisi par Claude' : c.exam.format;
+const goalOf = c => c.goal === 'Autre' ? (c.goalOther || '') : (c.goal || '');
+const GOALS = ['Valider le partiel', 'Viser une très bonne note', 'Comprendre le cours', 'Rattraper mon retard', 'Autre'];
 const uid = () => Math.random().toString(36).slice(2, 9);
 let toastEl; function toast(t){ toastEl?.remove(); toastEl = document.createElement('div'); toastEl.className = 'toast'; toastEl.setAttribute('role','status'); toastEl.textContent = t; document.body.append(toastEl); setTimeout(() => toastEl?.remove(), 3200); }
 const word = (size, ink) => `<span class="word" style="font-size:${size}px;color:${ink || 'var(--ink)'}" role="img" aria-label="Buddy">Bu<span class="dc p"><span>d</span></span><span class="dc k"><span>d</span></span>y</span>`;
@@ -219,16 +234,31 @@ function fromComplete(complete){
 const ERR = {not_granted:'Tu as refusé l’accès à Claude. Recharge la page pour qu’il te le redemande.', rate_limited:'Ta limite Claude est atteinte pour le moment. Réessaie plus tard.', prompt_too_large:'Ce cours est trop long pour une seule demande : choisis une partie ou retire un fichier.', invalid_json:'La réponse de Claude n’était pas lisible. Réessaie.', sampling_disabled:'Claude n’est pas disponible pour ce compte.', capability_disabled:'Claude n’est pas disponible pour ce compte.', session_expired:'Ta session Claude a expiré. Recharge la page.', refused:'Claude a refusé cette demande. Essaie une autre partie du cours.', empty_completion:'Claude n’a rien renvoyé. Réessaie.', images_unavailable:'Claude ne peut pas lire d’image ici.'};
 const errText = e => ERR[e?.code] || ('Claude n’a pas répondu (' + (e?.code || 'erreur') + '). Réessaie.');
 
+/* A course bigger than one Claude request: past exams first, then the pages that match her objective or topic, then the rest, in course order. */
+const BUDGET = 110000;
+function courseText(c, focus){
+  const all = c.files.filter(f => f.pages && f.pages.length).flatMap(f => f.pages.map(pg => ({f, pg, t:`[${f.kind} · ${f.name} · ${f.unit === 'diapo' ? 'diapo' : 'p.'} ${pg.p}]\n${pg.text}`})));
+  all.forEach((x, i) => x.i = i);
+  if (all.reduce((n, x) => n + x.t.length, 0) <= BUDGET) return all.map(x => x.t).join('\n\n');
+  const words = norm(focus || '').split(/[^a-zà-ÿ0-9]+/).filter(w => w.length > 3);
+  const score = x => (x.f.kind === 'Annale' ? 1000 : 0) + words.reduce((n, w) => n + (norm(x.pg.text).includes(w) ? 10 : 0), 0) + Math.random();
+  const pick = []; let n = 0;
+  for (const x of all.slice().sort((a, b) => score(b) - score(a))) { if (n + x.t.length > BUDGET) continue; pick.push(x); n += x.t.length; }
+  return '(Extraits : le cours entier est trop long pour une seule demande.)\n\n' + pick.sort((a, b) => a.i - b.i).map(x => x.t).join('\n\n');
+}
+
 /* ================= the engine: rules and templates ================= */
 const ENGINE = `Tu es le moteur d’exercices Buddy. Tu fabriques un jeu d’entraînement pour une étudiante, à partir de SON cours uniquement (cours, diapos, annales, notes, projets).
 Règles d’apprentissage :
 - Elle répond avant de voir la réponse. Une seule idée par carte. Questions courtes (20 mots max).
 - Mélange les notions. Préfère une situation concrète et nouvelle à une phrase recopiée.
-- Pièges plausibles : les vraies confusions, jamais de réponse absurde. "why" et "trap" : une phrase chacun.
+- Pièges plausibles : les vraies confusions, jamais de réponse absurde.
+- "why" (une phrase) explique pourquoi LA BONNE RÉPONSE répond exactement à LA QUESTION POSÉE, avec les mots de la question. "trap" (une phrase) explique pourquoi le piège le plus tentant est faux.
+- Chaque question se comprend seule : si elle parle d’un montant ou d’une « part », elle dit lequel (ex. « la part du loyer de novembre-décembre, 4 000 € »).
 - Si le cours contient des annales [Annale], imite leur style de questions.
 Tu choisis UNIQUEMENT parmi ces modèles ("type") et tu remplis leurs champs :
 - "pick" : situation?, ask, options[4], answer (une des options).
-- "case" : situation (2 phrases), steps[2-3] = {ask, options[3-4], answer}.
+- "case" : situation (2 phrases), steps[2-3] = {ask (se suffit à elle-même), options[3-4], answer, why, trap, quote (la phrase du cours qui justifie CETTE décision)}.
 - "sort" : ask, buckets[2-4], items[4-6] = {text, bucket}.
 - "order" : ask, items[3-6] dans le bon ordre (seulement si le cours donne un ordre).
 - "build" : ask, items[3-4] blocs courts dans l’ordre, traps[2] blocs pièges plausibles.
@@ -237,9 +267,9 @@ Tu choisis UNIQUEMENT parmi ces modèles ("type") et tu remplis leurs champs :
 - "number" : situation, ask, numbers {nom: valeur}, formula (arithmétique sur les noms), answer (nombre), unit, steps[] (le calcul étape par étape).
 - "speed" : ask, pairs[4-6] = [terme, définition courte].
 - "explain" : ask, model (réponse attendue), keys[2-4] (les idées que la réponse doit contenir).
-Preuve : chaque carte a "quote" (une phrase du cours recopiée MOT POUR MOT, 30 mots max) et "page" (le numéro du marqueur [type · fichier · p. N]). N’invente rien qui ne soit pas dans le cours.`;
+Preuve : chaque carte a "quote" et "page". "quote" = la phrase du cours qui JUSTIFIE la bonne réponse (une règle, une définition, une ligne de corrigé), recopiée MOT POUR MOT, 30 mots max ; jamais l’énoncé de l’exercice. "page" = le numéro du marqueur [type · fichier · p. N]. N’invente rien qui ne soit pas dans le cours.`;
 const FORMAT_MIX = {QCM:'surtout "pick" et "case" avec des pièges très proches', Dissertation:'des "build" et "explain" (arguments, définitions d’intro), des "pick" sur les distinctions, un "order" si possible', 'Cas pratique':'surtout "case" et "pick" concrets, un "explain" pour justifier', 'Juste comprendre':'"flash", "sort" et "pick" simples puis plus durs'};
-const TYPE_MIX = {Mélange:null, Situations:'uniquement "pick" et "case"', Flashcards:'uniquement "flash"', Trier:'uniquement "sort"', Ordre:'uniquement "order"', Construire:'uniquement "build"', Rédiger:'uniquement "explain"', Calculs:'uniquement "number" et "mistake" sur les calculs du cours', 'Speed round':'un seul "speed" puis des "flash"'};
+const TYPE_MIX = {'Claude choisit':null, Situations:'uniquement "pick" et "case"', Flashcards:'uniquement "flash"', Trier:'uniquement "sort"', Ordre:'uniquement "order"', Construire:'uniquement "build"', Rédiger:'uniquement "explain"', Calculs:'uniquement "number" et "mistake" sur les calculs du cours', 'Speed round':'un seul "speed" puis des "flash"'};
 
 function okNumber(k){ try { const toks = String(k.formula).match(/\d+(?:\.\d+)?|[A-Za-z_]\w*|[-+*/()]/g) || []; let i = 0; const nums = k.numbers || {};
   const prim = () => { const t = toks[i++]; if (t === '(') { const v = expr(); i++; return v; } if (t === '-') return -prim(); if (/^\d/.test(t)) return +t; if (t in nums) return +nums[t]; throw 0; };
@@ -255,7 +285,7 @@ function checkCards(c, all){
     const base = {...k, page: hit.p, file: hit.f, id: uid()};
     const t = k.type; let ok = false;
     if (t === 'pick') ok = Array.isArray(k.options) && k.options.length === 4 && k.options.includes(k.answer) && k.ask;
-    if (t === 'case') { if (Array.isArray(k.steps) && k.situation) k.steps.forEach((s, i) => { if (s && Array.isArray(s.options) && s.options.includes(s.answer) && s.ask) out.push({...base, id: uid(), type:'pick', caseStep: (i + 1) + '/' + k.steps.length, situation: k.situation, ask: s.ask, options: s.options, answer: s.answer}); }); continue; }
+    if (t === 'case') { if (Array.isArray(k.steps) && k.situation) k.steps.forEach((s, i) => { const sq = s?.quote && norm(s.quote).replace(/^["']|["']$/g,'').replace(/[.…]+$/,''), sh = sq && sq.length > 12 && hay.find(h => h.t.includes(sq)); if (s && Array.isArray(s.options) && s.options.includes(s.answer) && s.ask) out.push({...base, ...(sh ? {quote: s.quote, page: sh.p, file: sh.f} : {}), id: uid(), type:'pick', caseStep: (i + 1) + '/' + k.steps.length, situation: k.situation, ask: s.ask, options: s.options, answer: s.answer, why: s.why || '', trap: s.trap || '', prev: k.steps.slice(0, i).map(x => ({ask: x.ask, answer: x.answer}))}); }); continue; }
     if (t === 'sort') ok = Array.isArray(k.buckets) && k.buckets.length >= 2 && Array.isArray(k.items) && k.items.length >= 3 && k.items.every(x => x && k.buckets.includes(x.bucket));
     if (t === 'order') ok = Array.isArray(k.items) && k.items.length >= 3 && k.items.length <= 6;
     if (t === 'build') ok = Array.isArray(k.items) && k.items.length >= 2 && Array.isArray(k.traps) && k.traps.length >= 1;
@@ -274,29 +304,31 @@ async function makeGame(opts){
   const minutes = opts.minutes || 5, n = minutes >= 15 ? 10 : minutes >= 10 ? 8 : 5, days = daysTo(c);
   let focus = opts.on === 'part' ? (opts.part || '') : '';
   const reviewPart = opts.on === 'mistakes' && c.review.length ? '\n- Fais UNIQUEMENT des cartes sur ces idées ratées, autrement : ' + c.review.slice(0, 8).map(k => k.ask || k.front).join(' / ') : (c.review.length ? '\n- Elle a déjà raté : ' + c.review.slice(0, 4).map(k => k.ask || k.front).join(' / ') + '. Reprends-en une autrement.' : '');
-  const mix = TYPE_MIX[opts.kind] || FORMAT_MIX[c.exam.format] || 'un mélange des modèles adaptés au cours';
+  const mix = TYPE_MIX[opts.kind] || FORMAT_MIX[c.exam.format] || 'choisis toi-même les modèles qui servent le mieux son objectif, d’après la nature du cours (calculs et écritures → "number", "case", "mistake" ; notions → "pick", "sort", "flash" ; rédaction → "build", "explain") et le style de ses annales [Annale] s’il y en a';
+  const goal = goalOf(c);
   const prompt = `${ENGINE}
 
 L’étudiante :
-- Son partiel : ${fmt(c)}${days !== null && days >= 0 ? ', dans ' + plural(days, 'jour') : ''}.
+- Son objectif, qui passe avant tout le reste : ${goal || 'réussir son partiel'}.
+- Son partiel : ${fmt(c) === 'Format choisi par Claude' ? 'format inconnu, déduis-le de ses annales et de son cours' : fmt(c)}${days !== null && days >= 0 ? ', dans ' + plural(days, 'jour') : ''}.
 - Ce jeu : ${mix}. ${minutes} minutes, donc ${n} cartes.${focus ? '\n- Uniquement sur : ' + focus + '.' : ''}${reviewPart}
 
 Réponds uniquement avec ce JSON : {"title":"titre court du jeu","cards":[ ... ]}
 
 LE COURS :
-${textOf(c).slice(0, 180000)}`;
+${courseText(c, focus || goal)}`;
   busy = true; sheet = null; making = {step:0, n, written:0}; view = {name:'making', id:c.id}; render();
   const t1 = setTimeout(() => { if (making && making.step === 0) { making.step = 1; drawMaking(); } }, 2500);
   try {
     const out = await sample.json(prompt, {modelTier:'default', onText: ({text}) => { if (!making) return; making.step = Math.max(making.step, 1); making.written = Math.min(n, (text.match(/"type"\s*:/g) || []).length); drawMaking(); }});
     clearTimeout(t1); claudeState = 'ok';
     const all = Array.isArray(out?.cards) ? out.cards : [];
-    making.step = 2; making.written = all.length; drawMaking();
+    making.step = 2; making.written = Math.min(all.length, n); drawMaking();
     const kept = checkCards(c, all);
-    await new Promise(r => setTimeout(r, 700));
+    await new Promise(r => setTimeout(r, 500)); making.step = 3; drawMaking(); await new Promise(r => setTimeout(r, 450));
     busy = false; making = null;
     if (!kept.length) { view = {name:'course', id:c.id}; render(); return toast('Aucune carte n’a passé la vérification des citations. Réessaie.'); }
-    const g = {id: uid(), title: String(out.title || opts.kind || 'Jeu'), cards: kept, best: null, created: Date.now(), kind: opts.kind || 'Mélange'};
+    const g = {id: uid(), title: String(out.title || opts.kind || 'Jeu'), cards: kept, best: null, created: Date.now(), kind: opts.kind && opts.kind !== 'Claude choisit' ? opts.kind : 'Choisi par Claude'};
     c.games.unshift(g); save();
     startGame(c, g, all.length - kept.length);
   } catch(e){ clearTimeout(t1); busy = false; making = null; if (e?.code === 'not_granted') claudeState = 'refused'; view = {name:'course', id:c.id}; render(); toast(errText(e)); }
@@ -306,12 +338,12 @@ async function ask(text){
   const turns = chats[c.id] = chats[c.id] || [];
   turns.push({role:'user', content:text.trim()}); turns.push({role:'assistant', content:''});
   busy = true; drawSheet();
-  const rules = `Tu es Buddy, le compagnon de révision d’une étudiante. Réponds en français, en 2 à 4 phrases courtes, uniquement d’après son cours ci-dessous, et cite la page (p. N). Si le cours n’en parle pas, dis-le simplement. Pour un résumé ou un plan, des puces courtes.\n\nLE COURS :\n${textOf(c).slice(0, 180000)}`;
+  const rules = `Tu es Buddy, le compagnon de révision d’une étudiante. Réponds en français, en 2 à 4 phrases courtes, uniquement d’après son cours ci-dessous, et cite la page (p. N). Si le cours n’en parle pas, dis-le simplement. Mets en forme en Markdown simple : titres courts (##), **gras** pour les mots clés, listes à puces. Son objectif : ${goalOf(c) || 'réussir son partiel'}.\n\nLE COURS :\n${courseText(c, text)}`;
   try {
-    const {text: t} = await sample([{role:'user', content: rules}, ...turns.slice(0, -1).slice(-8)], {cache:false, modelTier:'default', onText: ({text}) => { turns[turns.length-1].content = text; const el = document.getElementById('lastai'); if (el) el.textContent = text; }});
+    const {text: t} = await sample([{role:'user', content: rules}, ...turns.slice(0, -1).slice(-8)], {cache:false, modelTier:'default', onText: ({text}) => { turns[turns.length-1].content = text; const el = document.getElementById('lastai'); if (el) { el.innerHTML = md(text); scrollChat(); } }});
     turns[turns.length-1].content = t; claudeState = 'ok';
   } catch(e){ turns[turns.length-1].content = errText(e); if (e?.code === 'not_granted') claudeState = 'refused'; }
-  busy = false; drawSheet(); document.getElementById('lastai')?.scrollIntoView({block:'nearest'});
+  busy = false; drawSheet();
 }
 async function gradeExplain(){
   const g = game, k = g.byId[g.cur], st = g.st, c = S.courses.find(x => x.id === g.courseId);
@@ -347,7 +379,7 @@ async function readFile(f){
   }
   if (/\.pdf$/.test(n) || f.type === 'application/pdf') {
     const L = await pdfLib(); const doc = await L.getDocument({data: await f.arrayBuffer()}).promise; const pages = [];
-    for (let i = 1; i <= doc.numPages; i++) { reading.detail = 'page ' + i + '/' + doc.numPages; drawSheet(); const pg = await doc.getPage(i); const tc = await pg.getTextContent(); pages.push({p:i, text: tc.items.map(x => x.str + (x.hasEOL ? '\n' : ' ')).join('').replace(/[ \t]+/g,' ').trim()}); }
+    for (let i = 1; i <= doc.numPages; i++) { reading.detail = 'page ' + i + '/' + doc.numPages; reading.pct = i / doc.numPages; if (i % 5 === 1 || i === doc.numPages) drawSheet(); const pg = await doc.getPage(i); const tc = await pg.getTextContent(); pages.push({p:i, text: tc.items.map(x => x.str + (x.hasEOL ? '\n' : ' ')).join('').replace(/[ \t]+/g,' ').trim()}); }
     const withText = pages.filter(p => p.text.length > 30);
     if (withText.length >= Math.max(1, doc.numPages * .3)) return {pages: withText, unit:'page', how: plural(withText.length, 'page') + ' lue' + (withText.length > 1 ? 's' : '')};
     const shots = [];
@@ -385,13 +417,107 @@ document.getElementById('file').addEventListener('change', async e => {
   const list = [...e.target.files]; e.target.value = ''; const c = course(); if (!list.length || !c) return;
   if (c.example) { c.files = []; c.example = false; }
   for (const f of list) {
+    if (c.files.some(x => x.name === f.name && (x.size == null || x.size === f.size))) { toast(f.name + ' est déjà dans ton cours.'); continue; }
     reading = {name: f.name, detail:'…'}; drawSheet();
-    const rec = {name: f.name, kind: KIND(f.name)};
+    const rec = {name: f.name, kind: KIND(f.name), size: f.size};
     try { Object.assign(rec, await readFile(f)); } catch(err){ rec.error = err?.plain || ('Je n’arrive pas à lire ce fichier. Exporte-le en PDF, puis réessaie.'); rec.pages = []; }
     c.files.push(rec); save();
   }
   reading = null; render();
 });
+
+/* ================= Google Drive, through her own Claude connector ================= */
+const DRIVE = 'Google Drive';
+let mcp = null, drive = {state:'idle', items:[], path:[], err:'', added:{}};
+(async () => { try { mcp = await window.claude?.use?.('mcp'); } catch(e){ mcp = null; } if (mcp) render(); })();
+const schemas = {};
+async function argName(tool, cands){
+  try { const d = schemas[tool] || (schemas[tool] = await mcp.describeTool(DRIVE, tool)); const props = Object.keys(d?.inputSchema?.properties || {}); return cands.find(x => props.includes(x)) || props.find(x => /id/i.test(x)) || cands[0]; }
+  catch(e){ return cands[0]; }
+}
+const DRIVE_ERR = {server_not_connected:'Google Drive n’est pas connecté à ton Claude. Dans Claude : Paramètres › Connecteurs › Google Drive, puis reviens ici.', needs_reauth:'Reconnecte Google Drive dans Claude (Paramètres › Connecteurs), puis réessaie.', not_in_manifest:'Tu n’as pas autorisé Buddy à lire ton Drive. Touche Réessayer pour qu’il te le redemande.', approval_required:'Buddy a besoin de ton accord pour lire ton Drive. Touche Réessayer.', selection_required:'Tu as plusieurs Google Drive connectés : choisis-en un dans la fenêtre de Claude.', blocked_by_policy:'Ton organisation bloque Google Drive ici.', server_unavailable:'Google Drive ne répond pas. Réessaie dans un instant.'};
+const driveErr = e => DRIVE_ERR[e?.code] || (e?.plain) || ('Google Drive n’a pas répondu (' + (e?.code || 'erreur') + ').');
+function payloadOf(r){ let p = r?.payload ?? r; if (typeof p === 'string') { try { p = JSON.parse(p); } catch(e){} } return p; }
+function textOf_(r){
+  const blocks = (r?.content || []).filter(b => b.type === 'text').map(b => b.text).join('\n');
+  const p = payloadOf(r);
+  if (typeof p === 'string') return p;
+  for (const k of ['content', 'text', 'body', 'markdown', 'data']) if (typeof p?.[k] === 'string' && p[k].length > 40) return p[k];
+  return blocks;
+}
+function driveFiles(r){
+  const out = [], seen = new Set();
+  const walk = v => { if (!v || typeof v !== 'object') return; if (Array.isArray(v)) return v.forEach(walk);
+    const id = v.id || v.fileId || v.file_id, name = v.name || v.title || v.fileName;
+    if (typeof id === 'string' && typeof name === 'string' && !seen.has(id)) { seen.add(id); out.push({id, name, mime: v.mimeType || v.mime_type || ''}); }
+    Object.values(v).forEach(walk); };
+  walk(payloadOf(r));
+  if (!out.length) { const t = textOf_(r); for (const m of t.matchAll(/^\s*[-*\d.)]*\s*(.+?)\s*[\(\[]?\s*(?:ID|id|fileId)\s*[:=]\s*([A-Za-z0-9_-]{15,})/gm)) if (!seen.has(m[2])) { seen.add(m[2]); out.push({id:m[2], name:m[1].replace(/[*_`]/g, ''), mime: /dossier|folder/i.test(m[0]) ? 'application/vnd.google-apps.folder' : ''}); } }
+  return out;
+}
+function findBase64(r){
+  let hit = null;
+  const walk = v => { if (hit || !v) return; if (typeof v === 'string') { if (v.length > 200 && /^[A-Za-z0-9+/=\s]+$/.test(v.slice(0, 400))) hit = v; return; } if (typeof v === 'object') Object.values(v).forEach(walk); };
+  walk(r?.content); walk(payloadOf(r)); return hit;
+}
+const isFolder = f => /folder/.test(f.mime);
+const extFor = (name, mime) => /\.[a-z0-9]{2,5}$/i.test(name) ? '' : /pdf/.test(mime) ? '.pdf' : /presentation/.test(mime) ? '.pptx' : /wordprocessing/.test(mime) ? '.docx' : /jpeg/.test(mime) ? '.jpg' : /png/.test(mime) ? '.png' : /text/.test(mime) ? '.txt' : '';
+function pagesFromText(text){
+  const parts = text.split(/\f|\n-{2,}\s*(?:page|Page)\s*\d+\s*-{2,}\n/).map(x => x.trim()).filter(Boolean);
+  const pages = []; let p = 1;
+  for (const part of parts) { if (part.length <= 3000) { pages.push({p: p++, text: part}); continue; } let buf = ''; for (const para of part.split(/\n+/)) { if ((buf + para).length > 2500 && buf) { pages.push({p: p++, text: buf.trim()}); buf = ''; } buf += para + '\n'; } if (buf.trim()) pages.push({p: p++, text: buf.trim()}); }
+  return pages;
+}
+async function driveList(kind, arg){
+  drive.state = 'loading'; drive.err = ''; drawSheet();
+  try {
+    let r;
+    if (kind === 'recent') r = await mcp.callTool(DRIVE, 'list_recent_files', {});
+    else { const a = await argName('search_files', ['query', 'q', 'search_query', 'searchQuery']); r = await mcp.callTool(DRIVE, 'search_files', {[a]: kind === 'folder' ? `'${arg}' in parents` : arg}); }
+    drive.items = driveFiles(r); drive.state = 'ok';
+    if (!drive.items.length) drive.err = kind === 'folder' ? 'Ce dossier est vide, ou je n’arrive pas à l’ouvrir : cherche tes fichiers par leur nom.' : 'Rien trouvé. Essaie un autre mot.';
+  } catch(e){ drive.state = 'error'; drive.err = driveErr(e); }
+  drawSheet();
+}
+async function driveRead(f){
+  if (/google-apps\.(spreadsheet|form|drawing|site|shortcut)/.test(f.mime)) throw {plain:'Ce type de fichier Google ne se lit pas ici : exporte-le en PDF dans Drive.'};
+  if (/video|audio/.test(f.mime)) throw {plain:'Une vidéo ou un son ne se lit pas : ajoute plutôt les diapos ou les notes.'};
+  try {
+    const a = await argName('read_file_content', ['fileId', 'file_id', 'id']);
+    const t = textOf_(await mcp.callTool(DRIVE, 'read_file_content', {[a]: f.id}));
+    if (t && t.trim().length > 80) { const pages = pagesFromText(t); return {pages, unit:'page', how:'depuis Drive · ' + plural(pages.length, 'partie') + ' lue' + (pages.length > 1 ? 's' : '')}; }
+  } catch(e){ if (['server_not_connected', 'needs_reauth', 'not_in_manifest', 'approval_required', 'blocked_by_policy'].includes(e?.code)) throw e; }
+  const a = await argName('download_file_content', ['fileId', 'file_id', 'id']);
+  const b64 = findBase64(await mcp.callTool(DRIVE, 'download_file_content', {[a]: f.id}));
+  if (!b64) throw {plain:'Je n’ai pas pu ouvrir ce fichier depuis Drive. Télécharge-le, puis ajoute-le avec « + Ajouter des fichiers ».'};
+  const bin = atob(b64.replace(/\s/g, '')), bytes = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  const res = await readFile(new File([bytes], f.name + extFor(f.name, f.mime), {type: f.mime}));
+  return {...res, how: 'depuis Drive · ' + res.how};
+}
+async function driveAdd(list){
+  const c = course(); if (!c || reading) return;
+  if (c.example) { c.files = []; c.example = false; }
+  for (const f of list) {
+    if (isFolder(f) || c.files.some(x => x.driveId === f.id || x.name === f.name)) { drive.added[f.id] = true; continue; }
+    reading = {name: f.name, detail:'depuis Drive', pct:.3}; drawSheet();
+    const rec = {name: f.name, kind: KIND(f.name), driveId: f.id};
+    try { Object.assign(rec, await driveRead(f)); } catch(e){ rec.error = driveErr(e); rec.pages = []; }
+    c.files.push(rec); drive.added[f.id] = true; save();
+  }
+  reading = null; drawSheet(); toast('Ajouté à ' + c.name + '.');
+}
+function driveSheet(c){
+  const here = drive.path[drive.path.length - 1];
+  const files = drive.items.filter(f => !isFolder(f));
+  return `<div class="row between"><h2 style="font-size:26px">Mon Google Drive</h2><button class="icon" data-a="close" aria-label="Fermer">✕</button></div>
+  <form id="driveform" class="row" style="flex-wrap:nowrap"><input id="dq" placeholder="Cherche : opérations, partiel, TD…" autocomplete="off" style="flex:1;min-width:0;border-radius:99px"><button class="btn ink sm" type="submit" aria-label="Chercher">→</button></form>
+  ${drive.path.length ? `<div class="row" style="gap:6px"><button class="link" data-a="dhome" style="text-decoration:none">Drive</button>${drive.path.map(f => `<span class="muted">›</span><b class="small">${esc(f.name)}</b>`).join('')}</div>` : '<span class="label">Récents</span>'}
+  ${here && files.length ? `<button class="btn white" data-a="dall" ${reading ? 'disabled' : ''}>Ajouter tout ce dossier (${plural(files.length, 'fichier')})</button>` : ''}
+  ${reading ? `<div class="file" style="flex-direction:column;align-items:stretch;gap:8px"><span class="nm"><b>${esc(reading.name)}</b><br><span class="muted">Je lis… ${esc(reading.detail)}</span></span><div class="bar"><i style="width:${Math.round((reading.pct || .05) * 100)}%"></i></div></div>` : ''}
+  <div class="msgs">${drive.state === 'loading' ? '<p class="muted">Je regarde ton Drive…</p>' : drive.items.map(f => `<div class="file">${isFolder(f) ? `<button class="nm" data-a="dopen" data-v="${esc(f.id)}" style="text-align:left"><b>📁 ${esc(f.name)}</b></button><span class="muted">›</span>` : `<span class="nm"><b>${esc(f.name)}</b></span>${drive.added[f.id] ? '<span class="small" style="color:var(--green-ink);font-weight:600">Ajouté</span>' : `<button class="btn sm white" data-a="dadd" data-v="${esc(f.id)}" ${reading ? 'disabled' : ''}>Ajouter</button>`}`}</div>`).join('')}
+  ${drive.err ? `<p class="small" ${drive.state === 'error' ? 'style="color:#b4500a"' : 'class="muted"'}>${esc(drive.err)}</p>${drive.state === 'error' ? '<button class="btn white sm" data-a="dhome">Réessayer</button>' : ''}` : ''}</div>
+  <p class="tiny muted">Buddy lit tes fichiers avec ton accès Google Drive dans Claude, seulement quand tu touches « Ajouter ».</p>`;
+}
 
 /* ================= game engine ================= */
 function prep(k){
@@ -428,7 +554,7 @@ function next(){ const g = game; g.i++; g.cur = g.queue.shift(); if (g.cur) g.st
 /* Partie du jour: a random mix of the games she already has, misses first. Free and instant. Claude writes only the very first game. */
 function daily(c){
   const pool = c.games.flatMap(g => g.cards);
-  if (!pool.length) return makeGame({on:'all', kind:'Mélange', minutes:5});
+  if (!pool.length) return makeGame({on:'all', kind:'Claude choisit', minutes:5});
   const keyOf = x => x.ask || x.front || x.title, seen = new Set(), pick = [];
   for (const k of shuffle(c.review).concat(shuffle(pool))) { const id = keyOf(k); if (seen.has(id)) continue; seen.add(id); pick.push({...k, id: uid()}); if (pick.length >= 5) break; }
   startGame(c, {id:'daily', daily:true, title:'Partie du jour', cards: pick}, 0);
@@ -457,7 +583,11 @@ function newCourseScreen(){
 }
 function examSetup(c, inSheet){
   const e = c.exam, ch = (k, v, l) => `<button class="chip" data-a="exam" data-k="${k}" data-v="${v}" aria-pressed="${e[k] === v}">${l || v}</button>`;
-  return `<span class="label">Le format</span><div class="chips">${['QCM','Dissertation','Cas pratique','Juste comprendre','Autre'].map(v => ch('format', v)).join('')}</div>
+  const gch = v => `<button class="chip" data-a="goal" data-v="${v}" aria-pressed="${c.goal === v}">${v}</button>`;
+  return `<span class="label">Ton objectif</span><div class="chips">${GOALS.map(gch).join('')}</div>
+  ${c.goal === 'Autre' ? `<input id="goalother" placeholder="Ex. comprendre les écritures de fin d’année" value="${esc(c.goalOther || '')}" aria-label="Ton objectif">` : ''}
+  <span class="label">Le format du partiel</span><div class="chips">${ch('format', 'auto', 'Claude choisit')}${['QCM','Dissertation','Cas pratique','Autre'].map(v => ch('format', v)).join('')}</div>
+  ${!e.format || e.format === 'auto' ? '<p class="tiny muted">Claude le devine d’après tes annales et ton cours.</p>' : ''}
   ${e.format === 'Autre' ? `<input id="exother" placeholder="Autre : oral, exposé, partiel en ligne…" value="${esc(e.other)}" aria-label="Ton format">` : ''}
   <span class="label">Quand</span><div class="chips">${ch('when','none','Peu importe')}${ch('when','exact','Date exacte')}${ch('when','2w','Dans 2 semaines')}</div>
   ${e.when === 'exact' ? `<input id="exdate" type="date" value="${esc(e.date)}" aria-label="Date du partiel">` : ''}
@@ -469,7 +599,7 @@ function setupScreen(){
   <button class="link" data-a="open" data-v="${c.id}" style="text-decoration:none">‹ ${esc(c.name)}</button>
   <h1 style="font-size:34px">Ton cours</h1>
   ${filesBlock(c)}
-  <h2 style="font-size:28px;margin-top:10px">Ton partiel, c’est quoi&nbsp;?</h2>
+  <h2 style="font-size:28px;margin-top:10px">Tu veux quoi&nbsp;?</h2>
   ${examSetup(c)}
   <button class="btn" data-a="go-course" ${c.files.some(f => f.pages && f.pages.length) ? '' : 'disabled'}>C’est parti</button>
   <p class="tiny muted" style="text-align:center">Modifiable à tout moment.</p></div></div>`;
@@ -477,9 +607,9 @@ function setupScreen(){
 function filesBlock(c){
   return `<span class="label">Tout ton cours</span>
   <div class="stack" style="gap:8px">${c.files.map((f, i) => `<div class="file ${f.error ? 'bad' : ''}"><span class="kind">${esc(f.kind)}</span><span class="nm"><b>${esc(f.name)}</b><br><span class="muted">${esc(f.error || f.how || '')}</span></span><span class="dot ${f.error ? 'no' : 'ok'}"></span>${c.example ? '' : `<button class="icon" data-a="rmfile" data-v="${i}" aria-label="Retirer ${esc(f.name)}" style="width:36px;height:36px;font-size:16px">✕</button>`}</div>`).join('') || '<p class="small muted">Aucun fichier pour l’instant.</p>'}</div>
-  ${reading ? `<div class="file"><div class="shuf" style="width:60px;height:40px;transform:scale(.4);transform-origin:left center" aria-hidden="true"><span class="word"><span class="dc p"><span>d</span></span><span class="dc k"><span>d</span></span></span></div><span class="nm"><b>${esc(reading.name)}</b><br><span class="muted">Je lis… ${esc(reading.detail)}</span></span></div>` : ''}
-  <button class="btn white" data-a="upload" ${reading ? 'disabled' : ''}>+ Ajouter des fichiers</button>
-  <p class="tiny muted">PDF, diapos (.pptx), Word (.docx), texte, photos de notes, scans. Depuis ton téléphone ou ton Drive.</p>`;
+  ${reading ? `<div class="file" style="flex-direction:column;align-items:stretch;gap:8px"><span class="nm"><b>${esc(reading.name)}</b><br><span class="muted">Je lis… ${esc(reading.detail)}</span></span><div class="bar"><i style="width:${Math.round((reading.pct || .05) * 100)}%"></i></div></div>` : ''}
+  <div class="row" style="flex-wrap:nowrap"><button class="btn white" data-a="upload" ${reading ? 'disabled' : ''}>+ Ajouter des fichiers</button>${mcp ? `<button class="btn white" data-a="drive" ${reading ? 'disabled' : ''}>Depuis Google Drive</button>` : ''}</div>
+  <p class="tiny muted">PDF, diapos (.pptx), Word (.docx), Google Docs, texte, photos de notes, scans. Pas de limite de taille : un très gros cours est envoyé à Claude par morceaux.</p>`;
 }
 function gameRow(g){ return `<div class="game"><span class="sc">${g.best ?? '–'}</span><button class="tx" data-a="play" data-v="${g.id}"><b>${esc(g.title)}</b><br><span class="small muted">${plural(g.cards.length, 'carte')} · ${esc(g.kind)}${g.best != null ? ' · meilleur ' + g.best + '/' + g.cards.length : ''}</span></button><button class="icon" data-a="gmenu" data-v="${g.id}" aria-label="Options du jeu ${esc(g.title)}">⋯</button></div>`; }
 function courseScreen(){
@@ -495,16 +625,25 @@ function courseScreen(){
   <div class="list"><button data-a="sheet" data-v="files"><span>Mon cours</span><span class="muted">${plural(filesN, 'fichier')}${c.files.some(f => f.error) ? ' · 1 illisible' : ''}</span></button><button data-a="sheet" data-v="ask" ${sample ? '' : 'disabled'}><span>Poser une question</span><span class="muted">→</span></button><button data-a="review" ${c.review.length && can ? '' : 'disabled'}><span>À revoir</span><span class="muted">${c.review.length}</span></button></div>
   </div></div>`;
 }
-function drawMaking(){ if (view.name === 'making') document.getElementById('app').innerHTML = makingScreen(); }
+function drawMaking(){
+  if (view.name !== 'making') return;
+  const app = document.getElementById('app'), m = making || {step:0, n:5, written:0};
+  if (!app.querySelector('.making')) { app.innerHTML = makingScreen(); return; }
+  app.querySelectorAll('.deck i').forEach((el, i) => { el.classList.toggle('on', i < m.written); el.classList.toggle('ok', m.step > 2 && i < m.written); });
+  const st = i => m.step > i ? 'ok' : m.step === i ? 'on' : '';
+  app.querySelectorAll('.steps > div').forEach((el, i) => el.className = st(i));
+  const w = app.querySelector('#written'); if (w) w.textContent = m.written ? ' · ' + Math.min(m.written, m.n) + '/' + m.n : '';
+}
 function makingScreen(){
   const m = making || {step:0, n:5, written:0}, st = i => m.step > i ? 'ok' : m.step === i ? 'on' : '';
-  return `<div class="making">${pair('five')}<h2 style="font-size:28px">Je prépare ta partie</h2>
-  <div class="steps"><div class="${st(0)}"><span class="dot"></span>Je lis ton cours</div><div class="${st(1)}"><span class="dot"></span>J’écris les cartes${m.written ? ' · ' + Math.min(m.written, m.n) + '/' + m.n : ''}</div><div class="${st(2)}"><span class="dot"></span>Je vérifie chaque citation</div></div></div>`;
+  return `<div class="making"><div class="deck" aria-hidden="true">${Array.from({length: m.n}, (_, i) => `<i class="${i < m.written ? 'on' : ''}"></i>`).join('')}</div><h2 style="font-size:28px">Je prépare ta partie</h2>
+  <div class="steps"><div class="${st(0)}"><span class="dot"></span>Je lis ton cours</div><div class="${st(1)}"><span class="dot"></span>J’écris les cartes<span id="written">${m.written ? ' · ' + Math.min(m.written, m.n) + '/' + m.n : ''}</span></div><div class="${st(2)}"><span class="dot"></span>Je vérifie chaque citation</div></div></div>`;
 }
 const src = k => `<p class="quote">« ${esc(k.quote)} » — ${esc(k.file || 'ton cours')}, p. ${k.page}</p>`;
 function stageHtml(k, again){
   const labels = {pick: k.caseStep ? 'Cas · décision ' + k.caseStep : 'Situation', sort:'Range', order:'Remets dans l’ordre', build:'Construis ta réponse', mistake:'Une copie d’étudiant', number:'Calcul', explain:'Rédige', speed:'Speed round'};
-  return `<section class="stage">${again ? '<span class="label" style="color:var(--pink)">Deuxième chance</span>' : `<span class="label">${labels[k.type] || ''} · p. ${k.page}</span>`}${k.situation ? `<p class="sit">${esc(k.situation)}</p>` : ''}<p class="q">${esc(k.type === 'sort' ? (game.st.i < game.st.items.length ? game.st.items[game.st.i].text : 'Tout est rangé.') : k.ask || '')}</p>${k.type === 'sort' ? `<span class="small" style="color:#a3a3a3">${esc(k.ask || '')}</span>` : ''}</section>`;
+  const enter = game.shown !== game.cur + ':' + game.i; game.shown = game.cur + ':' + game.i;
+  return `<section class="stage${enter ? ' enter' : ''}">${again ? '<span class="label" style="color:var(--pink)">Deuxième chance</span>' : `<span class="label">${labels[k.type] || ''} · p. ${k.page}</span>`}${k.situation ? `<p class="sit">${esc(k.situation)}</p>` : ''}${k.prev?.length ? `<div class="prev">${k.prev.map((x, i) => `<span>Décision ${i + 1} : ${esc(x.ask)} → <b>${esc(x.answer)}</b></span>`).join('')}</div>` : ''}<p class="q">${esc(k.type === 'sort' ? (game.st.i < game.st.items.length ? game.st.items[game.st.i].text : 'Tout est rangé.') : k.ask || '')}</p>${k.type === 'sort' ? `<span class="small" style="color:#a3a3a3">${esc(k.ask || '')}</span>` : ''}</section>`;
 }
 function moveHtml(k, st){
   switch (k.type) {
@@ -534,8 +673,9 @@ function dockHtml(k, st, g){
   if (k.type === 'explain') body = `<div class="keys">${k.keys.map((x, i) => `<span>${st.keys?.[i] ? '<b style="color:#2f8a4a">✓</b>' : '<b style="color:#b4500a">✗</b>'} ${esc(x)}</span>`).join('')}</div>${st.tip ? `<p class="small">${esc(st.tip)}</p>` : ''}<p class="small muted"><b>Réponse type :</b> ${esc(k.model)}</p>`;
   else if (k.type === 'number') body = `<p class="small">${(k.steps || []).map(esc).join('<br>')}</p>`;
   else if (k.type === 'sort' || k.type === 'speed') body = `<p class="small">${k.type === 'speed' ? (st.ok ? 'En ' + (25 - st.time) + ' secondes. Bats ton temps la prochaine fois.' : 'Le temps est écoulé.') : (st.ok ? 'Tout est bien rangé.' : 'Les cases en orange reviennent plus tard.')}</p>`;
-  else body = `<p class="small">${st.ok ? esc(k.why || '') : `<b>${k.type === 'mistake' ? 'C’était ' : 'Réponse : '}${esc(right)}.</b> ${esc(k.trap || k.why || '')}`}</p>`;
-  return `<div class="verdict" role="status"><div class="w"><span class="dot ${st.ok ? 'ok' : 'no'}" style="width:12px;height:12px"></span>${st.ok ? 'Exact !' : 'Pas tout à fait'}</div>${body}${src(k)}${!st.ok && g.retried[g.cur] && !again ? '<p class="tiny muted">Elle revient en fin de partie, autrement.</p>' : ''}<button class="btn ink" data-a="next">Continuer</button></div>`;
+  else body = `<p class="small">${st.ok ? esc(k.why || '') : `<b>${k.type === 'mistake' ? 'C’était ' : 'Réponse : '}${esc(right)}.</b> ${esc(k.why || '')}`}</p>${!st.ok && k.trap ? `<p class="small muted">${esc(k.trap)}</p>` : ''}`;
+  const enter = !st.verdictShown; st.verdictShown = true;
+  return `<div class="verdict${enter ? ' enter' : ''}" role="status"><div class="w"><span class="dot ${st.ok ? 'ok' : 'no'}" style="width:12px;height:12px"></span>${st.ok ? 'Exact !' : 'Pas tout à fait'}</div>${body}${src(k)}${!st.ok && g.retried[g.cur] && !again ? '<p class="tiny muted">Elle revient en fin de partie, autrement.</p>' : ''}<button class="btn ink" data-a="next">Continuer</button></div>`;
 }
 function play(){
   const g = game; if (!g) { view = {name:'course', id:view.id}; return courseScreen(); }
@@ -557,35 +697,63 @@ function endScreen(){
 }
 
 /* ================= sheets ================= */
-let gmenu = null, newGame = {on:'all', part:'', kind:'Mélange', minutes:5};
+let gmenu = null, newGame = {on:'all', part:'', kind:'Claude choisit', minutes:5};
 function sheetHtml(){
   const c = course();
   if (sheet === 'about') return `<h2 style="font-size:26px">Comment ça marche</h2><p><b>Ton cours reste ici.</b> Tes fichiers sont lus dans ce navigateur et gardés dans ce navigateur.</p><p><b>Claude, sur ton compte.</b> Quand tu crées un jeu ou poses une question, Buddy envoie ton cours à ton Claude. Ça compte dans ton usage Claude.</p><p><b>Chaque réponse est prouvée.</b> Une carte dont la phrase n’est pas retrouvée mot pour mot dans ton cours est jetée.</p><p><b>Tes erreurs reviennent</b> en fin de partie, puis dans « À revoir ».</p><button class="btn white" data-a="reset">${view.confirmReset ? 'Toucher encore pour tout effacer' : 'Tout effacer dans ce navigateur'}</button>`;
   if (!c) return '';
   if (sheet === 'files') return `<h2 style="font-size:26px">Mon cours</h2>${filesBlock(c)}<div class="row between"><button class="link" data-a="rename">Renommer le cours</button><button class="link" data-a="rmcourse" style="color:#b4500a">${view.confirmDelete ? 'Toucher encore pour supprimer' : 'Supprimer le cours'}</button></div>`;
-  if (sheet === 'exam') return `<h2 style="font-size:26px">Ton partiel</h2>${examSetup(c, true)}`;
+  if (sheet === 'exam') return `<h2 style="font-size:26px">Ton objectif</h2>${examSetup(c, true)}`;
   if (sheet === 'newgame') { const ng = newGame, ch = (k, v, l) => `<button class="chip" data-a="ng" data-k="${k}" data-v="${v}" aria-pressed="${String(ng[k]) === String(v)}">${l || v}</button>`;
     return `<h2 style="font-size:26px">Nouveau jeu</h2><span class="label">Sur quoi</span><div class="chips">${ch('on','all','Tout le cours')}${ch('on','part','Une partie')}${c.review.length ? ch('on','mistakes','Mes erreurs') : ''}</div>${ng.on === 'part' ? `<input id="ngpart" placeholder="la boucle de fidélité, le chapitre 2…" value="${esc(ng.part)}" aria-label="Quelle partie">` : ''}
     <span class="label">Quel jeu</span><div class="chips">${Object.keys(TYPE_MIX).map(v => ch('kind', v)).join('')}</div>
     <span class="label">Durée</span><div class="chips">${[5,10,15].map(v => ch('minutes', v, v + ' min')).join('')}</div>
-    <button class="btn" data-a="create">Créer le jeu</button><p class="tiny muted" style="text-align:center">Le format de ton partiel (${esc(fmt(c))}) est pris en compte.</p>`; }
+    <button class="btn" data-a="create">Créer le jeu</button><p class="tiny muted" style="text-align:center">Ton objectif${goalOf(c) ? ' (' + esc(goalOf(c)) + ')' : ''} passe en premier.</p>`; }
   if (sheet === 'gmenu') { const g = c.games.find(x => x.id === gmenu); if (!g) return '';
     return `<h2 style="font-size:24px">${esc(g.title)}</h2><button class="btn ink" data-a="play" data-v="${g.id}">Rejouer</button>${view.renaming ? `<form id="renameform" class="row" style="flex-wrap:nowrap"><input id="gname" value="${esc(g.title)}" aria-label="Nom du jeu" style="flex:1"><button class="btn sm" type="submit">OK</button></form>` : '<button class="btn white" data-a="grename">Renommer</button>'}<button class="btn white" data-a="gdelete" style="color:#b4500a">${view.confirmG ? 'Toucher encore pour supprimer' : 'Supprimer ce jeu'}</button><p class="tiny muted" style="text-align:center">Supprimer ne touche pas à ton cours ni à tes erreurs à revoir.</p>`; }
+  if (sheet === 'drive') return driveSheet(c);
   if (sheet === 'ask') { const turns = chats[c.id] || [];
-    return `<h2 style="font-size:26px">Pose une question</h2><div class="msgs">${turns.length ? turns.map((t, i) => `<div class="msg ${t.role === 'user' ? 'me' : 'ai'}" ${i === turns.length - 1 && t.role !== 'user' ? 'id="lastai"' : ''}>${esc(t.content || '…')}</div>`).join('') : `<p class="muted">Claude répond seulement d’après ton cours, avec la page.</p><div class="chips">${['Résume-moi le cours','Donne-moi un plan de dissert','C’est quoi la notion clé ?'].map(q => `<button class="chip" data-a="askchip" data-v="${esc(q)}">${esc(q)}</button>`).join('')}</div>`}</div>
-    <form id="askform" class="row" style="flex-wrap:nowrap"><input id="q" placeholder="Ta question sur le cours" autocomplete="off" style="flex:1;min-width:0;border-radius:99px"><button class="btn ink sm" type="submit" aria-label="Envoyer" ${busy ? 'disabled' : ''}>${busy ? '<span class="nod" aria-hidden="true" style="margin:0"><span>d</span><span>d</span></span>' : '↑'}</button></form>`; }
+    return `<div class="row between"><h2 style="font-size:26px">Pose une question</h2><button class="icon" data-a="close" aria-label="Fermer">✕</button></div><div class="msgs">${turns.length ? turns.map((t, i) => `<div class="msg ${t.role === 'user' ? 'me' : 'ai'}" ${i === turns.length - 1 && t.role !== 'user' ? 'id="lastai"' : ''}>${t.role === 'user' ? esc(t.content) : t.content ? md(t.content) : '<span class="typing" aria-label="Claude écrit"><i></i><i></i><i></i></span>'}</div>`).join('') : `<p class="muted">Claude répond seulement d’après ton cours, avec la page.</p><div class="chips">${['Résume-moi le cours','Donne-moi un plan de dissert','C’est quoi la notion clé ?'].map(q => `<button class="chip" data-a="askchip" data-v="${esc(q)}">${esc(q)}</button>`).join('')}</div>`}</div>
+    <form id="askform" class="row" style="flex-wrap:nowrap"><input id="q" placeholder="Ta question sur le cours" autocomplete="off" style="flex:1;min-width:0;border-radius:99px"><button class="btn ink sm" type="submit" aria-label="Envoyer" ${busy ? 'disabled' : ''}>↑</button></form>`; }
   return '';
 }
 function drawSheet(){
   const host = document.getElementById('sheet');
-  if (view.name === 'setup') { document.getElementById('app').innerHTML = setupScreen(); bindInputs(); }
+  if (view.name === 'setup' && !sheet) { const y = window.scrollY; document.getElementById('app').innerHTML = setupScreen(); bindInputs(); window.scrollTo(0, y); }
   if (!sheet) { host.innerHTML = ''; return; }
-  host.innerHTML = `<div class="scrim" data-a="close"><div class="sheet" data-stop role="dialog" aria-modal="true"><span class="grab"></span>${sheetHtml()}</div></div>`;
-  bindInputs();
+  const cur = host.querySelector('.sheet');
+  if (cur && cur.dataset.name === sheet) {
+    const keep = ['q', 'dq'].map(id => { const el = document.getElementById(id); return el && {id, v: el.value, f: document.activeElement === el}; }).filter(Boolean), top = cur.scrollTop;
+    cur.innerHTML = '<span class="grab"></span>' + sheetHtml(); cur.scrollTop = top;
+    for (const k of keep) { const el = document.getElementById(k.id); if (el) { el.value = k.v; if (k.f) el.focus(); } }
+  } else {
+    const chat = sheet === 'ask' || sheet === 'drive';
+    host.innerHTML = `<div class="scrim enter${chat ? ' drawer' : ''}" data-a="close"><div class="sheet${chat ? ' chat' : ''}" data-name="${sheet}" data-stop role="dialog" aria-modal="true"><span class="grab"></span>${sheetHtml()}</div></div>`;
+  }
+  bindInputs(); scrollChat();
+}
+function scrollChat(){ const m = document.querySelector('.sheet.chat .msgs'); if (m) m.scrollTop = m.scrollHeight; }
+/* Claude answers in Markdown: show it formatted, never as raw ** and #. */
+function md(src){
+  const inline = t => esc(t).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/(^|\W)\*(?!\s)(.+?)\*(?=\W|$)/g, '$1<i>$2</i>');
+  const out = []; let list = null;
+  for (const raw of String(src || '').split('\n')) {
+    const l = raw.trim();
+    const li = l.match(/^(?:[-*•]|\d+[.)])\s+(.*)/);
+    if (li) { if (!list) { list = []; } list.push('<li>' + inline(li[1]) + '</li>'); continue; }
+    if (list) { out.push('<ul>' + list.join('') + '</ul>'); list = null; }
+    if (!l) continue;
+    const h = l.match(/^#{1,6}\s+(.*)/);
+    out.push(h ? '<h4>' + inline(h[1]) + '</h4>' : '<p>' + inline(l) + '</p>');
+  }
+  if (list) out.push('<ul>' + list.join('') + '</ul>');
+  return out.join('');
 }
 function bindInputs(){
+  const df = document.getElementById('driveform'); if (df) df.onsubmit = e => { e.preventDefault(); const q = document.getElementById('dq').value.trim(); if (q) { drive.path = []; driveList('search', q); } };
   const af = document.getElementById('askform'); if (af) af.onsubmit = e => { e.preventDefault(); const q = document.getElementById('q'); const v = q.value; q.value = ''; ask(v); };
   const nf = document.getElementById('newform'); if (nf) { nf.querySelector('input').focus(); nf.onsubmit = e => { e.preventDefault(); const n = document.getElementById('cname').value.trim(); if (!n) return; const c = newCourse(n); S.courses.push(c); S.welcomed = true; save(); view = {name:'setup', id:c.id}; render(); }; }
+  const go = document.getElementById('goalother'); if (go) go.oninput = () => { course().goalOther = go.value; save(); };
   const eo = document.getElementById('exother'); if (eo) eo.oninput = () => { course().exam.other = eo.value; save(); };
   const ed = document.getElementById('exdate'); if (ed) ed.onchange = () => { course().exam.date = ed.value; save(); };
   const np = document.getElementById('ngpart'); if (np) np.oninput = () => { newGame.part = np.value; };
@@ -594,8 +762,9 @@ function bindInputs(){
 }
 function render(){
   const app = document.getElementById('app');
+  if (view.name === 'making' && making) { document.getElementById('sheet').innerHTML = ''; return drawMaking(); }
   app.innerHTML = view.name === 'welcome' ? welcome() : view.name === 'new' ? newCourseScreen() : view.name === 'setup' ? setupScreen() : view.name === 'course' ? courseScreen() : view.name === 'making' ? makingScreen() : view.name === 'play' ? play() : home();
-  drawSheet(); bindInputs();
+  if (view.name !== 'setup' || sheet) drawSheet(); else document.getElementById('sheet').innerHTML = ''; bindInputs();
 }
 
 /* ================= actions ================= */
@@ -604,7 +773,7 @@ document.addEventListener('click', e => {
   if (t.classList.contains('scrim') && e.target.closest('[data-stop]')) return;
   const a = t.dataset.a, v = t.dataset.v, c = course(), g = game, st = g?.st, k = g ? g.byId[g.cur] : null;
   switch (a) {
-    case 'close': sheet = null; view.confirmReset = view.confirmDelete = view.confirmG = view.renaming = false; return render();
+    case 'close': if (t.classList.contains('scrim') && e.target !== t) return; sheet = null; view.confirmReset = view.confirmDelete = view.confirmG = view.renaming = false; return render();
     case 'sheet': sheet = v; return drawSheet();
     case 'try': S.welcomed = true; save(); view = {name:'course', id:'ex'}; return render();
     case 'reset': if (!view.confirmReset) { view.confirmReset = true; return drawSheet(); } S = fresh(); save(); sheet = null; view = {name:'welcome'}; return render();
@@ -612,8 +781,14 @@ document.addEventListener('click', e => {
     case 'new': view = {name:'new'}; return render();
     case 'open': S.welcomed = true; save(); view = {name:'course', id:v}; render(); return window.scrollTo(0,0);
     case 'upload': return document.getElementById('file').click();
+    case 'drive': sheet = 'drive'; drive = {state:'idle', items:[], path:[], err:'', added:{}}; drawSheet(); return driveList('recent');
+    case 'dhome': drive.path = []; return driveList('recent');
+    case 'dopen': { const f = drive.items.find(x => x.id === v); if (!f) return; drive.path.push(f); return driveList('folder', f.id); }
+    case 'dadd': { const f = drive.items.find(x => x.id === v); return f ? driveAdd([f]) : null; }
+    case 'dall': return driveAdd(drive.items.filter(f => !isFolder(f)));
     case 'rmfile': c.files.splice(+v, 1); save(); return view.name === 'setup' ? render() : drawSheet();
     case 'exam': { const kk = t.dataset.k; c.exam[kk] = v; save(); return view.name === 'setup' ? render() : drawSheet(); }
+    case 'goal': c.goal = v; save(); return view.name === 'setup' ? render() : drawSheet();
     case 'go-course': view = {name:'course', id:c.id}; return render();
     case 'rename': { sheet = null; render(); const h = document.querySelector('.main h1'); if (!h) return; h.contentEditable = 'true'; h.focus(); document.getSelection().selectAllChildren(h); h.onblur = () => { const s = h.textContent.trim(); if (s) { c.name = s; save(); } render(); }; h.onkeydown = ev => { if (ev.key === 'Enter') { ev.preventDefault(); h.blur(); } }; return; }
     case 'rmcourse': if (!view.confirmDelete) { view.confirmDelete = true; return drawSheet(); } S.courses = S.courses.filter(x => x.id !== c.id); save(); sheet = null; view = {name:'home'}; return render();
@@ -654,4 +829,5 @@ document.addEventListener('click', e => {
   }
 });
 render();
+idbGet(KEY).then(s => { loaded = true; if (s && s.courses) { S = s; if (view.name === 'welcome' && S.welcomed) view = {name:'home'}; render(); } else save(); }).catch(() => { loaded = true; });
 </script>
