@@ -207,7 +207,8 @@ textarea{min-height:140px;resize:vertical;line-height:1.45}
 .istep .n{width:34px;height:44px;flex:none;border-radius:9px;background:var(--ink);color:var(--pink);font-family:var(--disp);font-size:20px;display:flex;align-items:center;justify-content:center;transform:rotate(-5deg)}
 .istep:nth-child(2) .n{background:var(--pink);color:var(--ink);transform:rotate(5deg)}
 .intro .dock{display:block}
-@media (min-width:900px){.intro{grid-template-columns:1.05fr 1fr;column-gap:64px;padding-bottom:24px}.intro .isteps{grid-column:1 / -1;grid-template-columns:repeat(3,1fr)}.intro .dock{display:none}}
+.deal{animation:deal .7s cubic-bezier(.2,1.2,.4,1) both}
+@media (min-width:900px){.intro{column-gap:64px;padding-bottom:24px}.intro.withdemo{grid-template-columns:1.05fr 1fr}.intro .isteps{grid-column:1 / -1;grid-template-columns:repeat(3,1fr)}.intro .dock{display:none}}
 .anim .logo-in .dc.p{animation:drop-p .8s cubic-bezier(.2,1.5,.4,1) .15s both}
 .anim .logo-in .dc.k{animation:drop-k .8s cubic-bezier(.2,1.5,.4,1) .32s both}
 .anim .logo-in .tx{animation:rise .5s ease-out both}
@@ -239,7 +240,7 @@ const EX_PAGES = [
  {p:2, text:"À chaque étape, le client croise des points de contact. On en distingue quatre types selon qui les contrôle. Les points de contact brand-owned sont conçus et gérés par la marque, comme son site, son appli ou son packaging. Les points de contact partner-owned sont gérés avec des partenaires, comme une agence ou un distributeur. Les points de contact customer-owned dépendent du client seul, comme sa propre réflexion sur ses besoins. Les points de contact social/external échappent à la marque, comme les avis en ligne ou un influenceur indépendant. Au post-achat, un déclencheur mène soit à la fidélité, avec un rachat, soit à un retour au pré-achat où le client compare d'autres offres : c'est la boucle de fidélité."}];
 const newCourse = (name, example) => ({id: example ? 'ex' : 'c' + Date.now(), name, example: !!example, created: Date.now(), fresh: true,
   goal: example ? 'Valider le partiel' : '', goalOther: '', exam: {format: 'auto', other: '', when: 'none', date: ''}, files: example ? [{name:'TD3 parcours client (exemple).txt', kind:'Cours', pages: EX_PAGES, unit:'page'}] : [], games: [], review: []});
-const fresh = () => ({welcomed:false, courses:[newCourse('Marketing · parcours client', true)]});
+const fresh = () => ({welcomed:false, courses:[]});
 const load = () => { try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.courses) return s; } catch(e){} return fresh(); };
 let S = load();
 /* Courses can be big: they live in IndexedDB (hundreds of MB), not localStorage (5 MB). */
@@ -696,7 +697,7 @@ const INTRO = [
   {s:'Une entreprise vend à 50 € un produit qui lui coûte 30 € en charges variables.', q:'Sa marge sur coût variable unitaire ?', o:['20 €','30 €','80 €'], a:'20 €', w:'Prix de vente − coût variable : 50 − 30 = 20 €.'},
   {s:'Tom lit les avis en ligne avant de réserver un hôtel.', q:'Le site d’avis est quel point de contact ?', o:['Brand-owned','Social/external','Partner-owned'], a:'Social/external', w:'Un avis en ligne échappe à la marque.'}
 ];
-let intro = {i:0, picked:null, played:false};
+let intro = {i:0, picked:null, played:false, show:false};
 function introDemo(){
   const c = INTRO[intro.i % INTRO.length], done = intro.picked !== null, ok = intro.picked === c.a;
   return `<section class="stage"><span class="label">Essaie · ${intro.i % INTRO.length + 1}/${INTRO.length}</span><p class="sit">${esc(c.s)}</p><p class="q">${esc(c.q)}</p></section>
@@ -711,14 +712,15 @@ function burst(host){
 }
 function welcome(){
   const anim = !intro.played; intro.played = true;
-  return `<div class="intro${anim ? ' anim' : ''}">
+  const dealNow = intro.show && !intro.dealt; if (intro.show) intro.dealt = true;
+  return `<div class="intro${anim ? ' anim' : ''}${intro.show ? ' withdemo' : ''}">
   <div style="display:flex;flex-direction:column;gap:22px">
     <span class="word logo-in" style="font-size:34px" role="img" aria-label="Buddy"><span class="tx">Bu</span><span class="dc p"><span>d</span></span><span class="dc k"><span>d</span></span><span class="tx">y</span></span>
     <h1><span class="hl">Ton cours</span><span class="hl">devient</span><span class="hl">un jeu.</span></h1>
     <p class="lead">Ajoute tes TD, diapos, annales et tableurs. Claude en fait des parties de 5 minutes pour ton objectif, et te montre la page du cours à chaque réponse.</p>
-    <div class="cta"><button class="btn" data-a="new">+ Ajouter un cours</button><button class="link" data-a="try" style="align-self:center">Ou essaie avec un cours exemple</button></div>
+    <div class="cta"><button class="btn" data-a="new">+ Ajouter un cours</button>${intro.show ? '' : '<button class="btn white" data-a="ishow">Essayer un exemple</button>'}</div>
   </div>
-  <div class="demo" id="idemo" aria-live="polite">${introDemo()}</div>
+  ${intro.show ? `<div class="demo${dealNow ? ' deal' : ''}" id="idemo" aria-live="polite">${introDemo()}</div>` : ''}
   <div class="isteps">
     <div class="istep"><span class="n">1</span><span><b>Ajoute ton cours</b><br><span class="small muted">Un dossier entier, ton Drive, Excel, des photos de notes.</span></span></div>
     <div class="istep"><span class="n">2</span><span><b>Choisis ton objectif</b><br><span class="small muted">Valider, viser haut, comprendre, et le format des exercices.</span></span></div>
@@ -730,7 +732,7 @@ function welcome(){
 function home(){
   return `<header class="topbar" style="justify-content:space-between"><button data-a="intro" aria-label="Revoir l’accueil de Buddy" style="min-height:44px">${word(24)}</button><button class="act" data-a="sheet" data-v="about">? Comment ça marche</button></header>
   <h1 style="font-size:36px;margin:12px 0 18px">Mes cours</h1>
-  <div class="courses">${S.courses.map(c => { const d = daysTo(c); return `<button class="course" data-a="open" data-v="${c.id}"><span class="ini">${esc((c.name.trim()[0] || '?').toUpperCase())}</span><span class="meta"><b>${esc(c.name)}</b><span class="small muted">${c.example ? 'Exemple · ' : ''}${plural(c.games.length, 'jeu', 'jeux')}${c.review.length ? ' · ' + c.review.length + ' à revoir' : ''}</span></span>${d !== null && d >= 0 ? `<span class="label" style="color:var(--ink)">J-${d}</span>` : '<span class="muted">›</span>'}</button>`; }).join('')}</div>
+  <div class="courses">${S.courses.map(c => { const d = daysTo(c); return `<button class="course" data-a="open" data-v="${c.id}"><span class="ini">${esc((c.name.trim()[0] || '?').toUpperCase())}</span><span class="meta"><b>${esc(c.name)}</b><span class="small muted">${c.example ? 'Exemple · ' : ''}${plural(c.games.length, 'jeu', 'jeux')}${c.review.length ? ' · ' + c.review.length + ' à revoir' : ''}</span></span>${d !== null && d >= 0 ? `<span class="label" style="color:var(--ink)">J-${d}</span>` : '<span class="muted">›</span>'}</button>`; }).join('') || '<p class="muted">Aucun cours pour l’instant : ajoute ton premier cours.</p>'}</div>
   <div style="margin-top:12px"><button class="add" data-a="new">+ Nouveau cours</button></div>
   ${claudeState === 'none' ? '<p class="small muted" style="margin-top:16px">Ouvre Buddy dans Claude pour créer des jeux.</p>' : ''}`;
 }
@@ -948,12 +950,12 @@ document.addEventListener('click', e => {
   if (t.classList.contains('scrim') && e.target.closest('[data-stop]')) return;
   const a = t.dataset.a, v = t.dataset.v, c = course(), g = game, st = g?.st, k = g ? g.byId[g.cur] : null;
   switch (a) {
-    case 'intro': intro = {i:0, picked:null, played:false}; view = {name:'welcome'}; render(); return window.scrollTo(0, 0);
+    case 'intro': intro = {i:0, picked:null, played:false, show:false}; view = {name:'welcome'}; render(); return window.scrollTo(0, 0);
     case 'ipick': { if (intro.picked !== null) return; intro.picked = v; const host = document.getElementById('idemo'); host.innerHTML = introDemo(); if (v === INTRO[intro.i % INTRO.length].a) burst(host); return; }
     case 'inext': intro.i++; intro.picked = null; document.getElementById('idemo').innerHTML = introDemo(); return;
     case 'close': if (t.classList.contains('scrim') && e.target !== t) return; sheet = null; view.confirmReset = view.confirmDelete = view.confirmG = view.renaming = false; return render();
     case 'sheet': sheet = v; return drawSheet();
-    case 'try': S.welcomed = true; save(); view = {name:'course', id:'ex'}; return render();
+    case 'ishow': { intro.show = true; document.getElementById('app').innerHTML = welcome(); const d = document.getElementById('idemo'); if (d && innerWidth < 900) d.scrollIntoView({behavior:'smooth', block:'start'}); return; }
     case 'reset': if (!view.confirmReset) { view.confirmReset = true; return drawSheet(); } S = fresh(); save(); sheet = null; view = {name:'welcome'}; return render();
     case 'home': view = {name:'home'}; return render();
     case 'new': view = {name:'new'}; return render();
