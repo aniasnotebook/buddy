@@ -291,6 +291,10 @@ function finder(c){
     return null;
   };
 }
+/* Claude's instructions are not a guarantee: a card must carry an explanation, and its quote must prove the answer, not repeat the exercise. */
+const wordsOf = t => norm(t).match(/[a-zà-ÿ0-9]{4,}/g) || [];
+function echoes(k){ const q = wordsOf(k.quote); if (q.length < 4) return false; const ctx = new Set(wordsOf((k.situation || '') + ' ' + (k.ask || ''))); return q.filter(w => ctx.has(w)).length / q.length >= .5; }
+const sound = k => !!k && (k.type !== 'pick' || !!String(k.why || '').trim()) && (k.type === 'flash' || !echoes(k));
 function checkCards(c, all){
   const find = finder(c);
   const out = []; let used = 0;
@@ -298,7 +302,7 @@ function checkCards(c, all){
     if (!k || !k.type || !k.quote) continue;
     const before = out.length;
     const hit = find(k.quote); if (!hit) continue;
-    const base = {...k, page: hit.p, file: hit.f, id: uid()};
+    const base = {...k, page: hit.p, file: hit.f, id: uid(), src: all.indexOf(k)};
     const t = k.type; let ok = false;
     if (t === 'pick') ok = Array.isArray(k.options) && k.options.length === 4 && k.options.includes(k.answer) && k.ask;
     if (t === 'case') { if (Array.isArray(k.steps) && k.situation) k.steps.forEach((s, i) => { const sh = s?.quote && find(s.quote); if (s && Array.isArray(s.options) && s.options.includes(s.answer) && s.ask) out.push({...base, ...(sh ? {quote: s.quote, page: sh.p, file: sh.f} : {}), id: uid(), type:'pick', caseStep: (i + 1) + '/' + k.steps.length, situation: k.situation, ask: s.ask, options: s.options, answer: s.answer, why: s.why || '', trap: s.trap || '', prev: k.steps.slice(0, i).map(x => ({ask: x.ask, answer: x.answer}))}); }); if (out.length > before) used++; continue; }
@@ -312,8 +316,9 @@ function checkCards(c, all){
     if (t === 'explain') ok = k.ask && k.model && Array.isArray(k.keys) && k.keys.length >= 1;
     if (ok) { out.push(base); used++; }
   }
-  out.dropped = all.filter(Boolean).length - used;
-  return out;
+  const good = out.filter(sound);
+  good.dropped = all.filter(Boolean).length - new Set(good.map(x => x.src)).size;
+  return good;
 }
 async function makeGame(opts){
   const c = course(); if (!sample || busy) return;
@@ -548,7 +553,9 @@ function prep(k){
   return st;
 }
 function startGame(c, g, dropped){
-  const cards = g.review ? g.cards : g.cards;
+  const cards = g.cards.filter(sound);
+  if (!cards.length) { render(); return toast('Ce jeu vient d’une ancienne version de Buddy : crée un nouveau jeu.'); }
+  dropped = (dropped || 0) + (g.review ? 0 : g.cards.length - cards.length);
   game = {courseId:c.id, gameId:g.id, title:g.title, review: !!g.review, daily: !!g.daily, cards, queue: cards.map(k => k.id), byId: Object.fromEntries(cards.map(k => [k.id, k])), retried:{}, first:{}, i:0, dropped: dropped || 0, t0: Date.now()};
   game.cur = game.queue.shift(); game.st = prep(game.byId[game.cur]);
   view = {name:'play', id:c.id}; render(); window.scrollTo(0,0);
@@ -709,7 +716,7 @@ function endScreen(){
   const head = right === n ? 'Parfait.' : right >= n - 1 ? 'Presque parfait.' : right >= n / 2 ? 'Bonne partie.' : 'On s’y remet.';
   return `<div class="end"><div class="medal">${right === n ? '★' : right}</div><h1 style="font-size:40px">${head}</h1>
   <div class="stats"><div><b>${right}/${n}</b><span class="label">du 1er coup</span></div><div><b>${c.review.length}</b><span class="label">à revoir</span></div><div><b>${secs >= 60 ? Math.round(secs / 60) + ' min' : secs + ' s'}</b><span class="label">de jeu</span></div></div>
-  ${g.dropped ? `<p class="small muted">${plural(g.dropped, 'carte')} écartée${g.dropped > 1 ? 's' : ''} : citation introuvable dans ton cours.</p>` : ''}
+  ${g.dropped ? `<p class="small muted">${plural(g.dropped, 'carte')} écartée${g.dropped > 1 ? 's' : ''} : la phrase du cours ne prouvait pas la réponse.</p>` : ''}
   <div class="row" style="width:100%;max-width:520px;flex-wrap:nowrap"><button class="btn" data-a="continue">Continuer</button>${g.review ? '' : `<button class="btn white" data-a="replay-now">${g.daily ? 'Un autre mélange' : 'Rejouer'}</button>`}</div></div>`;
 }
 
