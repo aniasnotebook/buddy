@@ -278,7 +278,75 @@ const idb = () => idbP || (idbP = new Promise((res, rej) => { const r = indexedD
 const idbGet = async k => { const db = await idb(); return new Promise((res, rej) => { const q = db.transaction('kv').objectStore('kv').get(k); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); }); };
 const idbPut = async (k, v) => { const db = await idb(); return new Promise((res, rej) => { const t = db.transaction('kv', 'readwrite'); t.objectStore('kv').put(v, k); t.oncomplete = () => res(); t.onerror = () => rej(t.error); }); };
 let saveT = null, loaded = false;
-const save = () => { if (!loaded) return; clearTimeout(saveT); saveT = setTimeout(() => idbPut(KEY, S).catch(() => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){ toast('Plus de place dans ce navigateur : retire un gros fichier.'); } }), 120); };
+const save = () => { if (!loaded) return; S.updated = Date.now(); clearTimeout(saveT); saveT = setTimeout(() => { idbPut(KEY, S).catch(() => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){ toast('Plus de place dans ce navigateur : retire un gros fichier.'); } }); cloudPush(); }, 400); };
+
+/* ================= her account: a private space in Buddy's Claude database =================
+   data/users/<her id>/… is readable and writable by her alone (not even the page's owner by default).
+   One document per course, the course text in chunks under 200 KB, one index. The browser copy stays as the fast copy and the fallback. */
+let cloud = {db:null, uid:null, state:'off', sent:{}, busy:false, again:false};
+const CHUNK = 180000;
+const sid = x => String(x).replace(/[^A-Za-z0-9_\-.~:@+]/g, '_').slice(0, 120);
+function cloudDocs(){
+  const docs = {};
+  const index = {v:1, updated: S.updated || Date.now(), welcomed: !!S.welcomed, courses: S.courses.map(c => c.id)};
+  for (const c of S.courses) {
+    const files = c.files.map((f, fi) => {
+      const text = JSON.stringify(f.pages || []), parts = Math.ceil(text.length / CHUNK) || 0;
+      for (let k = 0; k < parts; k++) docs['p_' + sid(c.id) + '_' + fi + '_' + k] = {t: text.slice(k * CHUNK, (k + 1) * CHUNK)};
+      const {pages, ...meta} = f; return {...meta, parts};
+    });
+    docs['c_' + sid(c.id)] = {json: JSON.stringify({...c, files})};
+  }
+  docs.index = index;
+  return docs;
+}
+async function cloudPush(){
+  if (cloud.state !== 'on') return;
+  if (cloud.busy) { cloud.again = true; return; }
+  cloud.busy = true;
+  try {
+    const docs = cloudDocs(), col = cloud.db.collection('data/users/' + cloud.uid);
+    for (const [id, body] of Object.entries(docs)) { if (id === 'index') continue; const h = JSON.stringify(body); if (cloud.sent[id] === h) continue; await col.doc(id).set(body); cloud.sent[id] = h; }
+    for (const id of Object.keys(cloud.sent)) if (!(id in docs)) { await col.doc(id).delete(); delete cloud.sent[id]; }
+    await col.doc('index').set(docs.index); cloud.sent.index = JSON.stringify(docs.index);
+  } catch(e){ if (e?.code === 'invalid_argument' || e?.code === 'permission_denied' || e?.code === 'revoked') { cloud.state = 'denied'; render(); } else if (e?.code === 'quota_exceeded') { cloud.state = 'full'; toast('Ton espace Buddy est plein : supprime un vieux cours.'); } }
+  cloud.busy = false;
+  if (cloud.again) { cloud.again = false; cloudPush(); }
+}
+async function cloudPull(){
+  const col = cloud.db.collection('data/users/' + cloud.uid);
+  const idx = await col.doc('index').get();
+  if (!idx.exists) return null;
+  const index = idx.data();
+  const courses = [];
+  for (const id of index.courses || []) {
+    const d = await col.doc('c_' + sid(id)).get(); if (!d.exists) continue;
+    const c = JSON.parse(d.data().json); cloud.sent['c_' + sid(id)] = JSON.stringify(d.data());
+    for (let fi = 0; fi < c.files.length; fi++) {
+      const f = c.files[fi]; let text = '';
+      for (let k = 0; k < (f.parts || 0); k++) { const pd = await col.doc('p_' + sid(c.id) + '_' + fi + '_' + k).get(); if (pd.exists) { text += pd.data().t; cloud.sent['p_' + sid(c.id) + '_' + fi + '_' + k] = JSON.stringify(pd.data()); } }
+      try { f.pages = text ? JSON.parse(text) : []; } catch(e){ f.pages = []; }
+      delete f.parts;
+    }
+    courses.push(c);
+  }
+  cloud.sent.index = JSON.stringify(index);
+  return {welcomed: index.welcomed, courses, updated: index.updated};
+}
+async function cloudStart(){
+  try {
+    const [db, user] = await Promise.all([window.claude?.use?.('db'), window.claude?.use?.('user')]);
+    const uid = await user?.id?.();
+    if (!db || !uid) { cloud.state = 'local'; return render(); }
+    cloud.db = db; cloud.uid = uid;
+    const remote = await Promise.race([cloudPull(), new Promise((_, r) => setTimeout(() => r({code:'timeout'}), 15000))]);
+    cloud.state = 'on';
+    /* never let an empty browser overwrite her saved courses */
+    if (remote && (remote.updated || 0) > (S.updated || 0) || remote && remote.courses.length && !S.courses.length) { S = remote; S.updated = remote.updated; idbPut(KEY, S).catch(() => {}); if (view.name === 'welcome' && S.welcomed) view = {name:'home'}; else if (view.id && !S.courses.some(c => c.id === view.id)) view = {name:'home'}; render(); toast('Tes cours sont revenus depuis ton compte.'); }
+    else { cloudPush(); render(); }
+  } catch(e){ cloud.state = e?.code === 'invalid_argument' ? 'denied' : 'local'; render(); }
+}
+const cloudLine = () => cloud.state === 'on' ? 'Sauvegardé dans ton compte Claude : tu retrouves tes cours sur tous tes appareils.' : cloud.state === 'denied' ? 'Gardé dans ce navigateur seulement : ce lien ne permet pas de sauvegarder dans ton compte.' : cloud.state === 'local' ? 'Gardé dans ce navigateur seulement.' : '';
 let view = {name: S.welcomed ? 'home' : 'welcome'}, game = null, busy = false, sheet = null, making = null, reading = null;
 const chats = {};
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -761,7 +829,7 @@ function welcome(){
     <div class="istep"><span class="n">2</span><span><b>Choisis ton objectif</b><br><span class="small muted">Valider, viser haut, comprendre, et le format des exercices.</span></span></div>
     <div class="istep"><span class="n">3</span><span><b>Joue 5 minutes</b><br><span class="small muted">Ce que tu rates revient jusqu’à ce que ça rentre.</span></span></div>
   </div>
-  <p class="tiny muted" style="text-align:center;grid-column:1 / -1">Tout reste dans ton Claude et ce navigateur.</p>
+  <p class="tiny muted" style="text-align:center;grid-column:1 / -1">Tes cours restent à toi : dans ton compte Claude et ce navigateur.</p>
   </div>`;
 }
 const noClaude = () => claudeState === 'none' ? `<div class="banner" role="status" style="background:var(--orange-tint);color:var(--ink)"><span class="dot no" style="background:var(--orange)"></span><span><b>Claude n’est pas branché sur cette page.</b> Ouvre Buddy depuis claude.ai, connectée à ton compte Claude : sur un lien public, Claude est coupé. Tes cours et tes jeux déjà créés marchent quand même.</span></div>` : '';
@@ -770,7 +838,7 @@ function home(){
   <h1 style="font-size:36px;margin:12px 0 18px">Mes cours</h1>
   <div class="courses">${S.courses.map(c => { const d = daysTo(c); return `<button class="course" data-a="open" data-v="${c.id}"><span class="ini">${esc((c.name.trim()[0] || '?').toUpperCase())}</span><span class="meta"><b>${esc(c.name)}</b><span class="small muted">${c.example ? 'Exemple · ' : ''}${plural(c.games.length, 'jeu', 'jeux')}${c.review.length ? ' · ' + c.review.length + ' à revoir' : ''}</span></span>${d !== null && d >= 0 ? `<span class="label" style="color:var(--ink)">J-${d}</span>` : '<span class="muted">›</span>'}</button>`; }).join('') || '<p class="muted">Aucun cours pour l’instant : ajoute ton premier cours.</p>'}</div>
   <div style="margin-top:12px"><button class="add" data-a="new" style="gap:6px">${ic('plus')}Ajouter un cours</button></div>
-  <div style="margin-top:16px">${noClaude()}</div>`;
+  <div style="margin-top:16px">${noClaude()}</div>${cloudLine() ? `<p class="tiny muted" style="margin-top:14px;text-align:center">${esc(cloudLine())}</p>` : ''}`;
 }
 function newCourseScreen(){
   return `<div class="shell">${sideHtml()}<div class="main" style="max-width:560px">
@@ -906,7 +974,7 @@ function sheetHtml(){
   const c = course(), sub = view.sub;
   if (sheet === 'about') {
     if (sub === 'reset') return head('Tout effacer ?') + confirmDel('Tout effacer', `Ça efface <b>tous tes cours</b>, leurs jeux et tes erreurs à revoir, dans ce navigateur. Tes fichiers d’origine ne sont pas touchés.`, 'reset');
-    return head('Comment ça marche') + `<p><b>Ton cours reste ici.</b> Tes fichiers sont lus et gardés dans ce navigateur.</p><p><b>Claude, sur ton compte.</b> Quand tu crées un jeu ou poses une question, Buddy envoie ton cours à ton Claude. Ça compte dans ton usage Claude.</p><p><b>Chaque carte vient de ton cours.</b> Buddy vérifie qu’elle s’appuie sur une phrase retrouvée mot pour mot dans tes fichiers, sinon elle est jetée. Sous chaque réponse, « Voir dans ton cours » ouvre la page.</p><p><b>Tes erreurs reviennent</b> en fin de partie, puis dans « À revoir ».</p>
+    return head('Comment ça marche') + `<p><b>Où sont tes cours.</b> ${esc(cloudLine() || 'Gardés dans ce navigateur.')}</p><p><b>Claude, sur ton compte.</b> Quand tu crées un jeu ou poses une question, Buddy envoie ton cours à ton Claude. Ça compte dans ton usage Claude.</p><p><b>Chaque carte vient de ton cours.</b> Buddy vérifie qu’elle s’appuie sur une phrase retrouvée mot pour mot dans tes fichiers, sinon elle est jetée. Sous chaque réponse, « Voir dans ton cours » ouvre la page.</p><p><b>Tes erreurs reviennent</b> en fin de partie, puis dans « À revoir ».</p>
     <div class="rows"><button class="rowbtn red" data-a="sub" data-v="reset">${ic('trash')}<span class="grow">Tout effacer dans ce navigateur</span>${ic('next')}</button></div>`;
   }
   if (!c) return '';
@@ -1055,5 +1123,5 @@ document.addEventListener('click', e => {
   }
 });
 render();
-idbGet(KEY).then(s => { loaded = true; if (s && s.courses) { S = s; if (view.name === 'welcome' && S.welcomed) view = {name:'home'}; render(); } else save(); }).catch(() => { loaded = true; });
+idbGet(KEY).then(s => { loaded = true; if (s && s.courses) { S = s; if (view.name === 'welcome' && S.welcomed) view = {name:'home'}; render(); } }).catch(() => { loaded = true; }).finally(cloudStart);
 </script>
