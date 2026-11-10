@@ -30,16 +30,32 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
 .word .dc span{font-size:.82em;line-height:1}
 .dc.p{background:var(--pink);color:var(--ink);transform:rotate(-8deg)} .dc.k{background:var(--ink);color:var(--white);transform:rotate(7deg)}
 /* buttons */
-.btn{display:flex;align-items:center;justify-content:center;min-height:54px;border-radius:16px;background:var(--pink);color:var(--ink);box-shadow:var(--press);font-weight:600;font-size:16px;padding:0 20px;width:100%;transition:transform .08s,box-shadow .08s}
+/* Buttons. L (52px): the one main action of a screen, full width. S (40px): an action inside a list or a bar. XS (34px): an action on one row (Retirer, Ajouter).
+   Pink = the main action; ink = go on in a game; white = secondary; red = only the final "delete" of a confirmation. Icons: one stroke set, 18px, 8px from the text. */
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;min-height:52px;border-radius:16px;line-height:1.2;text-align:center;background:var(--pink);color:var(--ink);box-shadow:var(--press);font-weight:600;font-size:16px;padding:0 20px;width:100%;transition:transform .08s,box-shadow .08s}
 .btn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.2)}
 .btn.ink{background:var(--ink);color:var(--white)}
 .btn.white{background:var(--white);border:2px solid var(--rim);box-shadow:0 4px 0 var(--rim)}
 .btn:disabled{background:var(--rim);color:#8a8a8a;box-shadow:0 4px 0 #d6d6d6;cursor:default;transform:none}
-.btn.sm{min-height:44px;width:auto;font-size:14px;border-radius:12px}
+.btn.sm{min-height:40px;width:auto;font-size:14px;border-radius:12px;padding:0 14px;gap:6px}
+.btn.xs{min-height:34px;width:auto;font-size:13px;border-radius:10px;padding:0 12px;gap:6px;box-shadow:none;border:1.5px solid var(--rim);background:var(--white);flex:none}
+.btn.xs:active{transform:none;background:var(--mist)}
+.btn.danger{background:var(--red);color:#fff;box-shadow:0 4px 0 #a4161a}
+.btn svg,.icon svg,.act svg,.back svg,.rowbtn svg{width:18px;height:18px;flex:none}
+.icon svg,.btn.only svg{width:20px;height:20px}.btn.only{width:44px;min-height:44px;padding:0;flex:none}
+.side .foot svg,.list svg,.add svg{width:18px;height:18px;flex:none}
+.pin{position:sticky;bottom:calc(-22px - env(safe-area-inset-bottom,0px));margin:0 -4px;padding:10px 4px calc(14px + env(safe-area-inset-bottom,0px));background:linear-gradient(to top,var(--white) 80%,rgba(255,255,255,0));z-index:2}
+.rows{display:flex;flex-direction:column;border:1px solid var(--rim);border-radius:18px;overflow:hidden}
+.rowbtn{display:flex;align-items:center;gap:12px;min-height:56px;padding:0 16px;border-bottom:1px solid var(--rim);font-weight:600;text-align:left;width:100%}
+.rowbtn:last-child{border-bottom:0}.rowbtn:hover{background:var(--mist)}
+.rowbtn .grow{flex:1}.rowbtn .muted{font-weight:500}
+.rowbtn.red{color:#a4161a}
+.sheethead{display:flex;align-items:center;gap:8px;min-height:44px}.sheethead h2{flex:1;font-size:24px}
+.sheethead .back{display:flex;align-items:center;gap:2px;min-height:44px;padding:0 8px 0 2px;border-radius:12px;font-weight:600;color:var(--muted)}
 .link{font-weight:600;text-decoration:underline;color:var(--muted);min-height:40px;display:inline-flex;align-items:center}
 .icon{width:44px;height:44px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;font-size:20px;color:var(--muted)}
 .icon:hover{background:var(--mist)}
-.chip{display:inline-flex;align-items:center;min-height:42px;padding:0 14px;border-radius:99px;background:var(--mist);font-weight:600;font-size:15px}
+.chip{display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border-radius:99px;background:var(--mist);font-weight:600;font-size:14px}
 .chip[aria-pressed="true"]{background:var(--ink);color:var(--white)}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 input,textarea{font:inherit;color:var(--ink);background:var(--white);border:2px solid var(--rim);border-radius:14px;min-height:50px;padding:10px 14px;width:100%}
@@ -69,11 +85,11 @@ textarea{min-height:140px;resize:vertical;line-height:1.45}
 .side .foot button:hover{background:rgba(0,0,0,.04);color:var(--ink)}
 /* top bar: what screen this is, how to go back, the settings */
 .topbar{position:sticky;top:0;z-index:15;display:flex;align-items:center;gap:8px;min-height:60px;margin:-16px calc(-1 * max(16px, env(safe-area-inset-left, 0px))) 4px;padding:8px max(12px, env(safe-area-inset-left, 0px));background:rgba(255,255,255,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--rim)}
-.topbar .back{display:flex;align-items:center;gap:2px;min-height:44px;padding:0 10px 0 4px;border-radius:12px;font-weight:600;font-size:15px}
+.topbar .back{display:flex;align-items:center;gap:4px;min-height:40px;padding:0 10px 0 4px;border-radius:12px;font-weight:600;font-size:14px}
 .topbar .back:hover{background:var(--mist)}
-.topbar .back b{font-size:24px;line-height:1;font-weight:500;margin-right:2px}
+
 .topbar .ttl{flex:1;min-width:0;text-align:center;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.topbar .act{display:flex;align-items:center;gap:6px;min-height:44px;padding:0 12px;border-radius:12px;background:var(--mist);font-weight:600;font-size:14px}
+.topbar .act{display:flex;align-items:center;gap:6px;min-height:40px;padding:0 12px;border-radius:12px;background:var(--mist);font-weight:600;font-size:14px}
 .topbar .sp{width:88px;flex:none}
 @media (min-width:900px){.topbar{position:static;margin:0 0 4px;padding:0;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;border:0;min-height:48px}.topbar .back,.topbar .ttl{display:none}.topbar{justify-content:flex-end}.topbar .sp{display:none}}
 .main{display:flex;flex-direction:column;gap:18px;min-width:0}
@@ -86,7 +102,7 @@ textarea{min-height:140px;resize:vertical;line-height:1.45}
 .course .ini{width:44px;height:44px;border-radius:12px;background:var(--mist);display:flex;align-items:center;justify-content:center;font-family:var(--disp);font-size:20px;flex:none}
 .course .meta{flex:1;min-width:0}
 .course b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.add{display:flex;align-items:center;justify-content:center;min-height:56px;border-radius:20px;border:2px dashed var(--rim);color:var(--muted);font-weight:600;width:100%}
+.add svg{width:18px;height:18px}.add{display:flex;align-items:center;justify-content:center;min-height:56px;border-radius:20px;border:2px dashed var(--rim);color:var(--muted);font-weight:600;width:100%}
 .day{position:relative;overflow:hidden;display:flex;flex-direction:column;gap:14px}
 .day .deco{position:absolute;right:-24px;top:-24px;width:110px;height:110px;border-radius:28px;background:var(--pink);transform:rotate(14deg)}
 .day h2{font-size:48px}
@@ -95,7 +111,7 @@ textarea{min-height:140px;resize:vertical;line-height:1.45}
 .game{display:flex;align-items:center;gap:12px;border:1px solid var(--rim);border-radius:18px;padding:12px 14px}
 .game .sc{width:40px;height:52px;border-radius:10px;background:var(--ink);display:inline-flex;align-items:center;justify-content:center;transform:rotate(-5deg);flex:none;font-family:var(--disp);font-size:20px;color:var(--pink)}
 .game .tx{flex:1;min-width:0;text-align:left}
-.uprow{display:grid;grid-template-columns:1fr;gap:8px}@media (min-width:600px){.uprow{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}}
+.uprow{display:grid;grid-template-columns:1fr;gap:8px}
 .banner{display:flex;align-items:center;gap:10px;border-radius:16px;background:var(--ink);color:var(--white);padding:12px 14px;font-size:14px}
 /* files */
 .file{display:flex;align-items:center;gap:10px;border:1px solid var(--rim);border-radius:14px;padding:10px 12px}
@@ -263,7 +279,9 @@ const fmt = c => c.exam.format === 'Autre' ? (c.exam.other || 'Autre') : (!c.exa
 const goalOf = o => o.goal === 'Autre' ? (o.goalOther || '') : (o.goal || '');
 const GOALS = ['Valider le partiel', 'Viser une très bonne note', 'Comprendre le cours', 'Rattraper mon retard', 'Autre'];
 const uid = () => Math.random().toString(36).slice(2, 9);
-let toastEl; function toast(t){ toastEl?.remove(); toastEl = document.createElement('div'); toastEl.className = 'toast'; toastEl.setAttribute('role','status'); toastEl.textContent = t; document.body.append(toastEl); setTimeout(() => toastEl?.remove(), 3200); }
+let toastEl, toastT; function toast(t, undo){ toastEl?.remove(); clearTimeout(toastT); toastEl = document.createElement('div'); toastEl.className = 'toast'; toastEl.setAttribute('role','status'); toastEl.textContent = t; if (undo) { const b = document.createElement('button'); b.textContent = 'Annuler'; b.style.cssText = 'margin-left:12px;font-weight:700;color:var(--pink);min-height:32px'; b.onclick = () => { toastEl?.remove(); undo(); }; toastEl.append(b); } document.body.append(toastEl); toastT = setTimeout(() => toastEl?.remove(), undo ? 5000 : 3200); }
+const ICONS = {close:'<path d="M6 6l12 12M18 6L6 18"/>', back:'<path d="M15 5l-7 7 7 7"/>', next:'<path d="M9 5l7 7-7 7"/>', gear:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>', more:'<circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/>', plus:'<path d="M12 5v14M5 12h14"/>', up:'<path d="M12 19V5M5 12l7-7 7 7"/>', search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>', trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>', edit:'<path d="M4 20h4L19 9l-4-4L4 16v4zM13 7l4 4"/>', play:'<path d="M7 5l12 7-12 7V5z"/>', cards:'<rect x="4" y="6" width="12" height="15" rx="2"/><path d="M8 3h10a2 2 0 0 1 2 2v13"/>', file:'<path d="M14 3H6v18h12V7l-4-4zM14 3v4h4"/>', folder:'<path d="M3 6a1 1 0 0 1 1-1h5l2 2h9a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6z"/>', drive:'<path d="M8 3h8l6 10-4 7H6l-4-7 6-10zM2 13h20M8 3l8 17M16 3L8 20"/>', help:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6M12 17.5v.01"/>', chat:'<path d="M4 5h16v11H9l-5 4V5z"/>', redo:'<path d="M4 12a8 8 0 1 0 2.3-5.6M4 4v5h5"/>'};
+const ic = n => `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[n]}</svg>`;
 const word = (size, ink) => `<span class="word" style="font-size:${size}px;color:${ink || 'var(--ink)'}" role="img" aria-label="Buddy">Bu<span class="dc p"><span>d</span></span><span class="dc k"><span>d</span></span>y</span>`;
 const pair = cls => `<div class="pair ${cls}" aria-hidden="true"><span class="word" style="font-size:96px"><span class="dc p"><span>d</span></span><span class="dc k"><span>d</span></span></span></div>`;
 
@@ -632,12 +650,12 @@ async function driveAdd(list){
 function driveSheet(c){
   const here = drive.path[drive.path.length - 1];
   const files = drive.items.filter(f => !isFolder(f));
-  return `<div class="row between"><h2 style="font-size:26px">Mon Google Drive</h2><button class="icon" data-a="close" aria-label="Fermer">✕</button></div>
-  <form id="driveform" class="row" style="flex-wrap:nowrap"><input id="dq" placeholder="Cherche : opérations, partiel, TD…" autocomplete="off" style="flex:1;min-width:0;border-radius:99px"><button class="btn ink sm" type="submit" aria-label="Chercher">→</button></form>
+  return `<div class="row between"><h2 style="font-size:26px">Mon Google Drive</h2><button class="icon" data-a="close" aria-label="Fermer">${ic('close')}</button></div>
+  <form id="driveform" class="row" style="flex-wrap:nowrap"><input id="dq" placeholder="Cherche : opérations, partiel, TD…" autocomplete="off" style="flex:1;min-width:0;border-radius:99px"><button class="btn ink sm only" type="submit" aria-label="Chercher">${ic('search')}</button></form>
   ${drive.path.length ? `<div class="row" style="gap:6px"><button class="link" data-a="dhome" style="text-decoration:none">Drive</button>${drive.path.map(f => `<span class="muted">›</span><b class="small">${esc(f.name)}</b>`).join('')}</div>` : '<span class="label">Récents</span>'}
-  ${here && drive.items.length ? `<button class="btn white" data-a="dall" ${reading ? 'disabled' : ''}>Ajouter tout ce dossier${drive.items.some(isFolder) ? ' et ses sous-dossiers' : ' (' + plural(files.length, 'fichier') + ')'}</button>` : ''}
+  ${here && drive.items.length ? `<button class="btn white" data-a="dall" ${reading ? 'disabled' : ''}>${ic('folder')}Ajouter tout ce dossier${drive.items.some(isFolder) ? ' et ses sous-dossiers' : ' (' + plural(files.length, 'fichier') + ')'}</button>` : ''}
   ${reading ? `<div class="file" style="flex-direction:column;align-items:stretch;gap:8px"><span class="nm"><b>${esc(reading.name)}</b><br><span class="muted">Je lis… ${esc(reading.detail)}</span></span><div class="bar"><i style="width:${Math.round((reading.pct || .05) * 100)}%"></i></div></div>` : ''}
-  <div class="msgs">${drive.state === 'loading' ? '<p class="muted">Je regarde ton Drive…</p>' : drive.items.map(f => `<div class="file">${isFolder(f) ? `<button class="nm" data-a="dopen" data-v="${esc(f.id)}" style="text-align:left"><b>📁 ${esc(f.name)}</b></button><span class="muted">›</span>` : `<span class="nm"><b>${esc(f.name)}</b></span>${drive.added[f.id] ? '<span class="small" style="color:var(--green-ink);font-weight:600">Ajouté</span>' : `<button class="btn sm white" data-a="dadd" data-v="${esc(f.id)}" ${reading ? 'disabled' : ''}>Ajouter</button>`}`}</div>`).join('')}
+  <div class="msgs">${drive.state === 'loading' ? '<p class="muted">Je regarde ton Drive…</p>' : drive.items.map(f => `<div class="file">${isFolder(f) ? `<button class="nm" data-a="dopen" data-v="${esc(f.id)}" style="text-align:left"><b>📁 ${esc(f.name)}</b></button><span class="muted">›</span>` : `<span class="nm"><b>${esc(f.name)}</b></span>${drive.added[f.id] ? '<span class="small" style="color:var(--green-ink);font-weight:600">Ajouté</span>' : `<button class="btn xs" data-a="dadd" data-v="${esc(f.id)}" ${reading ? 'disabled' : ''}>Ajouter</button>`}`}</div>`).join('')}
   ${drive.err ? `<p class="small" ${drive.state === 'error' ? 'style="color:#b4500a"' : 'class="muted"'}>${esc(drive.err)}</p>${drive.state === 'error' ? '<button class="btn white sm" data-a="dhome">Réessayer</button>' : ''}` : ''}</div>
   <p class="tiny muted">Buddy lit tes fichiers avec ton accès Google Drive dans Claude, seulement quand tu touches « Ajouter ».</p>`;
 }
@@ -686,10 +704,10 @@ function daily(c){
 }
 /* ================= screens ================= */
 function topbar({back, backV, backLabel, title, right}){
-  return `<header class="topbar">${back ? `<button class="back" data-a="${back}" ${backV ? `data-v="${backV}"` : ''} aria-label="Retour : ${esc(backLabel)}"><b>‹</b>${esc(backLabel)}</button>` : '<span class="sp"></span>'}<span class="ttl">${esc(title || '')}</span>${right || '<span class="sp"></span>'}</header>`;
+  return `<header class="topbar">${back ? `<button class="back" data-a="${back}" ${backV ? `data-v="${backV}"` : ''} aria-label="Retour : ${esc(backLabel)}">${ic('back')}${esc(backLabel)}</button>` : '<span class="sp"></span>'}<span class="ttl">${esc(title || '')}</span>${right || '<span class="sp"></span>'}</header>`;
 }
 function sideHtml(){
-  return `<nav class="side" aria-label="Mes cours"><button class="home" data-a="home" aria-label="Accueil Buddy">${word(26)}</button><span class="label" style="margin:10px 6px 4px">Mes cours</span>${S.courses.map(c => { const d = daysTo(c); return `<button class="c" data-a="open" data-v="${c.id}" aria-current="${view.id === c.id}"><span class="ini">${esc((c.name.trim()[0] || '?').toUpperCase())}</span><span class="nm">${esc(c.name)}</span>${d !== null && d >= 0 ? `<span class="label">J-${d}</span>` : ''}</button>`; }).join('')}<button class="add" data-a="new" style="margin-top:6px;min-height:48px">+ Nouveau cours</button><div class="foot"><button data-a="sheet" data-v="about">? Comment ça marche</button></div></nav>`;
+  return `<nav class="side" aria-label="Mes cours"><button class="home" data-a="home" aria-label="Accueil Buddy">${word(26)}</button><span class="label" style="margin:10px 6px 4px">Mes cours</span>${S.courses.map(c => { const d = daysTo(c); return `<button class="c" data-a="open" data-v="${c.id}" aria-current="${view.id === c.id}"><span class="ini">${esc((c.name.trim()[0] || '?').toUpperCase())}</span><span class="nm">${esc(c.name)}</span>${d !== null && d >= 0 ? `<span class="label">J-${d}</span>` : ''}</button>`; }).join('')}<button class="add" data-a="new" style="margin-top:6px;min-height:48px;gap:6px">${ic('plus')}Ajouter un cours</button><div class="foot"><button data-a="sheet" data-v="about">${ic('help')}Comment ça marche</button></div></nav>`;
 }
 /* ================= the first opening ================= */
 const INTRO = [
@@ -718,7 +736,7 @@ function welcome(){
     <span class="word logo-in" style="font-size:34px" role="img" aria-label="Buddy"><span class="tx">Bu</span><span class="dc p"><span>d</span></span><span class="dc k"><span>d</span></span><span class="tx">y</span></span>
     <h1><span class="hl">Ton cours</span><span class="hl">devient</span><span class="hl">un jeu.</span></h1>
     <p class="lead">Ajoute tes TD, diapos, annales et tableurs. Claude en fait des parties de 5 minutes pour ton objectif, et te montre la page du cours à chaque réponse.</p>
-    <div class="cta"><button class="btn" data-a="new">+ Ajouter un cours</button>${intro.show ? '' : '<button class="btn white" data-a="ishow">Essayer un exemple</button>'}</div>
+    <div class="cta"><button class="btn" data-a="new">${ic('plus')}Ajouter un cours</button>${intro.show ? '' : '<button class="btn white" data-a="ishow">Essayer un exemple</button>'}</div>
   </div>
   ${intro.show ? `<div class="demo${dealNow ? ' deal' : ''}" id="idemo" aria-live="polite">${introDemo()}</div>` : ''}
   <div class="isteps">
@@ -730,17 +748,17 @@ function welcome(){
   </div>`;
 }
 function home(){
-  return `<header class="topbar" style="justify-content:space-between"><button data-a="intro" aria-label="Revoir l’accueil de Buddy" style="min-height:44px">${word(24)}</button><button class="act" data-a="sheet" data-v="about">? Comment ça marche</button></header>
+  return `<header class="topbar" style="justify-content:space-between"><button data-a="intro" aria-label="Revoir l’accueil de Buddy" style="min-height:44px">${word(24)}</button><button class="act" data-a="sheet" data-v="about">${ic('help')}Comment ça marche</button></header>
   <h1 style="font-size:36px;margin:12px 0 18px">Mes cours</h1>
   <div class="courses">${S.courses.map(c => { const d = daysTo(c); return `<button class="course" data-a="open" data-v="${c.id}"><span class="ini">${esc((c.name.trim()[0] || '?').toUpperCase())}</span><span class="meta"><b>${esc(c.name)}</b><span class="small muted">${c.example ? 'Exemple · ' : ''}${plural(c.games.length, 'jeu', 'jeux')}${c.review.length ? ' · ' + c.review.length + ' à revoir' : ''}</span></span>${d !== null && d >= 0 ? `<span class="label" style="color:var(--ink)">J-${d}</span>` : '<span class="muted">›</span>'}</button>`; }).join('') || '<p class="muted">Aucun cours pour l’instant : ajoute ton premier cours.</p>'}</div>
-  <div style="margin-top:12px"><button class="add" data-a="new">+ Nouveau cours</button></div>
+  <div style="margin-top:12px"><button class="add" data-a="new" style="gap:6px">${ic('plus')}Ajouter un cours</button></div>
   ${claudeState === 'none' ? '<p class="small muted" style="margin-top:16px">Ouvre Buddy dans Claude pour créer des jeux.</p>' : ''}`;
 }
 function newCourseScreen(){
   return `<div class="shell">${sideHtml()}<div class="main" style="max-width:560px">
-  ${topbar({back:'home', backLabel:'Mes cours', title:'Nouveau cours'})}<h1 style="font-size:34px">Nouveau cours</h1>
+  ${topbar({back:'home', backLabel:'Mes cours', title:'Ajouter un cours'})}<h1 style="font-size:34px">Ajouter un cours</h1>
   <form id="newform" class="stack"><label class="label" for="cname">Nom du cours</label><input id="cname" placeholder="Contrôle de gestion" autocomplete="off" required>
-  <button class="btn" type="submit">Continuer</button></form></div></div>`;
+  <button class="btn" type="submit">Créer le cours</button></form></div></div>`;
 }
 function examSetup(c, inSheet){
   const e = c.exam, ch = (k, v, l) => `<button class="chip" data-a="exam" data-k="${k}" data-v="${v}" aria-pressed="${e[k] === v}">${l || v}</button>`;
@@ -756,28 +774,28 @@ function setupScreen(){
   ${filesBlock(c)}
   ${examSetup(c)}
   <p class="tiny muted">Ton objectif et le format des exercices se choisissent pour chaque jeu.</p>
-  <button class="btn" data-a="go-course" ${c.files.some(f => f.pages && f.pages.length) ? '' : 'disabled'}>C’est parti</button>
+  <div class="pin" style="bottom:0"><button class="btn" data-a="go-course" ${c.files.some(f => f.pages && f.pages.length) ? '' : 'disabled'}>C’est parti</button></div>
   <p class="tiny muted" style="text-align:center">Modifiable à tout moment.</p></div></div>`;
 }
 function filesBlock(c){
   return `<span class="label">Tout ton cours</span>
-  <div class="stack" style="gap:8px">${c.files.map((f, i) => `<div class="file ${f.error ? 'bad' : ''}"><span class="kind">${esc(f.kind)}</span><span class="nm"><b>${esc(f.name)}</b><br><span class="muted">${f.folder ? esc(f.folder) + ' · ' : ''}${esc(f.error || f.how || '')}</span></span><span class="dot ${f.error ? 'no' : 'ok'}"></span>${c.example ? '' : `<button class="btn sm white" data-a="rmfile" data-v="${i}" aria-label="Retirer ${esc(f.name)} du cours" style="min-height:36px;padding:0 10px;font-size:13px;box-shadow:none">Retirer</button>`}</div>`).join('') || '<p class="small muted">Aucun fichier pour l’instant.</p>'}</div>
+  <div class="stack" style="gap:8px">${c.files.map((f, i) => `<div class="file ${f.error ? 'bad' : ''}"><span class="kind">${esc(f.kind)}</span><span class="nm"><b>${esc(f.name)}</b><br><span class="muted">${f.folder ? esc(f.folder) + ' · ' : ''}${esc(f.error || f.how || '')}</span></span><span class="dot ${f.error ? 'no' : 'ok'}"></span>${c.example ? '' : `<button class="btn xs" data-a="rmfile" data-v="${i}" aria-label="Retirer ${esc(f.name)} du cours">Retirer</button>`}</div>`).join('') || '<p class="small muted">Aucun fichier pour l’instant.</p>'}</div>
   ${reading ? `<div class="file" style="flex-direction:column;align-items:stretch;gap:8px"><span class="nm"><b>${esc(reading.name)}</b><br><span class="muted">Je lis… ${esc(reading.detail)}</span></span><div class="bar"><i style="width:${Math.round((reading.pct || .05) * 100)}%"></i></div></div>` : ''}
-  <div class="uprow"><button class="btn white" data-a="upload" ${reading ? 'disabled' : ''}>+ Ajouter des fichiers</button>${canFolder ? `<button class="btn white" data-a="upfolder" ${reading ? 'disabled' : ''}>+ Ajouter un dossier</button>` : ''}${mcp ? `<button class="btn white" data-a="drive" ${reading ? 'disabled' : ''}>Depuis Google Drive</button>` : ''}</div>
+  <div class="uprow"><button class="btn white" data-a="upload" ${reading ? 'disabled' : ''}>${ic('file')}Ajouter des fichiers</button>${canFolder ? `<button class="btn white" data-a="upfolder" ${reading ? 'disabled' : ''}>${ic('folder')}Ajouter un dossier</button>` : ''}${mcp ? `<button class="btn white" data-a="drive" ${reading ? 'disabled' : ''}>${ic('drive')}Depuis Google Drive</button>` : ''}</div>
   <p class="tiny muted">PDF, diapos (.pptx), Word (.docx), Excel (.xlsx), Google Docs et Sheets, texte, photos de notes, scans. Pas de limite de taille : un très gros cours est envoyé à Claude par morceaux.</p>`;
 }
-function gameRow(g){ return `<div class="game"><span class="sc">${g.best ?? '–'}</span><button class="tx" data-a="play" data-v="${g.id}"><b>${esc(g.title)}</b><br><span class="small muted">${plural(g.cards.length, 'carte')} · ${esc(g.kind)}${g.best != null ? ' · meilleur ' + g.best + '/' + g.cards.length : ''}</span></button><button class="icon" data-a="gmenu" data-v="${g.id}" aria-label="Options du jeu ${esc(g.title)}">⋯</button></div>`; }
+function gameRow(g){ return `<div class="game"><span class="sc">${g.best ?? '–'}</span><button class="tx" data-a="play" data-v="${g.id}"><b>${esc(g.title)}</b><br><span class="small muted">${plural(g.cards.length, 'carte')} · ${esc(g.kind)}${g.best != null ? ' · meilleur ' + g.best + '/' + g.cards.length : ''}</span></button><button class="icon" data-a="gmenu" data-v="${g.id}" aria-label="Options du jeu ${esc(g.title)}">${ic('more')}</button></div>`; }
 function courseScreen(){
   const c = course(); if (!c) { view = {name:'home'}; return home(); }
   const d = daysTo(c), can = !!sample && !busy && c.files.some(f => f.pages && f.pages.length);
   const filesN = c.files.filter(f => !f.error).length;
   return `<div class="shell">${sideHtml()}<div class="main">
-  ${topbar({back:'home', backLabel:'Mes cours', title:c.name, right:`<button class="act" data-a="sheet" data-v="exam" aria-label="Réglages du cours">${d !== null && d >= 0 ? 'J-' + d + ' · ' : ''}⚙ Réglages</button>`})}
+  ${topbar({back:'home', backLabel:'Mes cours', title:c.name, right:`<button class="act" data-a="sheet" data-v="exam" aria-label="Réglages du cours">${ic('gear')}${d !== null && d >= 0 ? 'J-' + d + ' · ' : ''}Réglages</button>`})}
   ${c.fresh ? `<div class="banner" role="status"><span class="dot ok"></span><span>Dossier <b>${esc(c.name)}</b> créé. ${plural(filesN, 'fichier')} dedans, prêt à jouer.</span></div>` : ''}
   <h1 style="font-size:40px">${esc(c.name)}</h1>
   <div class="top2"><div class="card day"><span class="deco"></span><span class="label">Partie du jour</span><h2>5 min</h2><p class="muted">${c.games.length ? 'Un mélange de tes jeux' + (c.review.length ? ' · ' + plural(c.review.length, 'erreur') + ' à rattraper' : '') : 'Ton premier jeu, écrit par Claude'}</p><button class="btn" data-a="daily" ${c.games.length || can ? '' : 'disabled'}>Jouer</button>${!sample ? '<p class="tiny muted">Ouvre Buddy dans Claude pour jouer.</p>' : ''}</div>
-  <div class="stack" style="gap:10px"><div class="row between"><span class="label">Mes jeux · ${c.games.length}</span><button class="btn sm" data-a="newgame" ${can ? '' : 'disabled'}>+ Nouveau jeu</button></div>${c.games.map(gameRow).join('') || '<p class="small muted">Tes jeux s’ajoutent ici : rejoue-les, renomme-les, supprime-les.</p>'}</div></div>
-  <div class="list"><button data-a="sheet" data-v="files"><span>Fichiers du cours</span><span class="muted">${plural(filesN, 'fichier')}${c.files.some(f => f.error) ? ' · 1 illisible' : ''}</span></button><button data-a="sheet" data-v="ask" ${sample ? '' : 'disabled'}><span>Poser une question</span><span class="muted">→</span></button><button data-a="review" ${c.review.length && can ? '' : 'disabled'}><span>À revoir</span><span class="muted">${c.review.length}</span></button></div>
+  <div class="stack" style="gap:10px"><div class="row between"><span class="label">Mes jeux · ${c.games.length}</span><button class="btn sm white" data-a="newgame" ${can ? '' : 'disabled'}>${ic('plus')}Nouveau jeu</button></div>${c.games.map(gameRow).join('') || '<p class="small muted">Tes jeux s’ajoutent ici : rejoue-les, renomme-les, supprime-les.</p>'}</div></div>
+  <div class="list"><button data-a="sheet" data-v="files"><span>Fichiers du cours</span><span class="muted">${plural(filesN, 'fichier')}${c.files.some(f => f.error) ? ' · 1 illisible' : ''}</span></button><button data-a="sheet" data-v="ask" ${sample ? '' : 'disabled'}><span>Poser une question</span><span class="muted" style="display:flex">${ic('next')}</span></button><button data-a="review" ${c.review.length && can ? '' : 'disabled'}><span>À revoir</span><span class="muted">${c.review.length}</span></button></div>
   </div></div>`;
 }
 function drawMaking(){
@@ -846,7 +864,7 @@ function play(){
   if (!g.cur) return endScreen();
   const k = g.byId[g.cur], st = g.st, total = g.cards.length + Object.keys(g.retried).length;
   const segs = Array.from({length: Math.min(total, 12)}, (_, i) => `<i class="${i < Math.round((g.i + (st.done ? 1 : 0)) / total * Math.min(total, 12)) ? 'on' : ''}"></i>`).join('');
-  return `<div class="g"><div class="gtop"><button class="icon" data-a="quit" aria-label="Quitter le jeu">✕</button><div class="segs" role="progressbar" aria-valuenow="${g.i}" aria-valuemax="${total}">${segs}</div><span class="label">${Math.min(g.i + 1, total)}/${total}</span></div>
+  return `<div class="g"><div class="gtop"><button class="icon" data-a="quit" aria-label="Quitter le jeu">${ic('close')}</button><div class="segs" role="progressbar" aria-valuenow="${g.i}" aria-valuemax="${total}">${segs}</div><span class="label">${Math.min(g.i + 1, total)}/${total}</span></div>
   ${stageHtml(k, g.i >= g.cards.length)}<div class="move">${moveHtml(k, st)}<div class="dock"><div>${dockHtml(k, st, g)}</div></div></div></div>`;
 }
 function endScreen(){
@@ -857,39 +875,46 @@ function endScreen(){
   return `<div class="end"><div class="medal">${right === n ? '★' : right}</div><h1 style="font-size:40px">${head}</h1>
   <div class="stats"><div><b>${right}/${n}</b><span class="label">du 1er coup</span></div><div><b>${c.review.length}</b><span class="label">à revoir</span></div><div><b>${secs >= 60 ? Math.round(secs / 60) + ' min' : secs + ' s'}</b><span class="label">de jeu</span></div></div>
   ${g.dropped ? `<p class="small muted">${plural(g.dropped, 'carte')} écartée${g.dropped > 1 ? 's' : ''} : pas retrouvée dans ton cours, ou sans explication.</p>` : ''}
-  <div class="row" style="width:100%;max-width:520px;flex-wrap:nowrap"><button class="btn" data-a="continue">Continuer</button>${g.review ? '' : `<button class="btn white" data-a="replay-now">${g.daily ? 'Un autre mélange' : 'Rejouer'}</button>`}</div></div>`;
+  <div class="row" style="width:100%;max-width:520px;flex-wrap:nowrap"><button class="btn" data-a="continue">Continuer</button>${g.review ? '' : `<button class="btn white" data-a="replay-now">${ic('redo')}${g.daily ? 'Un autre mélange' : 'Rejouer'}</button>`}</div></div>`;
 }
 
 /* ================= sheets ================= */
 let gmenu = null, newGame = {goal:'Valider le partiel', goalOther:'', on:'all', part:'', kind:'Claude choisit', kindOther:'', minutes:5};
 /* each course remembers the last game she set up, so the sheet opens on her usual choices */
 function openNewGame(c){ newGame = {...newGame, ...(c.lastNew || {}), on:'all', part:''}; sheet = 'newgame'; drawSheet(); }
+function head(title, back){ return `<div class="sheethead">${back ? `<button class="icon" data-a="${back[0]}" ${back[1] ? `data-v="${back[1]}"` : ''} aria-label="Retour : ${esc(back[2])}">${ic('back')}</button>` : ''}<h2>${esc(title)}</h2><button class="icon" data-a="close" aria-label="Fermer">${ic('close')}</button></div>`; }
+function confirmDel(what, consequence, action){ return `<p>${consequence}</p><div class="stack" style="gap:10px;margin-top:6px"><button class="btn danger" data-a="${action}">${ic('trash')}${what}</button><button class="btn white" data-a="sub" data-v="">Annuler</button></div>`; }
 function sheetHtml(){
-  const c = course();
-  if (sheet === 'about') return `<h2 style="font-size:26px">Comment ça marche</h2><p><b>Ton cours reste ici.</b> Tes fichiers sont lus dans ce navigateur et gardés dans ce navigateur.</p><p><b>Claude, sur ton compte.</b> Quand tu crées un jeu ou poses une question, Buddy envoie ton cours à ton Claude. Ça compte dans ton usage Claude.</p><p><b>Chaque carte vient de ton cours.</b> Buddy vérifie qu’elle s’appuie sur une phrase retrouvée mot pour mot dans tes fichiers, sinon elle est jetée. Sous chaque réponse, « Voir dans ton cours » ouvre la page.</p><p><b>Tes erreurs reviennent</b> en fin de partie, puis dans « À revoir ».</p><button class="btn white" data-a="reset">${view.confirmReset ? 'Toucher encore pour tout effacer' : 'Tout effacer dans ce navigateur'}</button>`;
+  const c = course(), sub = view.sub;
+  if (sheet === 'about') {
+    if (sub === 'reset') return head('Tout effacer ?') + confirmDel('Tout effacer', `Ça efface <b>tous tes cours</b>, leurs jeux et tes erreurs à revoir, dans ce navigateur. Tes fichiers d’origine ne sont pas touchés.`, 'reset');
+    return head('Comment ça marche') + `<p><b>Ton cours reste ici.</b> Tes fichiers sont lus et gardés dans ce navigateur.</p><p><b>Claude, sur ton compte.</b> Quand tu crées un jeu ou poses une question, Buddy envoie ton cours à ton Claude. Ça compte dans ton usage Claude.</p><p><b>Chaque carte vient de ton cours.</b> Buddy vérifie qu’elle s’appuie sur une phrase retrouvée mot pour mot dans tes fichiers, sinon elle est jetée. Sous chaque réponse, « Voir dans ton cours » ouvre la page.</p><p><b>Tes erreurs reviennent</b> en fin de partie, puis dans « À revoir ».</p>
+    <div class="rows"><button class="rowbtn red" data-a="sub" data-v="reset">${ic('trash')}<span class="grow">Tout effacer dans ce navigateur</span>${ic('next')}</button></div>`;
+  }
   if (!c) return '';
-  if (sheet === 'files') return `<div class="row between"><h2 style="font-size:26px">Les fichiers du cours</h2><button class="icon" data-a="close" aria-label="Fermer">✕</button></div>${filesBlock(c)}`;
+  if (sheet === 'files') return head('Les fichiers du cours') + filesBlock(c);
   if (sheet === 'exam') { const nf = c.files.filter(f => !f.error).length;
-    return `<div class="row between"><h2 style="font-size:26px">Réglages du cours</h2><button class="icon" data-a="close" aria-label="Fermer">✕</button></div>
-    ${examSetup(c)}
-    <span class="label" style="margin-top:6px">Nom du cours</span><form id="cnameform" class="row" style="flex-wrap:nowrap"><input id="cname2" value="${esc(c.name)}" aria-label="Nom du cours" style="flex:1"><button class="btn sm" type="submit">Renommer</button></form>
-    <span class="label" style="margin-top:6px">Supprimer</span>
-    ${view.confirmDelete ? `<p class="small">Ça supprime <b>${esc(c.name)}</b> : ${plural(nf, 'fichier')}, ${plural(c.games.length, 'jeu', 'jeux')} et ${plural(c.review.length, 'erreur')} à revoir. Tes fichiers d’origine ne sont pas touchés.</p><div class="row" style="flex-wrap:nowrap"><button class="btn white" data-a="nodel">Annuler</button><button class="btn" data-a="rmcourse" style="background:var(--red);color:#fff">Supprimer</button></div>` : '<button class="btn white" data-a="rmcourse" style="color:#a4161a">Supprimer le cours</button>'}`; }
+    if (sub === 'rename') return head('Renommer le cours', ['sub', '', 'Réglages']) + `<form id="cnameform" class="stack"><input id="cname2" value="${esc(c.name)}" aria-label="Nom du cours"><button class="btn" type="submit">Enregistrer</button></form>`;
+    if (sub === 'delete') return head('Supprimer le cours ?') + confirmDel('Supprimer', `Ça supprime <b>${esc(c.name)}</b> : ${plural(nf, 'fichier')}, ${plural(c.games.length, 'jeu', 'jeux')} et ${plural(c.review.length, 'erreur')} à revoir. Tes fichiers d’origine ne sont pas touchés.`, 'rmcourse');
+    return head('Réglages du cours') + `${examSetup(c)}
+    <div class="rows" style="margin-top:6px"><button class="rowbtn" data-a="sub" data-v="rename">${ic('edit')}<span class="grow">Renommer le cours</span>${ic('next')}</button></div>
+    <div class="rows" style="margin-top:10px"><button class="rowbtn red" data-a="sub" data-v="delete">${ic('trash')}<span class="grow">Supprimer le cours</span>${ic('next')}</button></div>`; }
   if (sheet === 'newgame') { const ng = newGame, ch = (k, v, l) => `<button class="chip" data-a="ng" data-k="${k}" data-v="${v}" aria-pressed="${String(ng[k]) === String(v)}">${l || v}</button>`;
-    return `<h2 style="font-size:26px">Nouveau jeu</h2><span class="label">Ton objectif</span><div class="chips">${GOALS.map(v => ch('goal', v)).join('')}</div>${ng.goal === 'Autre' ? `<input id="nggoal" placeholder="Ex. maîtriser les écritures de fin d’année" value="${esc(ng.goalOther)}" aria-label="Ton objectif">` : ''}
+    return head('Nouveau jeu') + `<span class="label">Ton objectif</span><div class="chips">${GOALS.map(v => ch('goal', v)).join('')}</div>${ng.goal === 'Autre' ? `<input id="nggoal" placeholder="Ex. maîtriser les écritures de fin d’année" value="${esc(ng.goalOther)}" aria-label="Ton objectif">` : ''}
     <span class="label">Sur quoi</span><div class="chips">${ch('on','all','Tout le cours')}${ch('on','part','Une partie')}${c.review.length ? ch('on','mistakes','Mes erreurs') : ''}</div>${ng.on === 'part' ? `<input id="ngpart" placeholder="la boucle de fidélité, le chapitre 2…" value="${esc(ng.part)}" aria-label="Quelle partie">` : ''}
     <span class="label">Le format des exercices</span><div class="chips">${Object.keys(TYPE_MIX).concat('Autre').map(v => ch('kind', v)).join('')}</div>${ng.kind === 'Autre' ? `<input id="ngkind" placeholder="Ex. écritures comptables, schémas, oral" value="${esc(ng.kindOther)}" aria-label="Format des exercices">` : ng.kind === 'Claude choisit' ? '<p class="tiny muted">Claude le choisit d’après ton objectif, tes annales et ton cours.</p>' : ''}
     <span class="label">Durée</span><div class="chips">${[5,10,15].map(v => ch('minutes', v, v + ' min')).join('')}</div>
-    <button class="btn" data-a="create">Créer le jeu</button>`; }
+    <div class="pin"><button class="btn" data-a="create">${ic('play')}Créer le jeu</button></div>`; }
   if (sheet === 'gmenu') { const g = c.games.find(x => x.id === gmenu); if (!g) return '';
-    return `<h2 style="font-size:24px">${esc(g.title)}</h2><button class="btn ink" data-a="play" data-v="${g.id}">Rejouer</button>${view.renaming ? `<form id="renameform" class="row" style="flex-wrap:nowrap"><input id="gname" value="${esc(g.title)}" aria-label="Nom du jeu" style="flex:1"><button class="btn sm" type="submit">OK</button></form>` : '<button class="btn white" data-a="grename">Renommer</button>'}<button class="btn white" data-a="gcards">Voir les cartes (${g.cards.length})</button><button class="btn white" data-a="gdelete" style="color:#a4161a">${view.confirmG ? 'Toucher encore pour supprimer ce jeu' : 'Supprimer ce jeu'}</button><p class="tiny muted" style="text-align:center">Supprimer un jeu ne touche pas à ton cours ni à tes erreurs à revoir.</p>`; }
-  if (sheet === 'gcards') { const g = c.games.find(x => x.id === gmenu); if (!g) return '';
-    return `<div class="row between"><button class="link" data-a="gmenu" data-v="${g.id}" style="text-decoration:none">‹ ${esc(g.title)}</button><button class="icon" data-a="close" aria-label="Fermer">✕</button></div><h2 style="font-size:24px">Les cartes</h2>
-    <div class="stack" style="gap:8px">${g.cards.map(k => `<div class="file"><span class="kind">${esc({pick:'Situation', sort:'Trier', order:'Ordre', build:'Construire', flash:'Flashcard', mistake:'Erreur', number:'Calcul', speed:'Speed', explain:'Rédiger'}[k.type] || k.type)}</span><span class="nm">${esc(k.ask || k.front || '')}</span><button class="btn sm white" data-a="rmcard" data-v="${k.id}" aria-label="Retirer cette carte" style="min-height:36px;padding:0 10px;font-size:13px;box-shadow:none">Retirer</button></div>`).join('')}</div>`; }
+    if (sub === 'rename') return head('Renommer le jeu', ['sub', '', g.title]) + `<form id="renameform" class="stack"><input id="gname" value="${esc(g.title)}" aria-label="Nom du jeu"><button class="btn" type="submit">Enregistrer</button></form>`;
+    if (sub === 'delete') return head('Supprimer ce jeu ?') + confirmDel('Supprimer', `Ça supprime <b>${esc(g.title)}</b> et ses ${plural(g.cards.length, 'carte')}. Ton cours et tes erreurs à revoir restent.`, 'gdelete');
+    if (sub === 'cards') return head('Les cartes', ['sub', '', g.title]) + `<div class="stack" style="gap:8px">${g.cards.map(k => `<div class="file"><span class="kind">${esc({pick:'Situation', sort:'Trier', order:'Ordre', build:'Construire', flash:'Flashcard', mistake:'Erreur', number:'Calcul', speed:'Speed', explain:'Rédiger'}[k.type] || k.type)}</span><span class="nm">${esc(k.ask || k.front || '')}</span><button class="btn xs" data-a="rmcard" data-v="${k.id}" aria-label="Retirer cette carte">Retirer</button></div>`).join('')}</div>`;
+    return head(g.title) + `<button class="btn" data-a="play" data-v="${g.id}">${ic('play')}Jouer</button>
+    <div class="rows"><button class="rowbtn" data-a="sub" data-v="cards">${ic('cards')}<span class="grow">Voir les cartes</span><span class="muted small">${g.cards.length}</span>${ic('next')}</button><button class="rowbtn" data-a="sub" data-v="rename">${ic('edit')}<span class="grow">Renommer le jeu</span>${ic('next')}</button></div><div class="rows" style="margin-top:10px"><button class="rowbtn red" data-a="sub" data-v="delete">${ic('trash')}<span class="grow">Supprimer le jeu</span>${ic('next')}</button></div>`; }
   if (sheet === 'drive') return driveSheet(c);
   if (sheet === 'ask') { const turns = chats[c.id] || [];
-    return `<div class="row between"><h2 style="font-size:26px">Pose une question</h2><button class="icon" data-a="close" aria-label="Fermer">✕</button></div><div class="msgs">${turns.length ? turns.map((t, i) => `<div class="msg ${t.role === 'user' ? 'me' : 'ai'}" ${i === turns.length - 1 && t.role !== 'user' ? 'id="lastai"' : ''}>${t.role === 'user' ? esc(t.content) : t.content ? md(t.content) : '<span class="typing" aria-label="Claude écrit"><i></i><i></i><i></i></span>'}</div>`).join('') : `<p class="muted">Claude répond seulement d’après ton cours, avec la page.</p><div class="chips">${['Résume-moi le cours','Donne-moi un plan de dissert','C’est quoi la notion clé ?'].map(q => `<button class="chip" data-a="askchip" data-v="${esc(q)}">${esc(q)}</button>`).join('')}</div>`}</div>
-    <form id="askform" class="row" style="flex-wrap:nowrap"><input id="q" placeholder="Ta question sur le cours" autocomplete="off" style="flex:1;min-width:0;border-radius:99px"><button class="btn ink sm" type="submit" aria-label="Envoyer" ${busy ? 'disabled' : ''}>↑</button></form>`; }
+    return head('Pose une question') + `<div class="msgs">${turns.length ? turns.map((t, i) => `<div class="msg ${t.role === 'user' ? 'me' : 'ai'}" ${i === turns.length - 1 && t.role !== 'user' ? 'id="lastai"' : ''}>${t.role === 'user' ? esc(t.content) : t.content ? md(t.content) : '<span class="typing" aria-label="Claude écrit"><i></i><i></i><i></i></span>'}</div>`).join('') : `<p class="muted">Claude répond seulement d’après ton cours, avec la page.</p><div class="chips">${['Résume-moi le cours','Donne-moi un plan de dissert','C’est quoi la notion clé ?'].map(q => `<button class="chip" data-a="askchip" data-v="${esc(q)}">${esc(q)}</button>`).join('')}</div>`}</div>
+    <form id="askform" class="row" style="flex-wrap:nowrap"><input id="q" placeholder="Ta question sur le cours" autocomplete="off" style="flex:1;min-width:0;border-radius:99px"><button class="btn ink sm only" type="submit" aria-label="Envoyer" ${busy ? 'disabled' : ''}>${ic('up')}</button></form>`; }
   return '';
 }
 function drawSheet(){
@@ -932,8 +957,8 @@ function bindInputs(){
   const np = document.getElementById('ngpart'); if (np) np.oninput = () => { newGame.part = np.value; };
   const ngg = document.getElementById('nggoal'); if (ngg) ngg.oninput = () => { newGame.goalOther = ngg.value; };
   const ngk = document.getElementById('ngkind'); if (ngk) ngk.oninput = () => { newGame.kindOther = ngk.value; };
-  const cf = document.getElementById('cnameform'); if (cf) cf.onsubmit = e => { e.preventDefault(); const v = document.getElementById('cname2').value.trim(); if (v) { course().name = v; save(); toast('Cours renommé.'); render(); } };
-  const rf = document.getElementById('renameform'); if (rf) rf.onsubmit = e => { e.preventDefault(); const g = course().games.find(x => x.id === gmenu); const v = document.getElementById('gname').value.trim(); if (g && v) { g.title = v; save(); } view.renaming = false; render(); };
+  const cf = document.getElementById('cnameform'); if (cf) cf.onsubmit = e => { e.preventDefault(); const v = document.getElementById('cname2').value.trim(); if (v) { course().name = v; save(); toast('Cours renommé.'); } view.sub = null; render(); };
+  const rf = document.getElementById('renameform'); if (rf) rf.onsubmit = e => { e.preventDefault(); const g = course().games.find(x => x.id === gmenu); const v = document.getElementById('gname').value.trim(); if (g && v) { g.title = v; save(); toast('Jeu renommé.'); } view.sub = null; render(); };
   const num = document.getElementById('num'); if (num) num.oninput = () => { game.st.val = num.value; };
 }
 function render(){
@@ -953,10 +978,11 @@ document.addEventListener('click', e => {
     case 'intro': intro = {i:0, picked:null, played:false, show:false}; view = {name:'welcome'}; render(); return window.scrollTo(0, 0);
     case 'ipick': { if (intro.picked !== null) return; intro.picked = v; const host = document.getElementById('idemo'); host.innerHTML = introDemo(); if (v === INTRO[intro.i % INTRO.length].a) burst(host); return; }
     case 'inext': intro.i++; intro.picked = null; document.getElementById('idemo').innerHTML = introDemo(); return;
-    case 'close': if (t.classList.contains('scrim') && e.target !== t) return; sheet = null; view.confirmReset = view.confirmDelete = view.confirmG = view.renaming = false; return render();
-    case 'sheet': sheet = v; return drawSheet();
+    case 'close': if (t.classList.contains('scrim') && e.target !== t) return; sheet = null; view.sub = null; return render();
+    case 'sub': view.sub = v || null; return drawSheet();
+    case 'sheet': sheet = v; view.sub = null; return drawSheet();
     case 'ishow': { intro.show = true; document.getElementById('app').innerHTML = welcome(); const d = document.getElementById('idemo'); if (d && innerWidth < 900) d.scrollIntoView({behavior:'smooth', block:'start'}); return; }
-    case 'reset': if (!view.confirmReset) { view.confirmReset = true; return drawSheet(); } S = fresh(); save(); sheet = null; view = {name:'welcome'}; return render();
+    case 'reset': S = fresh(); save(); sheet = null; view = {name:'welcome'}; intro = {i:0, picked:null, played:false, show:false}; toast('Tout est effacé.'); return render();
     case 'home': view = {name:'home'}; return render();
     case 'new': view = {name:'new'}; return render();
     case 'open': S.welcomed = true; save(); view = {name:'course', id:v}; render(); return window.scrollTo(0,0);
@@ -967,21 +993,18 @@ document.addEventListener('click', e => {
     case 'dopen': { const f = drive.items.find(x => x.id === v); if (!f) return; drive.path.push(f); return driveList('folder', f.id); }
     case 'dadd': { const f = drive.items.find(x => x.id === v); return f ? driveAdd([f]) : null; }
     case 'dall': { const here = drive.path[drive.path.length - 1]; if (!here || reading) return; return (async () => { try { const all = await driveTree(here); reading = null; if (!all.length) { toast('Ce dossier est vide.'); return drawSheet(); } await driveAdd(all); } catch(e){ reading = null; drive.err = driveErr(e); drive.state = 'error'; drawSheet(); } })(); }
-    case 'rmfile': { const f = c.files.splice(+v, 1)[0]; save(); toast((f?.name || 'Le fichier') + ' retiré du cours. Tes jeux restent.'); return view.name === 'setup' ? render() : drawSheet(); }
+    case 'rmfile': { const at = +v, f = c.files.splice(at, 1)[0]; save(); const redraw = () => view.name === 'setup' ? render() : drawSheet(); toast((f?.name || 'Le fichier') + ' retiré.', () => { c.files.splice(at, 0, f); save(); redraw(); }); return redraw(); }
     case 'exam': { const kk = t.dataset.k; c.exam[kk] = v; save(); return view.name === 'setup' ? render() : drawSheet(); }
     case 'go-course': view = {name:'course', id:c.id}; return render();
-    case 'rmcourse': if (!view.confirmDelete) { view.confirmDelete = true; return drawSheet(); } S.courses = S.courses.filter(x => x.id !== c.id); save(); sheet = null; view = {name:'home'}; toast(c.name + ' supprimé.'); return render();
-    case 'nodel': view.confirmDelete = false; return drawSheet();
+    case 'rmcourse': S.courses = S.courses.filter(x => x.id !== c.id); save(); sheet = null; view = {name:'home'}; toast(c.name + ' supprimé.'); return render();
     case 'daily': return daily(c);
     case 'ng': { const kk = t.dataset.k; newGame[kk] = kk === 'minutes' ? +v : v; return drawSheet(); }
     case 'newgame': return openNewGame(c);
     case 'create': c.lastNew = {goal: newGame.goal, goalOther: newGame.goalOther, kind: newGame.kind, kindOther: newGame.kindOther, minutes: newGame.minutes}; save(); return makeGame({...newGame});
     case 'play': { const gg = c.games.find(x => x.id === v); sheet = null; return startGame(c, gg, 0); }
-    case 'gmenu': gmenu = v; sheet = 'gmenu'; view.confirmG = false; view.renaming = false; return drawSheet();
-    case 'grename': view.renaming = true; return drawSheet();
-    case 'gcards': sheet = 'gcards'; return drawSheet();
-    case 'rmcard': { const g = c.games.find(x => x.id === gmenu); if (!g) return; g.cards = g.cards.filter(k => k.id !== v); if (!g.cards.length) { c.games = c.games.filter(x => x.id !== g.id); sheet = null; save(); toast('Dernière carte retirée : le jeu est supprimé.'); return render(); } save(); toast('Carte retirée.'); return drawSheet(); }
-    case 'gdelete': if (!view.confirmG) { view.confirmG = true; return drawSheet(); } c.games = c.games.filter(x => x.id !== gmenu); save(); sheet = null; toast('Jeu supprimé.'); return render();
+    case 'gmenu': gmenu = v; sheet = 'gmenu'; view.sub = null; return drawSheet();
+    case 'rmcard': { const g = c.games.find(x => x.id === gmenu); if (!g) return; const before = g.cards.slice(); g.cards = g.cards.filter(k => k.id !== v); if (!g.cards.length) { c.games = c.games.filter(x => x.id !== g.id); sheet = null; save(); toast('Dernière carte retirée : le jeu est supprimé.'); return render(); } save(); toast('Carte retirée.', () => { g.cards = before; save(); drawSheet(); }); return drawSheet(); }
+    case 'gdelete': c.games = c.games.filter(x => x.id !== gmenu); save(); sheet = null; toast('Jeu supprimé.'); return render();
     case 'review': return startGame(c, {id:'review', review:true, title:'À revoir', cards: shuffle(c.review).slice(0, 8).map(x => ({...x, id: uid()}))}, 0);
     case 'askchip': return ask(v);
     case 'sel': if (st.done) return; st.sel = v; return render();
