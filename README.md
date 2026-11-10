@@ -8,10 +8,11 @@ Working name. No server, no account: her Claude does the AI work on her own plan
 
 **Claude (app or claude.ai)**
 
-Each student installs her own Player Two:
-1. Download [`dist/player-two-skill.zip`](dist/player-two-skill.zip).
-2. In Claude, open Customize › Skills and upload the ZIP (turn on code execution if Claude asks).
-3. In a new conversation, say **Ouvre Player Two**. Her Claude creates her own copy of the app, in her account.
+Each student installs her own Player Two, in one message. Open this link: it starts a Claude conversation with the message already written; send it. Her Claude reads the app from this repo and creates her own copy, in her account.
+
+https://claude.ai/new?q=Ouvre%20Player%20Two%20%3A%20cr%C3%A9e%20un%20artifact%20HTML%20dont%20le%20contenu%20est%20exactement%20ce%20fichier%2C%20copi%C3%A9%20en%20entier%2C%20sans%20rien%20changer%20ni%20raccourcir.%20Titre%20%3A%20Player%20Two.%20https%3A//raw.githubusercontent.com/aniasnotebook/study-engine/main/app/player-two.html
+
+Backup: download [`dist/player-two-skill.zip`](dist/player-two-skill.zip), upload it in Claude under Customize › Skills (code execution on), then say **Ouvre Player Two** in a new conversation.
 
 She adds a course (PDF or text, from her phone's file picker, Google Drive included), taps "Créer ma partie", and plays.
 
