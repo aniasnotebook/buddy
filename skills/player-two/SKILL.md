@@ -9,8 +9,8 @@ You give the student her own study app. Her courses, her exercises and her score
 
 ## When she says "Player Two" (or "ouvre Player Two", "open Player Two")
 
-1. **In the Claude app or on claude.ai:** give her the app's link: https://claude.ai/artifact/QGYa5c8WPtBdMXFxmQjc2m . It opens inside Claude and works on her own account. Only if she asks for her own copy (for example to change it), create an HTML artifact from `assets/player-two.html`, copied exactly, character for character, titled "Player Two".
-2. Then say, in her language, in at most two lines: "Voici Player Two : ouvre le lien. Ajoute ton cours dans un dossier, puis touche « Créer ma partie ». Tout reste dans ton Claude et ton navigateur."
+1. **In the Claude app or on claude.ai:** create her own copy of the app. Read the file `assets/player-two.html` from this skill and create an HTML artifact whose content is that file, **copied exactly, character for character, in full**. Do not rewrite, shorten, restyle or translate it. Title the artifact "Player Two". This copy is hers: it runs on her account and keeps her courses in her browser.
+2. Then say, in her language, in at most two lines: "Voici ton Player Two. Ajoute ton cours dans un dossier, puis touche « Créer ma partie ». Tout reste dans ton Claude et ton navigateur."
 3. If she asks to use Google Drive: she can open a file from Drive in this chat; read it, then tell her to download it as PDF and add it in the app's "Fichiers" tab. The app itself reads PDFs and text files she adds.
 
 The app calls Claude on her own account when she creates a game or asks the course a question. Each call counts in her Claude usage like a message.

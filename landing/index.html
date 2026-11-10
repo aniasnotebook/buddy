@@ -53,17 +53,25 @@ a{color:inherit}
 
   <section class="qcard" id="demo" aria-live="polite"></section>
 
-  <a class="btn" id="open" href="https://claude.ai/artifact/QGYa5c8WPtBdMXFxmQjc2m" target="_blank" rel="noopener">Ouvrir Player Two dans Claude</a>
-  <p class="small muted" style="margin-top:-12px">Gratuit, avec ton compte Claude. Rien à installer.</p>
+  <section class="box" id="install" aria-label="Installer Player Two">
+    <h2>Installe-le dans ton Claude</h2>
+    <div class="steps">
+      <div><span class="num">1</span><span><b>Télécharge Player Two.</b><br><a class="btn" style="margin-top:8px;font-size:16px;min-height:48px" href="https://github.com/aniasnotebook/study-engine/raw/main/dist/player-two-skill.zip">Télécharger le fichier</a></span></div>
+      <div><span class="num">2</span><span><b>Ajoute-le dans Claude :</b> Personnaliser › Skills › importer le fichier. Si Claude le demande, active l’exécution de code.</span></div>
+      <div><span class="num">3</span><span><b>Dans une nouvelle conversation, écris :</b> « Ouvre Player Two ». Ton Claude crée ton app, dans ton compte.</span></div>
+    </div>
+    <p class="small muted">Gratuit, avec ton compte Claude. Une seule fois : ensuite, « Ouvre Player Two » suffit.</p>
+  </section>
 
+  <h2 style="font-size:22px">Et après ?</h2>
   <section class="steps" aria-label="Comment ça marche">
-    <div><span class="num">1</span><span><b>Un dossier par cours.</b> Tu y ajoutes ton PDF.</span></div>
+    <div><span class="num">1</span><span><b>Un dossier par cours.</b> Tu y ajoutes ton PDF, depuis ton téléphone ou ton Google Drive.</span></div>
     <div><span class="num">2</span><span><b>Tu dis ton partiel</b> : QCM, dissert ou cas, la date, ton temps.</span></div>
     <div><span class="num">3</span><span><b>Claude crée ta partie.</b> Chaque citation est vérifiée mot pour mot dans ton fichier.</span></div>
     <div><span class="num">4</span><span><b>Ce que tu rates revient</b> jusqu’à ce que ça rentre.</span></div>
   </section>
 
-  <section class="box"><h3>Tes fichiers ?</h3><p class="small">Pas de compte en plus, pas de serveur à nous. Ton cours est lu dans ton navigateur et envoyé seulement à ton Claude quand tu crées une partie.</p></section>
+  <section class="box"><h3>Tes fichiers ?</h3><p class="small">Pas de compte en plus, pas de serveur à nous. Ton app est dans ton compte Claude. Ton cours est lu dans ton navigateur et envoyé seulement à ton Claude quand tu crées une partie.</p></section>
 
   <section class="box"><h3>Tu codes ?</h3><p class="small">Le moteur marche aussi dans Claude Code, Codex ou Gemini CLI :</p><code>npx skills add aniasnotebook/study-engine</code><p class="small muted">Puis : « Player Two : interroge-moi sur mon dossier de cours ».</p></section>
 

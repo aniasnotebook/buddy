@@ -8,9 +8,12 @@ Working name. No server, no account: her Claude does the AI work on her own plan
 
 **Claude (app or claude.ai)**
 
-Open the app: https://claude.ai/artifact/QGYa5c8WPtBdMXFxmQjc2m . It runs inside Claude, on the student's own account. Nothing to install. She adds a course (PDF or text), taps "Créer ma partie", and plays.
+Each student installs her own Player Two:
+1. Download [`dist/player-two-skill.zip`](dist/player-two-skill.zip).
+2. In Claude, open Customize › Skills and upload the ZIP (turn on code execution if Claude asks).
+3. In a new conversation, say **Ouvre Player Two**. Her Claude creates her own copy of the app, in her account.
 
-To open it from any conversation instead, upload [`dist/player-two-skill.zip`](dist/player-two-skill.zip) under Settings › Capabilities › Skills (code execution on), then say **Ouvre Player Two**.
+She adds a course (PDF or text, from her phone's file picker, Google Drive included), taps "Créer ma partie", and plays.
 
 **Coding agents (Claude Code, Codex, Gemini CLI, Cursor)**
 
@@ -24,7 +27,7 @@ Then ask your agent: "Player Two: quiz me on <course folder>". The agent runs on
 
 ## How it works
 
-1. The app is one HTML page published in Claude. Opened by a signed-in student, it can ask Claude on her account.
+1. The skill has her Claude create the app (`assets/player-two.html`) as an artifact in her own conversation. It runs on her account.
 2. The app reads her PDF in the browser (pdf.js) and keeps the text, page by page, in browser storage.
 3. To build a game, the app sends the engine rules, her settings (exam format, date, time, way of learning) and her course text to her Claude, and asks for cards as JSON.
 4. The app keeps only cards whose quote is found word for word in her file, then shows each with its page.
