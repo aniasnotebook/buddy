@@ -78,6 +78,7 @@ textarea{min-height:140px;resize:vertical;line-height:1.45}
 .game{display:flex;align-items:center;gap:12px;border:1px solid var(--rim);border-radius:18px;padding:12px 14px}
 .game .sc{width:40px;height:52px;border-radius:10px;background:var(--ink);display:inline-flex;align-items:center;justify-content:center;transform:rotate(-5deg);flex:none;font-family:var(--disp);font-size:20px;color:var(--pink)}
 .game .tx{flex:1;min-width:0;text-align:left}
+.uprow{display:grid;grid-template-columns:1fr;gap:8px}@media (min-width:600px){.uprow{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}}
 .banner{display:flex;align-items:center;gap:10px;border-radius:16px;background:var(--ink);color:var(--white);padding:12px 14px;font-size:14px}
 /* files */
 .file{display:flex;align-items:center;gap:10px;border:1px solid var(--rim);border-radius:14px;padding:10px 12px}
@@ -179,7 +180,8 @@ textarea{min-height:140px;resize:vertical;line-height:1.45}
 </style>
 <div id="app"></div>
 <div id="sheet"></div>
-<input type="file" id="file" multiple hidden accept=".pdf,.pptx,.docx,.txt,.md,.csv,.png,.jpg,.jpeg,.webp,.heic,application/pdf,image/*,text/plain">
+<input type="file" id="folder" multiple hidden webkitdirectory>
+<input type="file" id="file" multiple hidden accept=".pdf,.pptx,.docx,.xlsx,.xlsm,.txt,.md,.csv,.png,.jpg,.jpeg,.webp,.heic,application/pdf,image/*,text/plain">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script>
@@ -210,7 +212,7 @@ const shuffle = a => { const b = a.slice(); for (let i = b.length - 1; i > 0; i-
 const plural = (n, w, ws) => n + ' ' + (n > 1 ? (ws || w + 's') : w);
 const daysTo = c => { const e = c.exam; let d = null; if (e.when === 'exact' && e.date) d = new Date(e.date + 'T00:00:00'); if (e.when === '2w') d = new Date((c.created || Date.now()) + 14 * 864e5); if (!d) return null; const n = new Date(); n.setHours(0,0,0,0); return Math.round((d - n) / 864e5); };
 const fmt = c => c.exam.format === 'Autre' ? (c.exam.other || 'Autre') : (!c.exam.format || c.exam.format === 'auto' || c.exam.format === 'Juste comprendre') ? 'Format choisi par Claude' : c.exam.format;
-const goalOf = c => c.goal === 'Autre' ? (c.goalOther || '') : (c.goal || '');
+const goalOf = o => o.goal === 'Autre' ? (o.goalOther || '') : (o.goal || '');
 const GOALS = ['Valider le partiel', 'Viser une très bonne note', 'Comprendre le cours', 'Rattraper mon retard', 'Autre'];
 const uid = () => Math.random().toString(36).slice(2, 9);
 let toastEl; function toast(t){ toastEl?.remove(); toastEl = document.createElement('div'); toastEl.className = 'toast'; toastEl.setAttribute('role','status'); toastEl.textContent = t; document.body.append(toastEl); setTimeout(() => toastEl?.remove(), 3200); }
@@ -256,6 +258,7 @@ Règles d’apprentissage :
 - "why" (une phrase) explique pourquoi LA BONNE RÉPONSE répond exactement à LA QUESTION POSÉE, avec les mots de la question. "trap" (une phrase) explique pourquoi le piège le plus tentant est faux.
 - Chaque question se comprend seule : si elle parle d’un montant ou d’une « part », elle dit lequel (ex. « la part du loyer de novembre-décembre, 4 000 € »).
 - Si le cours contient des annales [Annale], imite leur style de questions.
+- Un tableur (« Feuille … », cellules A1, B2 et formules [=…]) contient souvent des exercices chiffrés : fais-en des "number" ou des "case" en reprenant le raisonnement de ses formules, avec d’autres chiffres.
 Tu choisis UNIQUEMENT parmi ces modèles ("type") et tu remplis leurs champs :
 - "pick" : situation?, ask, options[4], answer (une des options).
 - "case" : situation (2 phrases), steps[2-3] = {ask (se suffit à elle-même), options[3-4], answer, why, trap, quote (la phrase du cours qui justifie CETTE décision)}.
@@ -268,8 +271,7 @@ Tu choisis UNIQUEMENT parmi ces modèles ("type") et tu remplis leurs champs :
 - "speed" : ask, pairs[4-6] = [terme, définition courte].
 - "explain" : ask, model (réponse attendue), keys[2-4] (les idées que la réponse doit contenir).
 Preuve : chaque carte a "quote" et "page". "quote" = une phrase du cours sur la notion testée (la règle, la définition, la ligne de corrigé), recopiée MOT POUR MOT, 30 mots max, de la prose plutôt qu’une formule mise en forme : elle sert à vérifier que la carte vient du cours et à ouvrir la bonne page ; elle n’est pas montrée. L’explication, c’est "why". "page" = le numéro du marqueur [type · fichier · p. N]. N’invente rien qui ne soit pas dans le cours.`;
-const FORMAT_MIX = {QCM:'surtout "pick" et "case" avec des pièges très proches', Dissertation:'des "build" et "explain" (arguments, définitions d’intro), des "pick" sur les distinctions, un "order" si possible', 'Cas pratique':'surtout "case" et "pick" concrets, un "explain" pour justifier', 'Juste comprendre':'"flash", "sort" et "pick" simples puis plus durs'};
-const TYPE_MIX = {'Claude choisit':null, Situations:'uniquement "pick" et "case"', Flashcards:'uniquement "flash"', Trier:'uniquement "sort"', Ordre:'uniquement "order"', Construire:'uniquement "build"', Rédiger:'uniquement "explain"', Calculs:'uniquement "number" et "mistake" sur les calculs du cours', 'Speed round':'un seul "speed" puis des "flash"'};
+const TYPE_MIX = {'Claude choisit':null, QCM:'surtout "pick" et "case" avec des pièges très proches', 'Cas pratique':'surtout "case" et "pick" concrets, un "explain" pour justifier', Dissertation:'des "build" et "explain" (arguments, définitions d’intro), des "pick" sur les distinctions', Situations:'uniquement "pick" et "case"', Flashcards:'uniquement "flash"', Trier:'uniquement "sort"', Ordre:'uniquement "order"', Construire:'uniquement "build"', Rédiger:'uniquement "explain"', Calculs:'uniquement "number" et "mistake" sur les calculs du cours', 'Speed round':'un seul "speed" puis des "flash"'};
 
 function okNumber(k){ try { const toks = String(k.formula).replace(/√/g, 'sqrt').match(/\d+(?:[.,]\d+)?|[A-Za-z_]\w*|[-+*/()^]/g) || []; let i = 0; const nums = k.numbers || {};
   const atom = () => { const t = toks[i++]; if (t === '(') { const v = expr(); i++; return v; } if (t === '-') return -atom(); if (t === 'sqrt') { if (toks[i++] !== '(') throw 0; const v = expr(); i++; return Math.sqrt(v); } if (/^\d/.test(t)) return +t.replace(',', '.'); if (t in nums) return +nums[t]; throw 0; };
@@ -326,13 +328,13 @@ async function makeGame(opts){
   const minutes = opts.minutes || 5, n = minutes >= 15 ? 10 : minutes >= 10 ? 8 : 5, days = daysTo(c);
   let focus = opts.on === 'part' ? (opts.part || '') : '';
   const reviewPart = opts.on === 'mistakes' && c.review.length ? '\n- Fais UNIQUEMENT des cartes sur ces idées ratées, autrement : ' + c.review.slice(0, 8).map(k => k.ask || k.front).join(' / ') : (c.review.length ? '\n- Elle a déjà raté : ' + c.review.slice(0, 4).map(k => k.ask || k.front).join(' / ') + '. Reprends-en une autrement.' : '');
-  const mix = TYPE_MIX[opts.kind] || FORMAT_MIX[c.exam.format] || 'choisis toi-même les modèles qui servent le mieux son objectif, d’après la nature du cours (calculs et écritures → "number", "case", "mistake" ; notions → "pick", "sort", "flash" ; rédaction → "build", "explain") et le style de ses annales [Annale] s’il y en a';
-  const goal = goalOf(c);
+  const mix = opts.kind === 'Autre' && opts.kindOther ? 'des exercices de ce format : ' + opts.kindOther + ', avec les modèles qui s’en approchent le plus' : TYPE_MIX[opts.kind] || 'choisis toi-même les modèles qui servent le mieux son objectif, d’après la nature du cours (calculs et écritures → "number", "case", "mistake" ; notions → "pick", "sort", "flash" ; rédaction → "build", "explain") et le style de ses annales [Annale] s’il y en a';
+  const goal = goalOf(opts);
   const prompt = `${ENGINE}
 
 L’étudiante :
 - Son objectif, qui passe avant tout le reste : ${goal || 'réussir son partiel'}.
-- Le format des exercices qu’elle veut : ${fmt(c) === 'Format choisi par Claude' ? 'à toi de choisir, d’après ses annales et son cours' : fmt(c)}.${days !== null && days >= 0 ? '\n- Son partiel est dans ' + plural(days, 'jour') + '.' : ''}
+${days !== null && days >= 0 ? '- Son partiel est dans ' + plural(days, 'jour') + '.' : ''}
 - Ce jeu : ${mix}. ${minutes} minutes, donc ${n} cartes.${focus ? '\n- Uniquement sur : ' + focus + '.' : ''}${reviewPart}
 
 Réponds uniquement avec ce JSON : {"title":"titre court du jeu","cards":[ ... ]}
@@ -350,7 +352,7 @@ ${courseText(c, focus || goal)}`;
     await new Promise(r => setTimeout(r, 500)); making.step = 3; drawMaking(); await new Promise(r => setTimeout(r, 450));
     busy = false; making = null;
     if (!kept.length) { view = {name:'course', id:c.id}; render(); return toast('Aucune carte n’a passé la vérification des citations. Réessaie.'); }
-    const g = {id: uid(), title: String(out.title || opts.kind || 'Jeu'), cards: kept, best: null, created: Date.now(), kind: opts.kind && opts.kind !== 'Claude choisit' ? opts.kind : 'Choisi par Claude'};
+    const g = {id: uid(), title: String(out.title || opts.kind || 'Jeu'), cards: kept, best: null, created: Date.now(), kind: opts.kind === 'Autre' ? (opts.kindOther || 'Autre') : opts.kind && opts.kind !== 'Claude choisit' ? opts.kind : 'Choisi par Claude', goal: goalOf(opts)};
     c.games.unshift(g); save();
     startGame(c, g, Math.max(0, kept.dropped || 0));
   } catch(e){ clearTimeout(t1); busy = false; making = null; if (e?.code === 'not_granted') claudeState = 'refused'; view = {name:'course', id:c.id}; render(); toast(errText(e)); }
@@ -360,7 +362,7 @@ async function ask(text){
   const turns = chats[c.id] = chats[c.id] || [];
   turns.push({role:'user', content:text.trim()}); turns.push({role:'assistant', content:''});
   busy = true; drawSheet();
-  const rules = `Tu es Buddy, le compagnon de révision d’une étudiante. Réponds en français, en 2 à 4 phrases courtes, uniquement d’après son cours ci-dessous, et cite la page (p. N). Si le cours n’en parle pas, dis-le simplement. Mets en forme en Markdown simple : titres courts (##), **gras** pour les mots clés, listes à puces. Son objectif : ${goalOf(c) || 'réussir son partiel'}.\n\nLE COURS :\n${courseText(c, text)}`;
+  const rules = `Tu es Buddy, le compagnon de révision d’une étudiante. Réponds en français, en 2 à 4 phrases courtes, uniquement d’après son cours ci-dessous, et cite la page (p. N). Si le cours n’en parle pas, dis-le simplement. Mets en forme en Markdown simple : titres courts (##), **gras** pour les mots clés, listes à puces. \n\nLE COURS :\n${courseText(c, text)}`;
   try {
     const {text: t} = await sample([{role:'user', content: rules}, ...turns.slice(0, -1).slice(-8)], {cache:false, modelTier:'default', onText: ({text}) => { turns[turns.length-1].content = text; const el = document.getElementById('lastai'); if (el) { el.innerHTML = md(text); scrollChat(); } }});
     turns[turns.length-1].content = t; claudeState = 'ok';
@@ -381,7 +383,7 @@ async function gradeExplain(){
 /* ================= files: everything a course holds ================= */
 let pdfReady = null;
 function pdfLib(){ if (pdfReady) return pdfReady; pdfReady = (async () => { const L = window.pdfjsLib; if (!L) throw new Error('pdf'); try { const blob = new Blob(["importScripts('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js');"], {type:'text/javascript'}); L.GlobalWorkerOptions.workerPort = new Worker(URL.createObjectURL(blob)); } catch(e){ L.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; } return L; })(); return pdfReady; }
-const KIND = name => /annale|partiel|examen|exam|sujet/i.test(name) ? 'Annale' : /projet|project|dossier|rapport/i.test(name) ? 'Projet' : /note|brouillon/i.test(name) ? 'Notes' : /diapo|slide|\.pptx?$/i.test(name) ? 'Diapos' : /lecture|reading|article/i.test(name) ? 'Lecture' : 'Cours';
+const KIND = name => /annale|partiel|examen|exam|sujet/i.test(name) ? 'Annale' : /exo|exercice|\btd\b|corrig/i.test(name) ? 'Exercices' : /projet|project|dossier|rapport/i.test(name) ? 'Projet' : /note|brouillon/i.test(name) ? 'Notes' : /diapo|slide|\.pptx?$/i.test(name) ? 'Diapos' : /lecture|reading|article/i.test(name) ? 'Lecture' : 'Cours';
 const xmlText = (xml, tag) => { const d = new DOMParser().parseFromString(xml, 'application/xml'); return [...d.getElementsByTagName(tag)].map(n => n.textContent).join(' '); };
 async function ocr(blobs, label){
   if (!sample || !canImages) throw {plain:'Pour lire ' + label + ', Buddy a besoin de Claude avec les images : ouvre Buddy dans Claude.'};
@@ -395,9 +397,39 @@ async function ocr(blobs, label){
 }
 async function readFile(f){
   const n = f.name.toLowerCase();
-  if (/\.(pages|key|numbers|odt|odp|ods|doc|ppt|xls|xlsx|rtf|zip|mp4|mov|mp3|m4a|heic)$/.test(n)) {
+  if (/\.(pages|key|numbers|odt|odp|ods|doc|ppt|xls|rtf|zip|mp4|mov|mp3|m4a|heic)$/.test(n)) {
     const ext = n.split('.').pop();
-    throw {plain: ext === 'heic' ? 'Format HEIC illisible ici : prends la photo en JPG, ou exporte-la, puis réessaie.' : 'Format .' + ext + ' illisible : exporte-le en PDF, puis réessaie.'};
+    throw {plain: ext === 'heic' ? 'Format HEIC illisible ici : prends la photo en JPG, ou exporte-la, puis réessaie.' : ext === 'xls' || ext === 'numbers' || ext === 'ods' ? 'Format .' + ext + ' illisible : enregistre-le en .xlsx (Excel), puis réessaie.' : 'Format .' + ext + ' illisible : exporte-le en PDF, puis réessaie.'};
+  }
+  /* Excel: every sheet, row by row, with the formulas behind the numbers (business exercises live there) */
+  if (/\.xls[xm]$/.test(n)) {
+    const zip = await JSZip.loadAsync(await f.arrayBuffer());
+    const ss = zip.file('xl/sharedStrings.xml') ? new DOMParser().parseFromString(await zip.file('xl/sharedStrings.xml').async('string'), 'application/xml') : null;
+    const shared = ss ? [...ss.getElementsByTagName('si')].map(si => [...si.getElementsByTagName('t')].map(t => t.textContent).join('')) : [];
+    const wb = new DOMParser().parseFromString(await zip.file('xl/workbook.xml').async('string'), 'application/xml');
+    const names = [...wb.getElementsByTagName('sheet')].map(x => x.getAttribute('name'));
+    const sheets = Object.keys(zip.files).filter(k => /^xl\/worksheets\/sheet\d+\.xml$/.test(k)).sort((a, b) => +a.match(/\d+/)[0] - +b.match(/\d+/)[0]);
+    const pages = []; let p = 1;
+    for (let si = 0; si < sheets.length; si++) {
+      const doc = new DOMParser().parseFromString(await zip.file(sheets[si]).async('string'), 'application/xml');
+      const lines = [];
+      for (const row of doc.getElementsByTagName('row')) {
+        const cells = [...row.getElementsByTagName('c')].map(c => {
+          const t = c.getAttribute('t'), v = c.getElementsByTagName('v')[0]?.textContent ?? '', fx = c.getElementsByTagName('f')[0]?.textContent;
+          const val = t === 's' ? (shared[+v] ?? '') : t === 'inlineStr' ? [...c.getElementsByTagName('t')].map(x => x.textContent).join('') : t === 'b' ? (v === '1' ? 'VRAI' : 'FAUX') : v;
+          if (val === '' && !fx) return null;
+          return c.getAttribute('r') + ' ' + val + (fx ? ' [=' + fx + ']' : '');
+        }).filter(Boolean);
+        if (cells.length) lines.push(cells.join(' | '));
+      }
+      if (!lines.length) continue;
+      const head = 'Feuille « ' + (names[si] || 'Feuille ' + (si + 1)) + ' »\n';
+      let buf = head;
+      for (const l of lines) { if ((buf + l).length > 3000 && buf !== head) { pages.push({p: p++, text: buf.trim()}); buf = head; } buf += l + '\n'; }
+      if (buf.trim() !== head.trim()) pages.push({p: p++, text: buf.trim()});
+    }
+    if (!pages.length) throw {plain:'Ce classeur Excel est vide.'};
+    return {pages, unit:'page', how: plural(names.length || sheets.length, 'feuille') + ' lue' + ((names.length || sheets.length) > 1 ? 's' : '') + ', formules comprises'};
   }
   if (/\.pdf$/.test(n) || f.type === 'application/pdf') {
     const L = await pdfLib(); const doc = await L.getDocument({data: await f.arrayBuffer()}).promise; const pages = [];
@@ -435,18 +467,28 @@ async function readFile(f){
   }
   throw {plain:'Format illisible : exporte-le en PDF, puis réessaie.'};
 }
-document.getElementById('file').addEventListener('change', async e => {
-  const list = [...e.target.files]; e.target.value = ''; const c = course(); if (!list.length || !c) return;
+const READABLE = /\.(pdf|pptx|docx|xlsx|xlsm|txt|md|csv|png|jpe?g|webp|gif)$/i;
+async function addFiles(list, fromFolder){
+  const c = course(); if (!list.length || !c) return;
   if (c.example) { c.files = []; c.example = false; }
+  /* a whole folder: skip hidden files, gather what can't be read into one line instead of one error per file */
+  const skipped = [];
+  if (fromFolder) list = list.filter(f => { const path = f.webkitRelativePath || f.name; if (/(^|\/)\./.test(path) || /desktop\.ini$/i.test(path)) return false; if (!READABLE.test(f.name)) { skipped.push(f.name); return false; } return true; });
+  list.forEach((f, i) => f.__n = i + 1);
   for (const f of list) {
-    if (c.files.some(x => x.name === f.name && (x.size == null || x.size === f.size))) { toast(f.name + ' est déjà dans ton cours.'); continue; }
-    reading = {name: f.name, detail:'…'}; drawSheet();
-    const rec = {name: f.name, kind: KIND(f.name), size: f.size};
+    if (c.files.some(x => x.name === f.name && (x.size == null || x.size === f.size))) { if (!fromFolder) toast(f.name + ' est déjà dans ton cours.'); continue; }
+    reading = {name: f.name, detail: list.length > 1 ? 'fichier ' + f.__n + '/' + list.length : '…', pct: list.length > 1 ? f.__n / list.length : .05}; drawSheet();
+    const path = f.webkitRelativePath || f.name;
+    const rec = {name: f.name, kind: KIND(path), size: f.size, folder: path.includes('/') ? path.split('/').slice(0, -1).join(' › ') : ''};
     try { Object.assign(rec, await readFile(f)); } catch(err){ rec.error = err?.plain || ('Je n’arrive pas à lire ce fichier. Exporte-le en PDF, puis réessaie.'); rec.pages = []; }
     c.files.push(rec); save();
   }
+  if (skipped.length) { c.files.push({name: plural(skipped.length, 'fichier') + ' non lu' + (skipped.length > 1 ? 's' : ''), kind:'Ignorés', pages:[], error: skipped.slice(0, 6).join(', ') + (skipped.length > 6 ? '…' : '') + ' : format illisible (vidéo, Keynote, Pages…). Exporte-les en PDF.'}); save(); }
   reading = null; render();
-});
+}
+document.getElementById('file').addEventListener('change', e => { const list = [...e.target.files]; e.target.value = ''; addFiles(list, false); });
+document.getElementById('folder').addEventListener('change', e => { const list = [...e.target.files]; e.target.value = ''; addFiles(list, true); });
+const canFolder = 'webkitdirectory' in document.createElement('input') && !/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
 /* ================= Google Drive, through her own Claude connector ================= */
 const DRIVE = 'Google Drive';
@@ -483,7 +525,7 @@ function findBase64(r){
   walk(r?.content); walk(payloadOf(r)); return hit;
 }
 const isFolder = f => /folder/.test(f.mime);
-const extFor = (name, mime) => /\.[a-z0-9]{2,5}$/i.test(name) ? '' : /pdf/.test(mime) ? '.pdf' : /presentation/.test(mime) ? '.pptx' : /wordprocessing/.test(mime) ? '.docx' : /jpeg/.test(mime) ? '.jpg' : /png/.test(mime) ? '.png' : /text/.test(mime) ? '.txt' : '';
+const extFor = (name, mime) => /\.[a-z0-9]{2,5}$/i.test(name) ? '' : /pdf/.test(mime) ? '.pdf' : /presentation/.test(mime) ? '.pptx' : /spreadsheet/.test(mime) ? '.xlsx' : /wordprocessing/.test(mime) ? '.docx' : /jpeg/.test(mime) ? '.jpg' : /png/.test(mime) ? '.png' : /text/.test(mime) ? '.txt' : '';
 function pagesFromText(text){
   const parts = text.split(/\f|\n-{2,}\s*(?:page|Page)\s*\d+\s*-{2,}\n/).map(x => x.trim()).filter(Boolean);
   const pages = []; let p = 1;
@@ -502,7 +544,7 @@ async function driveList(kind, arg){
   drawSheet();
 }
 async function driveRead(f){
-  if (/google-apps\.(spreadsheet|form|drawing|site|shortcut)/.test(f.mime)) throw {plain:'Ce type de fichier Google ne se lit pas ici : exporte-le en PDF dans Drive.'};
+  if (/google-apps\.(form|drawing|site|shortcut)/.test(f.mime)) throw {plain:'Ce type de fichier Google ne se lit pas ici : exporte-le en PDF dans Drive.'};
   if (/video|audio/.test(f.mime)) throw {plain:'Une vidéo ou un son ne se lit pas : ajoute plutôt les diapos ou les notes.'};
   try {
     const a = await argName('read_file_content', ['fileId', 'file_id', 'id']);
@@ -516,13 +558,24 @@ async function driveRead(f){
   const res = await readFile(new File([bytes], f.name + extFor(f.name, f.mime), {type: f.mime}));
   return {...res, how: 'depuis Drive · ' + res.how};
 }
+async function driveTree(root){
+  const files = [], queue = [{f: root, path: ''}], seen = new Set();
+  const a = await argName('search_files', ['query', 'q', 'search_query', 'searchQuery']);
+  while (queue.length && files.length < 80) {
+    const {f, path} = queue.shift(); if (seen.has(f.id)) continue; seen.add(f.id);
+    reading = {name: root.name, detail: 'je parcours ' + (path ? path + ' › ' : '') + f.name, pct: .1}; drawSheet();
+    const items = driveFiles(await mcp.callTool(DRIVE, 'search_files', {[a]: `'${f.id}' in parents`}));
+    for (const it of items) { const p = (path ? path + ' › ' : '') + f.name; if (isFolder(it)) { if (p.split(' › ').length < 5) queue.push({f: it, path: p}); } else files.push({...it, folder: p}); }
+  }
+  return files;
+}
 async function driveAdd(list){
   const c = course(); if (!c || reading) return;
   if (c.example) { c.files = []; c.example = false; }
   for (const f of list) {
     if (isFolder(f) || c.files.some(x => x.driveId === f.id || x.name === f.name)) { drive.added[f.id] = true; continue; }
     reading = {name: f.name, detail:'depuis Drive', pct:.3}; drawSheet();
-    const rec = {name: f.name, kind: KIND(f.name), driveId: f.id};
+    const rec = {name: f.name, kind: KIND((f.folder || '') + '/' + f.name), driveId: f.id, folder: f.folder || ''};
     try { Object.assign(rec, await driveRead(f)); } catch(e){ rec.error = driveErr(e); rec.pages = []; }
     c.files.push(rec); drive.added[f.id] = true; save();
   }
@@ -534,7 +587,7 @@ function driveSheet(c){
   return `<div class="row between"><h2 style="font-size:26px">Mon Google Drive</h2><button class="icon" data-a="close" aria-label="Fermer">✕</button></div>
   <form id="driveform" class="row" style="flex-wrap:nowrap"><input id="dq" placeholder="Cherche : opérations, partiel, TD…" autocomplete="off" style="flex:1;min-width:0;border-radius:99px"><button class="btn ink sm" type="submit" aria-label="Chercher">→</button></form>
   ${drive.path.length ? `<div class="row" style="gap:6px"><button class="link" data-a="dhome" style="text-decoration:none">Drive</button>${drive.path.map(f => `<span class="muted">›</span><b class="small">${esc(f.name)}</b>`).join('')}</div>` : '<span class="label">Récents</span>'}
-  ${here && files.length ? `<button class="btn white" data-a="dall" ${reading ? 'disabled' : ''}>Ajouter tout ce dossier (${plural(files.length, 'fichier')})</button>` : ''}
+  ${here && drive.items.length ? `<button class="btn white" data-a="dall" ${reading ? 'disabled' : ''}>Ajouter tout ce dossier${drive.items.some(isFolder) ? ' et ses sous-dossiers' : ' (' + plural(files.length, 'fichier') + ')'}</button>` : ''}
   ${reading ? `<div class="file" style="flex-direction:column;align-items:stretch;gap:8px"><span class="nm"><b>${esc(reading.name)}</b><br><span class="muted">Je lis… ${esc(reading.detail)}</span></span><div class="bar"><i style="width:${Math.round((reading.pct || .05) * 100)}%"></i></div></div>` : ''}
   <div class="msgs">${drive.state === 'loading' ? '<p class="muted">Je regarde ton Drive…</p>' : drive.items.map(f => `<div class="file">${isFolder(f) ? `<button class="nm" data-a="dopen" data-v="${esc(f.id)}" style="text-align:left"><b>📁 ${esc(f.name)}</b></button><span class="muted">›</span>` : `<span class="nm"><b>${esc(f.name)}</b></span>${drive.added[f.id] ? '<span class="small" style="color:var(--green-ink);font-weight:600">Ajouté</span>' : `<button class="btn sm white" data-a="dadd" data-v="${esc(f.id)}" ${reading ? 'disabled' : ''}>Ajouter</button>`}`}</div>`).join('')}
   ${drive.err ? `<p class="small" ${drive.state === 'error' ? 'style="color:#b4500a"' : 'class="muted"'}>${esc(drive.err)}</p>${drive.state === 'error' ? '<button class="btn white sm" data-a="dhome">Réessayer</button>' : ''}` : ''}</div>
@@ -578,7 +631,7 @@ function next(){ const g = game; g.i++; g.cur = g.queue.shift(); if (g.cur) g.st
 /* Partie du jour: a random mix of the games she already has, misses first. Free and instant. Claude writes only the very first game. */
 function daily(c){
   const pool = c.games.flatMap(g => g.cards);
-  if (!pool.length) return makeGame({on:'all', kind:'Claude choisit', minutes:5});
+  if (!pool.length) { openNewGame(c); return; }
   const keyOf = x => x.ask || x.front || x.title, seen = new Set(), pick = [];
   for (const k of shuffle(c.review).concat(shuffle(pool))) { const id = keyOf(k); if (seen.has(id)) continue; seen.add(id); pick.push({...k, id: uid()}); if (pick.length >= 5) break; }
   startGame(c, {id:'daily', daily:true, title:'Partie du jour', cards: pick}, 0);
@@ -607,13 +660,7 @@ function newCourseScreen(){
 }
 function examSetup(c, inSheet){
   const e = c.exam, ch = (k, v, l) => `<button class="chip" data-a="exam" data-k="${k}" data-v="${v}" aria-pressed="${e[k] === v}">${l || v}</button>`;
-  const gch = v => `<button class="chip" data-a="goal" data-v="${v}" aria-pressed="${c.goal === v}">${v}</button>`;
-  return `<span class="label">Ton objectif</span><div class="chips">${GOALS.map(gch).join('')}</div>
-  ${c.goal === 'Autre' ? `<input id="goalother" placeholder="Ex. comprendre les écritures de fin d’année" value="${esc(c.goalOther || '')}" aria-label="Ton objectif">` : ''}
-  <span class="label">Le format des exercices</span><div class="chips">${ch('format', 'auto', 'Claude choisit')}${['QCM','Dissertation','Cas pratique','Autre'].map(v => ch('format', v)).join('')}</div>
-  ${!e.format || e.format === 'auto' ? '<p class="tiny muted">Claude le devine d’après tes annales et ton cours.</p>' : ''}
-  ${e.format === 'Autre' ? `<input id="exother" placeholder="Autre : écritures comptables, schémas, oral…" value="${esc(e.other)}" aria-label="Format des exercices">` : ''}
-  <span class="label">Quand</span><div class="chips">${ch('when','none','Peu importe')}${ch('when','exact','Date exacte')}${ch('when','2w','Dans 2 semaines')}</div>
+  return `<span class="label">Ton partiel, c’est quand&nbsp;?</span><div class="chips">${ch('when','none','Peu importe')}${ch('when','exact','Date exacte')}${ch('when','2w','Dans 2 semaines')}</div>
   ${e.when === 'exact' ? `<input id="exdate" type="date" value="${esc(e.date)}" aria-label="Date du partiel">` : ''}
   ${inSheet ? '<button class="btn" data-a="close">OK</button>' : ''}`;
 }
@@ -623,17 +670,17 @@ function setupScreen(){
   <button class="link" data-a="open" data-v="${c.id}" style="text-decoration:none">‹ ${esc(c.name)}</button>
   <h1 style="font-size:34px">Ton cours</h1>
   ${filesBlock(c)}
-  <h2 style="font-size:28px;margin-top:10px">Tu veux quoi&nbsp;?</h2>
   ${examSetup(c)}
+  <p class="tiny muted">Ton objectif et le format des exercices se choisissent pour chaque jeu.</p>
   <button class="btn" data-a="go-course" ${c.files.some(f => f.pages && f.pages.length) ? '' : 'disabled'}>C’est parti</button>
   <p class="tiny muted" style="text-align:center">Modifiable à tout moment.</p></div></div>`;
 }
 function filesBlock(c){
   return `<span class="label">Tout ton cours</span>
-  <div class="stack" style="gap:8px">${c.files.map((f, i) => `<div class="file ${f.error ? 'bad' : ''}"><span class="kind">${esc(f.kind)}</span><span class="nm"><b>${esc(f.name)}</b><br><span class="muted">${esc(f.error || f.how || '')}</span></span><span class="dot ${f.error ? 'no' : 'ok'}"></span>${c.example ? '' : `<button class="icon" data-a="rmfile" data-v="${i}" aria-label="Retirer ${esc(f.name)}" style="width:36px;height:36px;font-size:16px">✕</button>`}</div>`).join('') || '<p class="small muted">Aucun fichier pour l’instant.</p>'}</div>
+  <div class="stack" style="gap:8px">${c.files.map((f, i) => `<div class="file ${f.error ? 'bad' : ''}"><span class="kind">${esc(f.kind)}</span><span class="nm"><b>${esc(f.name)}</b><br><span class="muted">${f.folder ? esc(f.folder) + ' · ' : ''}${esc(f.error || f.how || '')}</span></span><span class="dot ${f.error ? 'no' : 'ok'}"></span>${c.example ? '' : `<button class="icon" data-a="rmfile" data-v="${i}" aria-label="Retirer ${esc(f.name)}" style="width:36px;height:36px;font-size:16px">✕</button>`}</div>`).join('') || '<p class="small muted">Aucun fichier pour l’instant.</p>'}</div>
   ${reading ? `<div class="file" style="flex-direction:column;align-items:stretch;gap:8px"><span class="nm"><b>${esc(reading.name)}</b><br><span class="muted">Je lis… ${esc(reading.detail)}</span></span><div class="bar"><i style="width:${Math.round((reading.pct || .05) * 100)}%"></i></div></div>` : ''}
-  <div class="row" style="flex-wrap:nowrap"><button class="btn white" data-a="upload" ${reading ? 'disabled' : ''}>+ Ajouter des fichiers</button>${mcp ? `<button class="btn white" data-a="drive" ${reading ? 'disabled' : ''}>Depuis Google Drive</button>` : ''}</div>
-  <p class="tiny muted">PDF, diapos (.pptx), Word (.docx), Google Docs, texte, photos de notes, scans. Pas de limite de taille : un très gros cours est envoyé à Claude par morceaux.</p>`;
+  <div class="uprow"><button class="btn white" data-a="upload" ${reading ? 'disabled' : ''}>+ Ajouter des fichiers</button>${canFolder ? `<button class="btn white" data-a="upfolder" ${reading ? 'disabled' : ''}>+ Ajouter un dossier</button>` : ''}${mcp ? `<button class="btn white" data-a="drive" ${reading ? 'disabled' : ''}>Depuis Google Drive</button>` : ''}</div>
+  <p class="tiny muted">PDF, diapos (.pptx), Word (.docx), Excel (.xlsx), Google Docs et Sheets, texte, photos de notes, scans. Pas de limite de taille : un très gros cours est envoyé à Claude par morceaux.</p>`;
 }
 function gameRow(g){ return `<div class="game"><span class="sc">${g.best ?? '–'}</span><button class="tx" data-a="play" data-v="${g.id}"><b>${esc(g.title)}</b><br><span class="small muted">${plural(g.cards.length, 'carte')} · ${esc(g.kind)}${g.best != null ? ' · meilleur ' + g.best + '/' + g.cards.length : ''}</span></button><button class="icon" data-a="gmenu" data-v="${g.id}" aria-label="Options du jeu ${esc(g.title)}">⋯</button></div>`; }
 function courseScreen(){
@@ -641,11 +688,11 @@ function courseScreen(){
   const d = daysTo(c), can = !!sample && !busy && c.files.some(f => f.pages && f.pages.length);
   const filesN = c.files.filter(f => !f.error).length;
   return `<div class="shell">${sideHtml()}<div class="main">
-  <div class="row between"><button class="link" data-a="home" style="text-decoration:none">‹ Mes cours</button><div class="row">${d !== null && d >= 0 ? `<span class="label" style="color:var(--ink)">Partiel J-${d} · ${esc(fmt(c))}</span>` : `<span class="label">${esc(fmt(c))}</span>`}<button class="icon" data-a="sheet" data-v="exam" aria-label="Mon partiel">⚙</button></div></div>
+  <div class="row between"><button class="link" data-a="home" style="text-decoration:none">‹ Mes cours</button><div class="row">${d !== null && d >= 0 ? `<span class="label" style="color:var(--ink)">Partiel J-${d}</span>` : ''}<button class="icon" data-a="sheet" data-v="exam" aria-label="Mon partiel">⚙</button></div></div>
   ${c.fresh ? `<div class="banner" role="status"><span class="dot ok"></span><span>Dossier <b>${esc(c.name)}</b> créé. ${plural(filesN, 'fichier')} dedans, prêt à jouer.</span></div>` : ''}
   <h1 style="font-size:40px">${esc(c.name)}</h1>
   <div class="top2"><div class="card day"><span class="deco"></span><span class="label">Partie du jour</span><h2>5 min</h2><p class="muted">${c.games.length ? 'Un mélange de tes jeux' + (c.review.length ? ' · ' + plural(c.review.length, 'erreur') + ' à rattraper' : '') : 'Ton premier jeu, écrit par Claude'}</p><button class="btn" data-a="daily" ${c.games.length || can ? '' : 'disabled'}>Jouer</button>${!sample ? '<p class="tiny muted">Ouvre Buddy dans Claude pour jouer.</p>' : ''}</div>
-  <div class="stack" style="gap:10px"><div class="row between"><span class="label">Mes jeux · ${c.games.length}</span><button class="btn sm" data-a="sheet" data-v="newgame" ${can ? '' : 'disabled'}>+ Nouveau jeu</button></div>${c.games.map(gameRow).join('') || '<p class="small muted">Tes jeux s’ajoutent ici : rejoue-les, renomme-les, supprime-les.</p>'}</div></div>
+  <div class="stack" style="gap:10px"><div class="row between"><span class="label">Mes jeux · ${c.games.length}</span><button class="btn sm" data-a="newgame" ${can ? '' : 'disabled'}>+ Nouveau jeu</button></div>${c.games.map(gameRow).join('') || '<p class="small muted">Tes jeux s’ajoutent ici : rejoue-les, renomme-les, supprime-les.</p>'}</div></div>
   <div class="list"><button data-a="sheet" data-v="files"><span>Mon cours</span><span class="muted">${plural(filesN, 'fichier')}${c.files.some(f => f.error) ? ' · 1 illisible' : ''}</span></button><button data-a="sheet" data-v="ask" ${sample ? '' : 'disabled'}><span>Poser une question</span><span class="muted">→</span></button><button data-a="review" ${c.review.length && can ? '' : 'disabled'}><span>À revoir</span><span class="muted">${c.review.length}</span></button></div>
   </div></div>`;
 }
@@ -730,18 +777,21 @@ function endScreen(){
 }
 
 /* ================= sheets ================= */
-let gmenu = null, newGame = {on:'all', part:'', kind:'Claude choisit', minutes:5};
+let gmenu = null, newGame = {goal:'Valider le partiel', goalOther:'', on:'all', part:'', kind:'Claude choisit', kindOther:'', minutes:5};
+/* each course remembers the last game she set up, so the sheet opens on her usual choices */
+function openNewGame(c){ newGame = {...newGame, ...(c.lastNew || {}), on:'all', part:''}; sheet = 'newgame'; drawSheet(); }
 function sheetHtml(){
   const c = course();
   if (sheet === 'about') return `<h2 style="font-size:26px">Comment ça marche</h2><p><b>Ton cours reste ici.</b> Tes fichiers sont lus dans ce navigateur et gardés dans ce navigateur.</p><p><b>Claude, sur ton compte.</b> Quand tu crées un jeu ou poses une question, Buddy envoie ton cours à ton Claude. Ça compte dans ton usage Claude.</p><p><b>Chaque carte vient de ton cours.</b> Buddy vérifie qu’elle s’appuie sur une phrase retrouvée mot pour mot dans tes fichiers, sinon elle est jetée. Sous chaque réponse, « Voir dans ton cours » ouvre la page.</p><p><b>Tes erreurs reviennent</b> en fin de partie, puis dans « À revoir ».</p><button class="btn white" data-a="reset">${view.confirmReset ? 'Toucher encore pour tout effacer' : 'Tout effacer dans ce navigateur'}</button>`;
   if (!c) return '';
   if (sheet === 'files') return `<h2 style="font-size:26px">Mon cours</h2>${filesBlock(c)}<div class="row between"><button class="link" data-a="rename">Renommer le cours</button><button class="link" data-a="rmcourse" style="color:#b4500a">${view.confirmDelete ? 'Toucher encore pour supprimer' : 'Supprimer le cours'}</button></div>`;
-  if (sheet === 'exam') return `<h2 style="font-size:26px">Ton objectif</h2>${examSetup(c, true)}`;
+  if (sheet === 'exam') return `<h2 style="font-size:26px">Ton partiel</h2>${examSetup(c, true)}`;
   if (sheet === 'newgame') { const ng = newGame, ch = (k, v, l) => `<button class="chip" data-a="ng" data-k="${k}" data-v="${v}" aria-pressed="${String(ng[k]) === String(v)}">${l || v}</button>`;
-    return `<h2 style="font-size:26px">Nouveau jeu</h2><span class="label">Sur quoi</span><div class="chips">${ch('on','all','Tout le cours')}${ch('on','part','Une partie')}${c.review.length ? ch('on','mistakes','Mes erreurs') : ''}</div>${ng.on === 'part' ? `<input id="ngpart" placeholder="la boucle de fidélité, le chapitre 2…" value="${esc(ng.part)}" aria-label="Quelle partie">` : ''}
-    <span class="label">Quel jeu</span><div class="chips">${Object.keys(TYPE_MIX).map(v => ch('kind', v)).join('')}</div>
+    return `<h2 style="font-size:26px">Nouveau jeu</h2><span class="label">Ton objectif</span><div class="chips">${GOALS.map(v => ch('goal', v)).join('')}</div>${ng.goal === 'Autre' ? `<input id="nggoal" placeholder="Ex. maîtriser les écritures de fin d’année" value="${esc(ng.goalOther)}" aria-label="Ton objectif">` : ''}
+    <span class="label">Sur quoi</span><div class="chips">${ch('on','all','Tout le cours')}${ch('on','part','Une partie')}${c.review.length ? ch('on','mistakes','Mes erreurs') : ''}</div>${ng.on === 'part' ? `<input id="ngpart" placeholder="la boucle de fidélité, le chapitre 2…" value="${esc(ng.part)}" aria-label="Quelle partie">` : ''}
+    <span class="label">Le format des exercices</span><div class="chips">${Object.keys(TYPE_MIX).concat('Autre').map(v => ch('kind', v)).join('')}</div>${ng.kind === 'Autre' ? `<input id="ngkind" placeholder="Ex. écritures comptables, schémas, oral" value="${esc(ng.kindOther)}" aria-label="Format des exercices">` : ng.kind === 'Claude choisit' ? '<p class="tiny muted">Claude le choisit d’après ton objectif, tes annales et ton cours.</p>' : ''}
     <span class="label">Durée</span><div class="chips">${[5,10,15].map(v => ch('minutes', v, v + ' min')).join('')}</div>
-    <button class="btn" data-a="create">Créer le jeu</button><p class="tiny muted" style="text-align:center">Ton objectif${goalOf(c) ? ' (' + esc(goalOf(c)) + ')' : ''} passe en premier.</p>`; }
+    <button class="btn" data-a="create">Créer le jeu</button>`; }
   if (sheet === 'gmenu') { const g = c.games.find(x => x.id === gmenu); if (!g) return '';
     return `<h2 style="font-size:24px">${esc(g.title)}</h2><button class="btn ink" data-a="play" data-v="${g.id}">Rejouer</button>${view.renaming ? `<form id="renameform" class="row" style="flex-wrap:nowrap"><input id="gname" value="${esc(g.title)}" aria-label="Nom du jeu" style="flex:1"><button class="btn sm" type="submit">OK</button></form>` : '<button class="btn white" data-a="grename">Renommer</button>'}<button class="btn white" data-a="gdelete" style="color:#b4500a">${view.confirmG ? 'Toucher encore pour supprimer' : 'Supprimer ce jeu'}</button><p class="tiny muted" style="text-align:center">Supprimer ne touche pas à ton cours ni à tes erreurs à revoir.</p>`; }
   if (sheet === 'drive') return driveSheet(c);
@@ -786,10 +836,10 @@ function bindInputs(){
   const df = document.getElementById('driveform'); if (df) df.onsubmit = e => { e.preventDefault(); const q = document.getElementById('dq').value.trim(); if (q) { drive.path = []; driveList('search', q); } };
   const af = document.getElementById('askform'); if (af) af.onsubmit = e => { e.preventDefault(); const q = document.getElementById('q'); const v = q.value; q.value = ''; ask(v); };
   const nf = document.getElementById('newform'); if (nf) { nf.querySelector('input').focus(); nf.onsubmit = e => { e.preventDefault(); const n = document.getElementById('cname').value.trim(); if (!n) return; const c = newCourse(n); S.courses.push(c); S.welcomed = true; save(); view = {name:'setup', id:c.id}; render(); }; }
-  const go = document.getElementById('goalother'); if (go) go.oninput = () => { course().goalOther = go.value; save(); };
-  const eo = document.getElementById('exother'); if (eo) eo.oninput = () => { course().exam.other = eo.value; save(); };
   const ed = document.getElementById('exdate'); if (ed) ed.onchange = () => { course().exam.date = ed.value; save(); };
   const np = document.getElementById('ngpart'); if (np) np.oninput = () => { newGame.part = np.value; };
+  const ngg = document.getElementById('nggoal'); if (ngg) ngg.oninput = () => { newGame.goalOther = ngg.value; };
+  const ngk = document.getElementById('ngkind'); if (ngk) ngk.oninput = () => { newGame.kindOther = ngk.value; };
   const rf = document.getElementById('renameform'); if (rf) rf.onsubmit = e => { e.preventDefault(); const g = course().games.find(x => x.id === gmenu); const v = document.getElementById('gname').value.trim(); if (g && v) { g.title = v; save(); } view.renaming = false; render(); };
   const num = document.getElementById('num'); if (num) num.oninput = () => { game.st.val = num.value; };
 }
@@ -814,20 +864,21 @@ document.addEventListener('click', e => {
     case 'new': view = {name:'new'}; return render();
     case 'open': S.welcomed = true; save(); view = {name:'course', id:v}; render(); return window.scrollTo(0,0);
     case 'upload': return document.getElementById('file').click();
+    case 'upfolder': return document.getElementById('folder').click();
     case 'drive': sheet = 'drive'; drive = {state:'idle', items:[], path:[], err:'', added:{}}; drawSheet(); return driveList('recent');
     case 'dhome': drive.path = []; return driveList('recent');
     case 'dopen': { const f = drive.items.find(x => x.id === v); if (!f) return; drive.path.push(f); return driveList('folder', f.id); }
     case 'dadd': { const f = drive.items.find(x => x.id === v); return f ? driveAdd([f]) : null; }
-    case 'dall': return driveAdd(drive.items.filter(f => !isFolder(f)));
+    case 'dall': { const here = drive.path[drive.path.length - 1]; if (!here || reading) return; return (async () => { try { const all = await driveTree(here); reading = null; if (!all.length) { toast('Ce dossier est vide.'); return drawSheet(); } await driveAdd(all); } catch(e){ reading = null; drive.err = driveErr(e); drive.state = 'error'; drawSheet(); } })(); }
     case 'rmfile': c.files.splice(+v, 1); save(); return view.name === 'setup' ? render() : drawSheet();
     case 'exam': { const kk = t.dataset.k; c.exam[kk] = v; save(); return view.name === 'setup' ? render() : drawSheet(); }
-    case 'goal': c.goal = v; save(); return view.name === 'setup' ? render() : drawSheet();
     case 'go-course': view = {name:'course', id:c.id}; return render();
     case 'rename': { sheet = null; render(); const h = document.querySelector('.main h1'); if (!h) return; h.contentEditable = 'true'; h.focus(); document.getSelection().selectAllChildren(h); h.onblur = () => { const s = h.textContent.trim(); if (s) { c.name = s; save(); } render(); }; h.onkeydown = ev => { if (ev.key === 'Enter') { ev.preventDefault(); h.blur(); } }; return; }
     case 'rmcourse': if (!view.confirmDelete) { view.confirmDelete = true; return drawSheet(); } S.courses = S.courses.filter(x => x.id !== c.id); save(); sheet = null; view = {name:'home'}; return render();
     case 'daily': return daily(c);
     case 'ng': { const kk = t.dataset.k; newGame[kk] = kk === 'minutes' ? +v : v; return drawSheet(); }
-    case 'create': return makeGame({...newGame});
+    case 'newgame': return openNewGame(c);
+    case 'create': c.lastNew = {goal: newGame.goal, goalOther: newGame.goalOther, kind: newGame.kind, kindOther: newGame.kindOther, minutes: newGame.minutes}; save(); return makeGame({...newGame});
     case 'play': { const gg = c.games.find(x => x.id === v); sheet = null; return startGame(c, gg, 0); }
     case 'gmenu': gmenu = v; sheet = 'gmenu'; view.confirmG = false; view.renaming = false; return drawSheet();
     case 'grename': view.renaming = true; return drawSheet();
