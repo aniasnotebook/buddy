@@ -40,7 +40,7 @@ Then ask your agent: "Player Two: quiz me on <course folder>". The agent runs on
 |---|---|
 | `app/player-two.html` | The app: the single source of truth |
 | `skills/player-two/` | The skill: instructions, learning and game rules, card types, quote checker, and a copy of the app in `assets/` |
-| `landing/index.html` | The shareable landing page (static) |
+| `docs/index.html` | The landing page, served by GitHub Pages at https://aniasnotebook.github.io/study-engine/ |
 | `scripts/build.sh` | Copies the app into the skill and builds `dist/player-two-skill.zip` |
 | `dist/player-two-skill.zip` | What students upload to Claude |
 
