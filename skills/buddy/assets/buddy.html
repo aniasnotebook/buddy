@@ -7,7 +7,7 @@
    Deliberately one light look (plain white), as agreed. */
 :root{
   --white:#ffffff; --ink:#111111; --muted:#737373; --rim:#e6e6e6; --mist:#f5f5f5;
-  --pink:#f06a98; --pink-tint:#fde3ec; --green:#7fee64; --green-ink:#2f6b1f; --orange:#ff7a45; --orange-tint:#fff1ea;
+  --pink:#f06a98; --pink-tint:#fde3ec; --green:#7fee64; --green-ink:#2f6b1f; --orange:#ff7a45; --orange-tint:#fff1ea; --red:#e5383b; --red-tint:#fdecec;
   --disp:'Titan One','Arial Black',sans-serif; --body:Inter,system-ui,-apple-system,'Segoe UI',sans-serif; --mono:'DM Mono',ui-monospace,monospace;
   --press:0 4px 0 rgba(0,0,0,.2); color-scheme:light;
 }
@@ -47,7 +47,7 @@ input:focus,textarea:focus{border-color:var(--ink);outline:none}
 textarea{min-height:140px;resize:vertical;line-height:1.45}
 .card{background:var(--white);border:1px solid var(--rim);border-radius:24px;padding:22px}
 .dot{display:inline-block;width:10px;height:10px;border-radius:99px;flex:none}
-.dot.ok{background:var(--green)} .dot.no{background:var(--orange)}
+.dot.ok{background:var(--green)} .dot.no{background:var(--red)} .dot.part{background:var(--orange)}
 .quote{padding:10px 12px;border-radius:12px;background:var(--mist);font:13px/1.5 var(--mono)}
 /* layout: courses sidebar on computers */
 .shell{display:block}
@@ -107,10 +107,10 @@ textarea{min-height:140px;resize:vertical;line-height:1.45}
 .opt{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:58px;border-radius:16px;background:var(--white);border:2px solid var(--rim);border-bottom-width:4px;padding:10px 16px;font-weight:600;font-size:17px;text-align:left;width:100%;transition:transform .08s}
 .opt:active{transform:translateY(2px)}
 .opt.sel{background:var(--pink-tint);border-color:var(--pink)}
-.opt.good{border-color:var(--ink)} .opt.bad{background:var(--orange-tint);border-color:var(--orange)} .opt.fade{opacity:.35}
+.opt.good{border-color:var(--ink)} .opt.bad{background:var(--red-tint);border-color:var(--red)} .opt.fade{opacity:.35}
 .tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .pc{display:inline-flex;align-items:center;min-height:44px;border-radius:14px;background:var(--white);border:2px solid var(--rim);border-bottom-width:4px;padding:8px 12px;font-weight:600;font-size:15px;text-align:left}
-.pc.on{border-color:var(--ink)} .pc.good{background:#f0fde9;border-color:#2f8a4a} .pc.bad{background:var(--orange-tint);border-color:var(--orange)}
+.pc.on{border-color:var(--ink)} .pc.good{background:#f0fde9;border-color:#2f8a4a} .pc.bad{background:var(--red-tint);border-color:var(--red)}
 .pool{display:flex;flex-wrap:wrap;gap:8px}
 .answer{min-height:70px;border-radius:16px;border:2px dashed var(--rim);padding:8px;display:flex;flex-wrap:wrap;gap:8px;align-content:flex-start}
 .answer:empty::before{content:attr(data-empty);color:var(--muted);font-size:14px;padding:8px}
@@ -119,7 +119,7 @@ textarea{min-height:140px;resize:vertical;line-height:1.45}
 .slot .n{width:18px;font:500 11px var(--mono);color:var(--muted)}
 .slot .e{flex:1;min-height:44px;border-radius:14px;background:var(--mist);border:2px dashed var(--rim)}
 .line{display:flex;gap:8px;padding:12px 14px;border-radius:14px;background:var(--mist);border:2px solid transparent;font-size:16px;text-align:left;width:100%}
-.line.sel{background:var(--pink-tint);border-color:var(--pink)} .line.good{background:#f0fde9;border-color:#2f8a4a} .line.bad{background:var(--orange-tint);border-color:var(--orange)}
+.line.sel{background:var(--pink-tint);border-color:var(--pink)} .line.good{background:#f0fde9;border-color:#2f8a4a} .line.bad{background:var(--red-tint);border-color:var(--red)}
 .flash{perspective:1200px;display:flex;justify-content:center}
 .flash button{width:min(320px,100%);height:380px;border-radius:28px;padding:24px;display:flex;flex-direction:column;justify-content:space-between;text-align:left;transition:transform .45s}
 .flash .front{background:var(--ink);color:var(--white)} .flash .back{background:var(--white);border:2px solid var(--ink);border-bottom-width:5px}
@@ -375,7 +375,7 @@ async function gradeExplain(){
     const out = await sample.json(`Tu corriges la réponse rédigée d’une étudiante, d’après son cours. Question : ${k.ask}\nRéponse attendue : ${k.model}\nIdées à vérifier : ${JSON.stringify(k.keys)}\nPhrase du cours : « ${k.quote} »\nSa réponse : « ${t} »\nPour chaque idée, dis si sa réponse la contient (même formulée autrement). Puis une phrase de conseil pour une copie de partiel.\nRéponds uniquement : {"keys":[true,false,...],"tip":"..."}`, {modelTier:'default', cache:false});
     st.keys = Array.isArray(out?.keys) ? k.keys.map((_, i) => !!out.keys[i]) : k.keys.map(() => false); st.tip = String(out?.tip || '');
   } catch(e){ st.grading = false; render(); return toast(errText(e)); }
-  st.grading = false; finish(st.keys.every(Boolean));
+  st.grading = false; finish(st.keys.every(Boolean), st.keys.filter(Boolean).length / st.keys.length);
 }
 
 /* ================= files: everything a course holds ================= */
@@ -561,9 +561,9 @@ function startGame(c, g, dropped){
   view = {name:'play', id:c.id}; render(); window.scrollTo(0,0);
 }
 let speedTimer = null;
-function finish(ok){
+function finish(ok, score){
   const g = game, k = g.byId[g.cur], st = g.st, c = S.courses.find(x => x.id === g.courseId);
-  st.done = true; st.ok = ok; clearInterval(speedTimer);
+  st.done = true; st.ok = ok; st.score = ok ? 1 : Math.max(0, Math.min(.99, score || 0)); clearInterval(speedTimer);
   if (!(g.cur in g.first)) g.first[g.cur] = ok;
   const keyOf = x => x.ask || x.front || x.title;
   if (!ok && !g.retried[g.cur] && k.type !== 'flash') { g.retried[g.cur] = true; g.queue.push(g.cur); }
@@ -672,7 +672,7 @@ function stageHtml(k, again){
 function moveHtml(k, st){
   switch (k.type) {
     case 'pick': return st.opts.map(o => `<button class="opt ${st.done ? (o === k.answer ? 'good' : o === st.sel ? 'bad' : 'fade') : o === st.sel ? 'sel' : ''}" data-a="sel" data-v="${esc(o)}" ${st.done ? 'disabled' : ''}>${esc(o)}${st.done && o === k.answer ? '<span class="dot ok"></span>' : ''}</button>`).join('');
-    case 'sort': return `${st.res.length ? `<div class="done-tags">${st.res.map(r => `<span style="${r.ok ? '' : 'background:var(--orange-tint);color:#b4500a'}">${r.ok ? '✓' : '✗'} ${esc(r.text)}</span>`).join('')}</div>` : ''}${st.i < st.items.length ? `<span class="label">Dans quelle case&nbsp;?</span><div class="tiles">${k.buckets.map(b => `<button class="pc" data-a="bucket" data-v="${esc(b)}" style="min-height:56px">${esc(b)}</button>`).join('')}</div>` : ''}`;
+    case 'sort': return `${st.res.length ? `<div class="done-tags">${st.res.map(r => `<span style="${r.ok ? '' : 'background:var(--red-tint);color:#a4161a'}">${r.ok ? '✓' : '✗'} ${esc(r.text)}</span>`).join('')}</div>` : ''}${st.i < st.items.length ? `<span class="label">Dans quelle case&nbsp;?</span><div class="tiles">${k.buckets.map(b => `<button class="pc" data-a="bucket" data-v="${esc(b)}" style="min-height:56px">${esc(b)}</button>`).join('')}</div>` : ''}`;
     case 'order': return `<div class="slots">${k.items.map((_, i) => `<div class="slot"><span class="n">${i + 1}</span>${st.placed[i] ? (st.done ? `<span class="pc ${st.placed[i] === k.items[i] ? 'good' : 'bad'}" style="flex:1">${esc(st.placed[i])}</span>` : `<button class="pc on" data-a="unplace" data-v="${i}" style="flex:1">${esc(st.placed[i])}</button>`) : '<span class="e"></span>'}</div>`).join('')}</div>${st.done ? '' : `<span class="label">Touche la suivante</span><div class="pool">${st.pool.filter(x => !st.placed.includes(x)).map(x => `<button class="pc" data-a="place" data-v="${esc(x)}">${esc(x)}</button>`).join('')}</div>`}`;
     case 'build': return `<div class="answer" data-empty="Touche les blocs pour construire ta réponse">${st.placed.map((x, i) => st.done ? `<span class="pc ${x === k.items[i] ? 'good' : 'bad'}">${esc(x)}${k.traps.includes(x) ? ' · piège' : ''}</span>` : `<button class="pc on" data-a="unplace" data-v="${i}">${esc(x)}</button>`).join('')}</div>${st.done ? '' : `<div class="pool">${st.pool.filter(x => !st.placed.includes(x)).map(x => `<button class="pc" data-a="place" data-v="${esc(x)}">${esc(x)}</button>`).join('')}</div><p class="tiny muted">${plural(k.traps.length, 'bloc')} ${k.traps.length > 1 ? 'sont des pièges' : 'est un piège'}.</p>`}`;
     case 'flash': return `<div class="flash"><button class="${st.flipped ? 'back' : 'front'}" data-a="flip" aria-label="Retourner la carte">${st.flipped ? `<span class="label">${esc(k.front)}</span><span style="font-weight:600;font-size:20px;line-height:1.3">${esc(k.back)}</span>${src(k)}` : `<span class="label" style="color:#a3a3a3">Flashcard · p. ${k.page}</span><h3>${esc(k.front)}</h3><span class="small" style="color:#a3a3a3">Dis la réponse dans ta tête, puis touche la carte.</span>`}</button></div>`;
@@ -696,10 +696,10 @@ function dockHtml(k, st, g){
   let body;
   if (k.type === 'explain') body = `<div class="keys">${k.keys.map((x, i) => `<span>${st.keys?.[i] ? '<b style="color:#2f8a4a">✓</b>' : '<b style="color:#b4500a">✗</b>'} ${esc(x)}</span>`).join('')}</div>${st.tip ? `<p class="small">${esc(st.tip)}</p>` : ''}<p class="small muted"><b>Réponse type :</b> ${esc(k.model)}</p>`;
   else if (k.type === 'number') body = `<p class="small">${(k.steps || []).map(esc).join('<br>')}</p>`;
-  else if (k.type === 'sort' || k.type === 'speed') body = `<p class="small">${k.type === 'speed' ? (st.ok ? 'En ' + (25 - st.time) + ' secondes. Bats ton temps la prochaine fois.' : 'Le temps est écoulé.') : (st.ok ? 'Tout est bien rangé.' : 'Les cases en orange reviennent plus tard.')}</p>`;
+  else if (k.type === 'sort' || k.type === 'speed') body = `<p class="small">${k.type === 'speed' ? (st.ok ? 'En ' + (25 - st.time) + ' secondes. Bats ton temps la prochaine fois.' : 'Le temps est écoulé.') : (st.ok ? 'Tout est bien rangé.' : 'Les cases en rouge reviennent plus tard.')}</p>`;
   else body = `<p class="small">${st.ok ? esc(k.why || '') : `<b>${k.type === 'mistake' ? 'C’était ' : 'Réponse : '}${esc(right)}.</b> ${esc(k.why || '')}`}</p>${!st.ok && k.trap ? `<p class="small muted">${esc(k.trap)}</p>` : ''}`;
   const enter = !st.verdictShown; st.verdictShown = true;
-  return `<div class="verdict${enter ? ' enter' : ''}" role="status"><div class="w"><span class="dot ${st.ok ? 'ok' : 'no'}" style="width:12px;height:12px"></span>${st.ok ? 'Exact !' : 'Pas tout à fait'}</div>${body}${src(k)}${!st.ok && g.retried[g.cur] && !again ? '<p class="tiny muted">Elle revient en fin de partie, autrement.</p>' : ''}<button class="btn ink" data-a="next">Continuer</button></div>`;
+  return `<div class="verdict${enter ? ' enter' : ''}" role="status"><div class="w"><span class="dot ${st.ok ? 'ok' : st.score > 0 ? 'part' : 'no'}" style="width:12px;height:12px"></span>${st.ok ? 'Exact !' : st.score > 0 ? 'Pas tout à fait' : 'Faux'}</div>${body}${src(k)}${!st.ok && g.retried[g.cur] && !again ? '<p class="tiny muted">Elle revient en fin de partie, autrement.</p>' : ''}<button class="btn ink" data-a="next">Continuer</button></div>`;
 }
 function play(){
   const g = game; if (!g) { view = {name:'course', id:view.id}; return courseScreen(); }
@@ -833,18 +833,19 @@ document.addEventListener('click', e => {
     case 'flip': st.flipped = !st.flipped; return render();
     case 'flashyes': return finish(true);
     case 'flashno': return finish(false);
-    case 'bucket': { const it = st.items[st.i]; st.res.push({text: it.text, ok: it.bucket === v}); st.i++; if (st.i >= st.items.length) return finish(st.res.every(r => r.ok)); return render(); }
-    case 'speedgo': st.started = true; speedTimer = setInterval(() => { st.time--; if (st.time <= 0) { st.time = 0; return finish(false); } render(); }, 1000); return render();
+    case 'bucket': { const it = st.items[st.i]; st.res.push({text: it.text, ok: it.bucket === v}); st.i++; if (st.i >= st.items.length) return finish(st.res.every(r => r.ok), st.res.filter(r => r.ok).length / st.res.length); return render(); }
+    case 'speedgo': st.started = true; speedTimer = setInterval(() => { st.time--; if (st.time <= 0) { st.time = 0; return finish(false, st.gone.length / k.pairs.length); } render(); }, 1000); return render();
     case 'L': st.pickL = v; return render();
     case 'R': { if (!st.pickL) return; const p = k.pairs.find(p => p[0] === st.pickL); if (p[1] === v) { st.gone.push(st.pickL); if (st.gone.length === k.pairs.length) { st.pickL = null; return finish(true); } } else { st.errors++; toast('Pas cette paire.'); } st.pickL = null; return render(); }
     case 'grade': return gradeExplain();
     case 'check': {
       let ok = false;
       if (k.type === 'pick') ok = st.sel === k.answer;
-      if (k.type === 'order' || k.type === 'build') ok = st.placed.every((x, i) => x === k.items[i]) && st.placed.length === k.items.length;
+      let score = 0;
+      if (k.type === 'order' || k.type === 'build') { ok = st.placed.every((x, i) => x === k.items[i]) && st.placed.length === k.items.length; score = st.placed.filter((x, i) => x === k.items[i]).length / k.items.length; }
       if (k.type === 'mistake') ok = st.sel === +k.answer;
       if (k.type === 'number') { const val = parseFloat(String(st.val ?? document.getElementById('num')?.value ?? '').replace(',', '.').replace(/\s/g, '')); if (isNaN(val)) return toast('Écris un nombre.'); st.val = val; ok = Math.abs(val - +k.answer) <= Math.max(.01, Math.abs(+k.answer) * .01); }
-      return finish(ok);
+      return finish(ok, score);
     }
     case 'next': return next();
     case 'quit': clearInterval(speedTimer); game = null; view = {name:'course', id:view.id}; render(); return window.scrollTo(0,0);
